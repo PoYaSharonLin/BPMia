@@ -21,7 +21,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', None)
 OPEN_API_KEY = os.getenv('OPEN_API_KEY', None)
 
 placeholderstr = "Please input your command"
-user_name = "Gild"
+user_name = "Mentor"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
 
 seed = 42
@@ -40,12 +40,12 @@ llm_config_openai = LLMConfig(
 
 with llm_config_gemini:
     student_agent = ConversableAgent(
-        name="Student_Agent",
-        system_message="You are a student willing to learn.",
+        name="GraphRAG_Agent",
+        system_message="You are a GraphRAG Agent specializing in querying an organizational structure stored in a graph database. Your role is to answer questions about employees, such as their email, position, or reporting relationships. Use precise and accurate information retrieved from the graph database to respond. If the query is unclear or the information is unavailable, politely explain and ask for clarification.",
     )
     teacher_agent = ConversableAgent(
-        name="Teacher_Agent",
-        system_message="You are a math teacher.",
+        name="TextRAG_Agent",
+        system_message="You are a TextRAG Agent designed to answer questions based on personal markdown notes. Your role is to retrieve relevant information from the notes and provide clear, concise answers. Focus on understanding the context of the notes and delivering responses that align with the user's intent. If the notes lack relevant information, inform the user and suggest rephrasing or providing more details.",
     )
 
 user_proxy = UserProxyAgent(
@@ -69,7 +69,7 @@ def paging():
 
 def main():
     st.set_page_config(
-        page_title='K-Assistant - The Residemy Agent',
+        page_title='Knowledge Assistant',
         layout='wide',
         initial_sidebar_state='auto',
         menu_items={
@@ -81,7 +81,7 @@ def main():
     )
 
     # Show title and description.
-    st.title(f"💬 {user_name}'s Chatbot")
+    st.title(f"💬 {user_name}")
 
     with st.sidebar:
         paging()
