@@ -12,8 +12,23 @@ A simple Streamlit app that shows how to build a chatbot using OpenAI's GPT-3.5.
    $ pip install -r requirements.txt
    ```
 
-2. Run the app
+2. Apply for API key 
+Apply API key from: 
+- https://platform.openai.com/api-keys
+- https://aistudio.google.com/app/apikey
+
+Replace <YOUR API KEY> with your real API key in example.env and rename example.env to .env 
+
+```bash
+OPENAI_API_KEY = <YOUR API KEY>
+GEMINI_API_KEY = <YOUR API KEY>
+```
+
+
+3. Run the app
 
    ```
    $ streamlit run streamlit_app.py
    ```
+
+### Live Demo
