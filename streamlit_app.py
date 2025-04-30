@@ -21,7 +21,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', None)
 OPEN_API_KEY = os.getenv('OPEN_API_KEY', None)
 
 placeholderstr = "Please input your command"
-user_name = "Gild"
+user_name = "On-boarding Mentor"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
 
 seed = 42
@@ -84,7 +84,7 @@ def main():
     )
 
     # Show title and description.
-    st.title(f"💬 {user_name}'s Chatbot")
+    st.title(f"💬 {user_name}")
 
     with st.sidebar:
         paging()
