@@ -13,12 +13,12 @@ from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 
 # Load environment variables from .env file
-load_dotenv(override=True)
+# load_dotenv(override=True)
 
 # https://ai.google.dev/gemini-api/docs/pricing
 # URL configurations
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', None)
-OPEN_API_KEY = os.getenv('OPEN_API_KEY', None)
+OPEN_API_KEY = st.secrets["OPEN_API_KEY"]
+GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 placeholderstr = "Please input your command"
 user_name = "On-boarding Mentor"
