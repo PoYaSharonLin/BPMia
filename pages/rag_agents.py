@@ -140,7 +140,7 @@ def main():
             teacher_agent,
             message = prompt,
             summary_method="reflection_with_llm",
-            max_turns=2,
+            max_turns=5,
         )
 
         response = chat_result.chat_history
