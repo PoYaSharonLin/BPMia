@@ -15,6 +15,19 @@ from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 # Load environment variables from .env file
 # load_dotenv(override=True)
 
+st.set_page_config(
+        page_title='On-boarding Mentor',
+        layout='wide',
+        initial_sidebar_state='auto',
+        menu_items={
+            'Get Help': 'https://streamlit.io/',
+            'Report a bug': 'https://github.com',
+            'About': 'About your application: **Hello world**'
+            },
+        page_icon="img/favicon.ico"
+    )
+
+
 # https://ai.google.dev/gemini-api/docs/pricing
 # URL configurations
 OPEN_API_KEY = st.secrets["OPEN_API_KEY"]
@@ -38,6 +51,11 @@ llm_config_openai = LLMConfig(
     api_key=OPEN_API_KEY,   # Authentication
 )
 
+if not st.secrets.get("OPEN_API_KEY"):
+    st.error("❌ OPEN_API_KEY not loaded from secrets.toml or Streamlit Cloud.")
+else:
+    st.success("✅ OPEN_API_KEY loaded successfully.")
+
 with llm_config_openai:
     assistant = AssistantAgent(
         name="assistant",
@@ -55,9 +73,11 @@ with llm_config_openai:
             "- For note-taking, go to 'Personal Note' and upload daily markdown notes to receive reminders on your content. "
             "Answer all user questions in a concise and helpful way based on this structure."
         ),
+        llm_config=llm_config_openai,
         max_consecutive_auto_reply=2
     )
 
+    
 user_proxy = UserProxyAgent(
     "user_proxy",
     human_input_mode="NEVER",
@@ -80,18 +100,6 @@ def paging():
     st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
 
 def main():
-    st.set_page_config(
-        page_title='On-boarding Mentor',
-        layout='wide',
-        initial_sidebar_state='auto',
-        menu_items={
-            'Get Help': 'https://streamlit.io/',
-            'Report a bug': 'https://github.com',
-            'About': 'About your application: **Hello world**'
-            },
-        page_icon="img/favicon.ico"
-    )
-
     # Show title and description.
     st.title(f"💬 {user_name}")
 
