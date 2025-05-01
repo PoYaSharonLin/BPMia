@@ -42,9 +42,18 @@ with llm_config_openai:
     assistant = AssistantAgent(
         name="assistant",
         system_message=(
-        "You are a helpful storyteller assistant. "
-        "Please give me a story. After your result, say 'ALL DONE'. "
-        "Do not say 'ALL DONE' in the same response."
+            "You are a helpful agent coordinator for an onboarding website. "
+            "Your role is to guide new employees through the platform and help them understand how to use its features. "
+            "When users ask questions like 'How should I start with this website?', respond with an overview of the site's purpose: "
+            "'This website helps you get familiar with your company and onboarding process! The website allows you to: "
+            "1. Visualize the enterprise culture, "
+            "2. Understand organization stakeholders, and "
+            "3. Grow with the company using your personal note.' "
+            "Direct users to the appropriate subpages as follows: "
+            "- For culture, visit 'Culture Visualization' subpage. "
+            "- For stakeholder mapping, visit 'Organization Stakeholders' and upload a stakeholder map. "
+            "- For note-taking, go to 'Personal Note' and upload daily markdown notes to receive reminders on your content. "
+            "Answer all user questions in a concise and helpful way based on this structure."
         ),
         max_consecutive_auto_reply=2
     )
@@ -68,11 +77,11 @@ def save_lang():
 
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
-    st.page_link("pages/two_agents.py", label="Two Agents' Talk", icon="💭")
+    st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
 
 def main():
     st.set_page_config(
-        page_title='K-Assistant - The Residemy Agent',
+        page_title='On-boarding Mentor',
         layout='wide',
         initial_sidebar_state='auto',
         menu_items={
@@ -121,7 +130,7 @@ def main():
                     st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
 
 
-    story_template = ("Give me a story started from '##PROMPT##'."
+    story_template = ("'##PROMPT##'."
                       f"And remeber to mention user's name {user_name} in the end."
                       f"Please express in {lang_setting}")
 
@@ -138,7 +147,7 @@ def main():
 
     def generate_response(prompt):
 
-        prompt_template = f"Give me a story started from '{prompt}'"
+        prompt_template = f"I would like to know'{prompt}'"
         # prompt_template = story_template.replace('##PROMPT##',prompt)
         # prompt_template = classification_template.replace('##PROMPT##',prompt)
         result = user_proxy.initiate_chat(
