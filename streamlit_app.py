@@ -30,7 +30,7 @@ st.set_page_config(
 
 # https://ai.google.dev/gemini-api/docs/pricing
 # URL configurations
-OPEN_API_KEY = st.secrets["OPENAI_API_KEY"]
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 placeholderstr = "Please input your command"
@@ -48,7 +48,7 @@ llm_config_gemini = LLMConfig(
 llm_config_openai = LLMConfig(
     api_type = "openai", 
     model="gpt-4o-mini",                    # The specific model
-    api_key=OPEN_API_KEY,   # Authentication
+    api_key=OPENAI_API_KEY,   # Authentication
 )
 
 if not st.secrets.get("OPENAI_API_KEY"):
