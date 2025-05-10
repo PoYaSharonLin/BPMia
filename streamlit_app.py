@@ -13,7 +13,7 @@ from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 
 # Load environment variables from .env file
-# load_dotenv(override=True)
+load_dotenv(override=True)
 
 st.set_page_config(
         page_title='On-boarding Mentor',
