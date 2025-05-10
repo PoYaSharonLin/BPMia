@@ -30,7 +30,7 @@ st.set_page_config(
 
 # https://ai.google.dev/gemini-api/docs/pricing
 # URL configurations
-OPEN_API_KEY = st.secrets["OPEN_API_KEY"]
+OPEN_API_KEY = st.secrets["OPENAI_API_KEY"]
 GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 
 placeholderstr = "Please input your command"
@@ -51,10 +51,10 @@ llm_config_openai = LLMConfig(
     api_key=OPEN_API_KEY,   # Authentication
 )
 
-if not st.secrets.get("OPEN_API_KEY"):
-    st.error("❌ OPEN_API_KEY not loaded from secrets.toml or Streamlit Cloud.")
+if not st.secrets.get("OPENAI_API_KEY"):
+    st.error("❌ OPENAI_API_KEY not loaded from secrets.toml or Streamlit Cloud.")
 else:
-    st.success("✅ OPEN_API_KEY loaded successfully.")
+    st.success("✅ OPENAI_API_KEY loaded successfully.")
 
 with llm_config_openai:
     assistant = AssistantAgent(
