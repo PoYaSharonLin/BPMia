@@ -98,6 +98,7 @@ def save_lang():
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
     st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
+    st.page_link("pages/word_cloud.py", label="Word Cloud", icon="☁️")
 
 def main():
     # Show title and description.
