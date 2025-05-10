@@ -9,4 +9,3 @@ ag2[openai]
 beautifulsoup4
 wordcloud
 nltk>=3.5
-re

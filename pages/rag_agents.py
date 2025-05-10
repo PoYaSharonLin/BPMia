@@ -120,9 +120,9 @@ def main():
                     st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
 
 
-    story_template = ("Give me a story started from '##PROMPT##'."
-                      f"And remeber to mention user's name {user_name} in the end."
-                      f"Please express in {lang_setting}")
+    # story_template = ("Give me a story started from '##PROMPT##'."
+    #                   f"And remeber to mention user's name {user_name} in the end."
+    #                   f"Please express in {lang_setting}")
 
     classification_template = ("You are a classification agent, your job is to classify what ##PROMPT## is according to the job definition list in <JOB_DEFINITION>"
     "<JOB_DEFINITION>"

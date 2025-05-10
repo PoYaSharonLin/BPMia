@@ -11,6 +11,14 @@ from nltk.tokenize import word_tokenize
 import pandas as pd
 
 # Initialize page config 
+def stream_data(stream_str):
+    for word in stream_str.split(" "):
+        yield word + " "
+        time.sleep(0.05)
+
+def save_lang():
+    st.session_state['lang_setting'] = st.session_state.get("language_select")
+
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
     st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
@@ -18,7 +26,7 @@ def paging():
 
 def main():
     st.set_page_config(
-        page_title='Word Cloud',
+        page_title='Knowledge Assistant',
         layout='wide',
         initial_sidebar_state='auto',
         menu_items={
@@ -28,6 +36,44 @@ def main():
             },
         page_icon="img/favicon.ico"
     )
+
+    # Show title and description.
+    st.title(f"💬 {user_name}")
+
+    with st.sidebar:
+        paging()
+
+        selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=0, on_change=save_lang, key="language_select")
+        if 'lang_setting' in st.session_state:
+            lang_setting = st.session_state['lang_setting']
+        else:
+            lang_setting = selected_lang
+            st.session_state['lang_setting'] = lang_setting
+
+        st_c_1 = st.container(border=True)
+        with st_c_1:
+            st.image("https://www.w3schools.com/howto/img_avatar.png")
+
+    st_c_chat = st.container(border=True)
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    else:
+        for msg in st.session_state.messages:
+            if msg["role"] == "user":
+                if user_image:
+                    st_c_chat.chat_message(msg["role"],avatar=user_image).markdown((msg["content"]))
+                else:
+                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
+            elif msg["role"] == "assistant":
+                st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
+            else:
+                try:
+                    image_tmp = msg.get("image")
+                    if image_tmp:
+                        st_c_chat.chat_message(msg["role"],avatar=image_tmp).markdown((msg["content"]))
+                except:
+                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
 
 # ----------------------------------------------------------------------
 
