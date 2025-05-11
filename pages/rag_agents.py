@@ -66,6 +66,7 @@ def save_lang():
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
     st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
+    st.page_link("pages/documents_upload.py", label="📄 Document Upload")
 
 def main():
     st.set_page_config(
