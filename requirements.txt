@@ -4,3 +4,8 @@ autogen-agentchat
 autogen-ext[openai]
 ag2[gemini]
 ag2[openai]
+
+# web scrapping 
+beautifulsoup4
+wordcloud
+nltk>=3.5

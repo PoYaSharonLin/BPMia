@@ -13,7 +13,7 @@ from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 
 # Load environment variables from .env file
-# load_dotenv(override=True)
+load_dotenv(override=True)
 
 st.set_page_config(
         page_title='On-boarding Mentor',
@@ -98,7 +98,7 @@ def save_lang():
 def paging():
     st.page_link("streamlit_app.py", label="Home", icon="🏠")
     st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
-    st.page_link("pages/documents_upload.py", label="📄 Document Upload", icon="📤")
+    st.page_link("pages/word_cloud.py", label="Word Cloud", icon="☁️")
 
 def main():
     # Show title and description.
