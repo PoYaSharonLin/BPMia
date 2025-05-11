@@ -12,6 +12,7 @@ from autogen import AssistantAgent, UserProxyAgent, LLMConfig
 from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 
+
 # Load environment variables from .env file
 load_dotenv(override=True)
 
@@ -36,7 +37,7 @@ GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 placeholderstr = "Please input your command"
 user_name = "On-boarding Mentor"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
-
+assistant_image = "https://www.w3schools.com/howto/img_avatar2.png"
 seed = 42
 
 llm_config_gemini = LLMConfig(
@@ -50,11 +51,6 @@ llm_config_openai = LLMConfig(
     model="gpt-4o-mini",                    # The specific model
     api_key=OPENAI_API_KEY,   # Authentication
 )
-
-if not st.secrets.get("OPENAI_API_KEY"):
-    st.error("❌ OPENAI_API_KEY not loaded from secrets.toml or Streamlit Cloud.")
-else:
-    st.success("✅ OPENAI_API_KEY loaded successfully.")
 
 with llm_config_openai:
     assistant = AssistantAgent(
@@ -140,26 +136,9 @@ def main():
                     st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
 
 
-    story_template = ("'##PROMPT##'."
-                      f"And remeber to mention user's name {user_name} in the end."
-                      f"Please express in {lang_setting}")
-
-    classification_template = ("You are a classification agent, your job is to classify what ##PROMPT## is according to the job definition list in <JOB_DEFINITION>"
-    "<JOB_DEFINITION>"
-    f"{JOB_DEFINITION}"
-    "</JOB_DEFINITION>"
-    # "Please output in JSON-format only."
-    # "JSON-format is as below:"
-    # f"{RESPONSE_FORMAT}"
-    "Let's think step by step."
-    # f"Please output in {lang_setting}"
-    )
-
     def generate_response(prompt):
 
         prompt_template = f"I would like to know'{prompt}'"
-        # prompt_template = story_template.replace('##PROMPT##',prompt)
-        # prompt_template = classification_template.replace('##PROMPT##',prompt)
         result = user_proxy.initiate_chat(
         recipient=assistant,
         message=prompt_template

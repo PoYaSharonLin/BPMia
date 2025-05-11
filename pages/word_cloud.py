@@ -9,14 +9,9 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import pandas as pd
-<<<<<<< HEAD
 from dataclasses import dataclass
 from typing import List, Optional, Dict
 from utils.ui_helper import UIHelper
-=======
-import time
-from components.navigation import paging
->>>>>>> 5d36152 (chore: remove chat function)
 
 # Download NLTK data
 nltk.download('punkt_tab')
@@ -96,7 +91,6 @@ class WordCloudGenerator:
         word_freq = Counter(tokens).most_common(n)
         return pd.DataFrame(word_freq, columns=["Word", "Frequency"])
 
-<<<<<<< HEAD
 class WordCloudApp:
     """Main application class for the word cloud generator."""
     
@@ -121,74 +115,6 @@ class WordCloudApp:
         # Scrape and process text
         raw_text = self.scraper.scrape(url)
         if not raw_text:
-=======
-        # User profile container
-        st_c_1 = st.container(border=True)
-        with st_c_1:
-            st.image("https://www.w3schools.com/howto/img_avatar.png")
-
-# Save language setting
-def save_lang():
-    st.session_state['lang_setting'] = st.session_state.get("language_select")
-
-# Word cloud generation functions
-@st.cache_data
-def scrape_text(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-        paragraphs = soup.find_all('p')
-        text = ' '.join([para.get_text() for para in paragraphs])
-        return text
-    except Exception as e:
-        st.error(f"Error scraping the webpage: {e}")
-        return ""
-
-@st.cache_data
-def preprocess_text(text):
-    text = text.lower()
-    text = re.sub(r'[^a-zA-Z\s]', '', text)
-    tokens = word_tokenize(text)
-    stop_words = set(stopwords.words('english'))
-    tokens = [word for word in tokens if word not in stop_words and len(word) > 2]
-    return tokens
-
-@st.cache_data
-def generate_wordcloud(tokens):
-    word_freq = Counter(tokens)
-    wordcloud = WordCloud(width=800, height=400,
-                         background_color='white',
-                         min_font_size=10).generate_from_frequencies(word_freq)
-    fig, ax = plt.subplots(figsize=(10, 5))
-    ax.imshow(wordcloud, interpolation='bilinear')
-    ax.axis('off')
-    return fig
-
-# Word cloud app logic
-def word_cloud_app():
-    st.title("Dynamic Word Cloud Generator")
-    st.write("This word cloud entails the enterprise culture, which suggests some abilities that employees should be equipped with.")
-
-    url = st.text_input("Enter URL to scrape:", value="https://www.iss.nthu.edu.tw/About-us/About--us")
-
-    if url:
-        raw_text = scrape_text(url)
-        if raw_text:
-            tokens = preprocess_text(raw_text)
-            if tokens:
-                fig = generate_wordcloud(tokens)
-                st.pyplot(fig)
-                
-                st.subheader("Top 5 Most Frequent Words")
-                word_freq = Counter(tokens)
-                top_words = word_freq.most_common(5)
-                df = pd.DataFrame(top_words, columns=["Word", "Frequency"])
-                st.table(df)
-            else:
-                st.warning("No valid words found after preprocessing.")
-        else:
->>>>>>> 5d36152 (chore: remove chat function)
             st.warning("No text could be scraped from the webpage.")
             return
         
@@ -207,18 +133,12 @@ def word_cloud_app():
         st.table(df)
 
 def main():
-<<<<<<< HEAD
     """Main entry point for the Streamlit application."""
     UIHelper.config_page()
     UIHelper.setup_sidebar()
     UIHelper.setup_chat()
     app = WordCloudApp()
     app.run()
-=======
-    config_page()  # Set up page configuration
-    setup_sidebar()  # Set up sidebar
-    word_cloud_app()  # Run word cloud generator
->>>>>>> 5d36152 (chore: remove chat function)
 
 if __name__ == "__main__":
     main()
