@@ -4,6 +4,7 @@ import time
 import re
 from dotenv import load_dotenv
 import os
+import re
 
 # Import ConversableAgent class
 import autogen
@@ -11,6 +12,7 @@ from autogen import ConversableAgent, LLMConfig, Agent
 from autogen import AssistantAgent, UserProxyAgent, LLMConfig
 from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
+from components.navigation import paging
 
 # Load environment variables from .env file
 # load_dotenv(override=True)
@@ -55,6 +57,23 @@ user_proxy = UserProxyAgent(
     is_termination_msg=lambda x: content_str(x.get("content")).find("ALL DONE") >= 0,
 )
 
+def load_uploaded_docs():
+    """Load all markdown files from uploaded_docs/personal and uploaded_docs/org."""
+    base_dirs = {
+        "personal": "uploaded_docs/personal",
+        "org": "uploaded_docs/org"
+    }
+
+    docs = {"personal": {}, "org": {}}
+
+    for category, path in base_dirs.items():
+        if os.path.exists(path):
+            for fname in os.listdir(path):
+                if fname.endswith(".md"):
+                    with open(os.path.join(path, fname), "r", encoding="utf-8") as f:
+                        docs[category][fname] = f.read()
+    return docs
+
 def stream_data(stream_str):
     for word in stream_str.split(" "):
         yield word + " "
@@ -62,11 +81,6 @@ def stream_data(stream_str):
 
 def save_lang():
     st.session_state['lang_setting'] = st.session_state.get("language_select")
-
-def paging():
-    st.page_link("streamlit_app.py", label="Home", icon="🏠")
-    st.page_link("pages/rag_agents.py", label="RAG Agent Space", icon="🤖")
-    st.page_link("pages/word_cloud.py", label="Word Cloud", icon="☁️")
 
 def main():
     st.set_page_config(
@@ -119,33 +133,73 @@ def main():
                 except:
                     st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
 
-
-    # story_template = ("Give me a story started from '##PROMPT##'."
-    #                   f"And remeber to mention user's name {user_name} in the end."
-    #                   f"Please express in {lang_setting}")
-
-    classification_template = ("You are a classification agent, your job is to classify what ##PROMPT## is according to the job definition list in <JOB_DEFINITION>"
-    "<JOB_DEFINITION>"
-    f"{JOB_DEFINITION}"
-    "</JOB_DEFINITION>"
-    # "Please output in JSON-format only."
-    # "JSON-format is as below:"
-    # f"{RESPONSE_FORMAT}"
-    "Let's think step by step."
-    # f"Please output in {lang_setting}"
-    )
+    def extract_mermaid_blocks(markdown_text):
+        """Extract only the Mermaid code blocks from a markdown string."""
+        pattern = r"```mermaid\n(.*?)```"
+        return re.findall(pattern, markdown_text, re.DOTALL)
 
     def generate_response(prompt):
+        docs = load_uploaded_docs()
 
-        chat_result = student_agent.initiate_chat(
-            teacher_agent,
-            message = prompt,
-            summary_method="reflection_with_llm",
-            max_turns=5,
-        )
+        prompt_lower = prompt.lower()
+        is_org_related = any(keyword in prompt_lower for keyword in [
+            "org", "organization", "structure", "team", "manager", "lead", "report", "department", "chart"
+        ])
 
-        response = chat_result.chat_history
-        return response
+        def should_stop(chat_history):
+            last_few = [msg["content"].strip().lower() for msg in chat_history[-3:] if msg["role"] == "assistant"]
+            generic_phrases = [
+                "i'm unable to answer", 
+                "i am sorry", 
+                "please rephrase", 
+                "notes do not contain", 
+                "could you please provide"
+            ]
+            return all(any(generic in resp for generic in generic_phrases) for resp in last_few)
+
+        if is_org_related:
+            mermaid_blocks = []
+            for content in docs.get("org", {}).values():
+                mermaid_blocks += extract_mermaid_blocks(content)
+
+            mermaid_diagrams = "\n\n".join(f"```mermaid\n{block}\n```" for block in mermaid_blocks)
+
+            final_prompt = (
+                "Based on the following organization charts, answer the user's question. "
+                "Only use this information to determine reporting lines, structure, or team relationships:\n\n"
+                f"{mermaid_diagrams}\n\nUser's question: {prompt}"
+            )
+
+            response = student_agent.initiate_chat(
+                user_proxy,
+                message=final_prompt,
+                summary_method="reflection_with_llm",
+                max_turns=3  # Reduce if desired
+            )
+            if should_stop(response.chat_history):
+                response.chat_history.append({"role": "assistant", "content": "Ending the chat as no relevant answer can be provided."})
+            return response.chat_history
+
+        else:
+            personal_content = "\n\n".join(
+                f"# {fname}\n{content}" 
+                for fname, content in docs.get("personal", {}).items()
+            )
+
+            final_prompt = (
+                "Use the following personal notes to answer the user's question:\n\n"
+                f"{personal_content}\n\nUser's question: {prompt}"
+            )
+
+            response = teacher_agent.initiate_chat(
+                user_proxy,
+                message=final_prompt,
+                summary_method="reflection_with_llm",
+                max_turns=3
+            )
+            if should_stop(response.chat_history):
+                response.chat_history.append({"role": "assistant", "content": "Ending the chat as no helpful answer can be provided."})
+            return response.chat_history
 
     def show_chat_history(chat_hsitory):
         for entry in chat_hsitory:
@@ -162,13 +216,19 @@ def main():
                         st_c_chat.chat_message(f"{role}").write((content))
                     else:
                         st_c_chat.chat_message("user",avatar=user_image).write(content)
-    
-        return 
 
     # Chat function section (timing included inside function)
     def chat(prompt: str):
+        # Add user message to chat log (and UI)
+        st_c_chat.chat_message("user", avatar=user_image).markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        # Generate response from agent
         response = generate_response(prompt)
+
+        # Add assistant messages
         show_chat_history(response)
+
 
     if prompt := st.chat_input(placeholder=placeholderstr, key="chat_bot"):
         chat(prompt)
