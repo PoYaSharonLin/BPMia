@@ -1,52 +1,99 @@
 import streamlit as st
-st.set_page_config(page_title="📄 Upload Notes & Org Charts", layout="centered")
-
 import os
+from typing import List
+from utils.ui_helper import UIHelper
 
-def paging():
-    st.page_link("streamlit_app.py", label="🏠 Home")
-    st.page_link("pages/rag_agents.py", label="🤖 RAG Agent Space")
-    st.page_link("pages/documents_upload.py", label="📄 Document Upload")
+class DocumentUploader:
+    def __init__(self):
+        self.base_upload_dir = "uploaded_docs"
+        self.doc_types = {
+            "Personal Notes": "personal",
+            "Organizational Structure": "org"
+        }
+        
+    def setup_directories(self, folder: str) -> str:
+        """Create and return upload directory path."""
+        upload_dir = os.path.join(self.base_upload_dir, folder)
+        try:
+            os.makedirs(upload_dir, exist_ok=True)
+        except OSError as e:
+            st.error(f"Error creating directory: {str(e)}")
+            return ""
+        return upload_dir
 
-with st.sidebar:
-    paging()
+    def get_uploaded_files(self, upload_dir: str) -> List[str]:
+        """Return list of markdown files in upload directory."""
+        try:
+            return [f for f in os.listdir(upload_dir) if f.endswith(".md")]
+        except FileNotFoundError:
+            return []
+        except Exception as e:
+            st.error(f"Error listing files: {str(e)}")
+            return []
 
-st.title("📄 Upload Your Documents")
+    def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
+        """Display uploaded files in expander."""
+        with st.expander(f"📄 View uploaded files in {doc_type}"):
+            if files:
+                for fname in files:
+                    st.markdown(f"- `{fname}`")
+            else:
+                st.info("No files uploaded yet.")
 
-# select doc type
-doc_type = st.radio("Select Upload Category", ["Personal Notes", "Organizational Structure"])
+    def handle_file_upload(self, uploaded_file, upload_dir: str) -> None:
+        """Handle file upload and preview."""
+        if uploaded_file is None:
+            return
 
-# select doc path based on doc type
-doc_folder = "personal" if doc_type == "Personal Notes" else "org"
-upload_dir = f"uploaded_docs/{doc_folder}"
-os.makedirs(upload_dir, exist_ok=True)
+        try:
+            file_path = os.path.join(upload_dir, uploaded_file.name)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            
+            st.success("✅ Upload Successful!")
+            st.markdown(f"**File saved as:** `{uploaded_file.name}`")
 
-# display the number of uploaded files of selected doc type
-uploaded_files = [f for f in os.listdir(upload_dir) if f.endswith(".md")]
-st.sidebar.markdown(f"📁 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
+            st.subheader("📝 File Preview")
+            try:
+                file_content = uploaded_file.getvalue().decode("utf-8")
+                st.markdown(file_content, unsafe_allow_html=False)
+            except UnicodeDecodeError:
+                st.error("Error: Unable to decode file content. Please ensure the file is a valid text file.")
+        except Exception as e:
+            st.error(f"Error uploading file: {str(e)}")
 
-# dropdown to display uploaded files
-with st.expander(f"📄 View uploaded files in {doc_type}"):
-    if uploaded_files:
-        for fname in uploaded_files:
-            st.markdown(f"- `{fname}`")
-    else:
-        st.info("No files uploaded yet.")
+    def render(self):
+        """Render the document uploader interface."""
+        try:
+            doc_type = st.radio("Select Upload Category", list(self.doc_types.keys()))
+            upload_dir = self.setup_directories(self.doc_types[doc_type])
+            if not upload_dir:
+                return
+                
+            uploaded_files = self.get_uploaded_files(upload_dir)
+            st.sidebar.markdown(f"📁 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
+            
+            self.display_uploaded_files(uploaded_files, doc_type)
+            
+            uploaded_file = st.file_uploader(
+                f"Upload your markdown (.md) file for {doc_type}",
+                type=["md"]
+            )
+            
+            self.handle_file_upload(uploaded_file, upload_dir)
+        except Exception as e:
+            st.error(f"Error rendering interface: {str(e)}")
 
-# uploaded files block
-uploaded_file = st.file_uploader(
-    f"Upload your markdown (.md) file for {doc_type}",
-    type=["md"]
-)
+def main():
+    try:
+        UIHelper.config_page()
+        UIHelper.setup_sidebar()
+        UIHelper.setup_chat()
+        
+        uploader = DocumentUploader()
+        uploader.render()
+    except Exception as e:
+        st.error(f"Error in main application: {str(e)}")
 
-# save and preview uploaded file
-if uploaded_file is not None:
-    file_path = os.path.join(upload_dir, uploaded_file.name)
-    with open(file_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    st.success("✅ Upload Successfully!")
-    st.markdown(f"**File saved as:** `{uploaded_file.name}`")
-
-    st.subheader("📝 File Preview")
-    file_content = uploaded_file.getvalue().decode("utf-8")
-    st.markdown(file_content, unsafe_allow_html=False)
+if __name__ == "__main__":
+    main()
