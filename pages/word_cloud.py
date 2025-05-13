@@ -134,9 +134,7 @@ class WordCloudApp:
 
 def main():
     """Main entry point for the Streamlit application."""
-    UIHelper.config_page()
     UIHelper.setup_sidebar()
-    UIHelper.setup_chat()
     app = WordCloudApp()
     app.run()
 
