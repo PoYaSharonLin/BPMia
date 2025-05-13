@@ -26,7 +26,6 @@ GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 placeholderstr = "Please input your command"
 user_name = "Mentor"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
-assistant_image = "https://www.w3schools.com/howto/img_avatar2.png"
 
 seed = 42
 
@@ -43,11 +42,11 @@ llm_config_openai = LLMConfig(
 )
 
 with llm_config_gemini:
-    student_agent = ConversableAgent(
+    graph_agent = ConversableAgent(
         name="GraphRAG_Agent",
         system_message="You are a GraphRAG Agent specializing in querying an organizational structure stored in a graph database. Your role is to answer questions about employees, such as their email, position, or reporting relationships. Use precise and accurate information retrieved from the graph database to respond. If the query is unclear or the information is unavailable, politely explain and ask for clarification.",
     )
-    teacher_agent = ConversableAgent(
+    text_agent = ConversableAgent(
         name="TextRAG_Agent",
         system_message="You are a TextRAG Agent designed to answer questions based on personal markdown notes. Your role is to retrieve relevant information from the notes and provide clear, concise answers. Focus on understanding the context of the notes and delivering responses that align with the user's intent. If the notes lack relevant information, inform the user and suggest rephrasing or providing more details.",
     )
@@ -56,7 +55,17 @@ user_proxy = UserProxyAgent(
     "user_proxy",
     human_input_mode="NEVER",
     code_execution_config=False,
-    is_termination_msg=lambda x: content_str(x.get("content")).find("ALL DONE") >= 0,
+    is_termination_msg=lambda x: any(
+        phrase in content_str(x.get("content", "")).lower()
+        for phrase in [
+            "I'm unable to provide",
+            "I am sorry",
+            "need more information",
+            "please provide a question",
+            "please clarify",
+            "no relevant answer",
+        ]
+    ),
 )
 
 def load_uploaded_docs():
@@ -89,10 +98,9 @@ def main():
     UIHelper.setup_sidebar()
 
     user_name = "Mentor"
-    user_image = "https://www.w3schools.com/howto/img_avatar.png"
     st.title(f"💬 {user_name}")
     st_c_chat = st.container(border=True)
-    UIHelper.setup_chat()
+    UIHelper.setup_chat(st_c_chat)
 
     def extract_mermaid_blocks(markdown_text):
         """Extract only the Mermaid code blocks from a markdown string."""
@@ -108,7 +116,13 @@ def main():
         ])
 
         def should_stop(chat_history):
-            last_few = [msg["content"].strip().lower() for msg in chat_history[-3:] if msg["role"] == "assistant"]
+            agent_roles = ["TextRAG_Agent", "GraphRAG_Agent"]
+            last_few = [
+                msg["content"].strip().lower()
+                for msg in chat_history[-3:]
+                if msg["role"] in agent_roles
+            ]
+
             generic_phrases = [
                 "i'm unable to answer", 
                 "i am sorry", 
@@ -130,15 +144,16 @@ def main():
                 "Only use this information to determine reporting lines, structure, or team relationships:\n\n"
                 f"{mermaid_diagrams}\n\nUser's question: {prompt}"
             )
+            st.session_state.messages.append({"role": "user_proxy", "content": prompt})
 
-            response = student_agent.initiate_chat(
-                user_proxy,
+            response = user_proxy.initiate_chat(
+                graph_agent,
                 message=final_prompt,
                 summary_method="reflection_with_llm",
                 max_turns=3  # Reduce if desired
             )
             if should_stop(response.chat_history):
-                response.chat_history.append({"role": "assistant", "content": "Ending the chat as no relevant answer can be provided."})
+                response.chat_history.append({"role": graph_agent.name, "content": "Ending the chat as no relevant answer can be provided."})
             return response.chat_history
 
         else:
@@ -152,14 +167,14 @@ def main():
                 f"{personal_content}\n\nUser's question: {prompt}"
             )
 
-            response = teacher_agent.initiate_chat(
-                user_proxy,
+            response = user_proxy.initiate_chat(
+                text_agent,
                 message=final_prompt,
                 summary_method="reflection_with_llm",
                 max_turns=3
             )
             if should_stop(response.chat_history):
-                response.chat_history.append({"role": "assistant", "content": "Ending the chat as no helpful answer can be provided."})
+                response.chat_history.append({"role": text_agent.name, "content": "Ending the chat as no helpful answer can be provided."})
             return response.chat_history
 
     def show_chat_history(chat_history):
@@ -167,26 +182,21 @@ def main():
             role = entry.get("role", "assistant")
             content = entry.get("content", "").strip()
 
+            if not content:
+                continue
+            
             # Add to session state for future reference
             st.session_state.messages.append({"role": role, "content": content})
 
-            if not content:
-                continue
-
             # Display with appropriate avatar
             if role == "user":
-                st_c_chat.chat_message("user", avatar=user_image).markdown(content)
-            elif role == "assistant":
-                st_c_chat.chat_message("assistant", avatar=assistant_image).markdown(content)
+                st_c_chat.chat_message("user", avatar=user_image).write(content)
             else:
                 # Fallback: use generic avatar if available or none
-                st_c_chat.chat_message(role).markdown(content)
+                st_c_chat.chat_message(role).write(content)
 
     # Chat function section (timing included inside function)
     def chat(prompt: str):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        st_c_chat.chat_message("user", avatar=user_image).markdown(prompt)
-
         response = generate_response(prompt)
         show_chat_history(response)
 
