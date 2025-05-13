@@ -13,6 +13,7 @@ from autogen import AssistantAgent, UserProxyAgent, LLMConfig
 from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
 from components.navigation import paging
+from utils.ui_helper import UIHelper
 
 # Load environment variables from .env file
 # load_dotenv(override=True)
@@ -25,6 +26,7 @@ GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 placeholderstr = "Please input your command"
 user_name = "Mentor"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
+assistant_image = "https://www.w3schools.com/howto/img_avatar2.png"
 
 seed = 42
 
@@ -83,55 +85,14 @@ def save_lang():
     st.session_state['lang_setting'] = st.session_state.get("language_select")
 
 def main():
-    st.set_page_config(
-        page_title='Knowledge Assistant',
-        layout='wide',
-        initial_sidebar_state='auto',
-        menu_items={
-            'Get Help': 'https://streamlit.io/',
-            'Report a bug': 'https://github.com',
-            'About': 'About your application: **Hello world**'
-            },
-        page_icon="img/favicon.ico"
-    )
+    UIHelper.config_page()
+    UIHelper.setup_sidebar()
 
-    # Show title and description.
+    user_name = "Mentor"
+    user_image = "https://www.w3schools.com/howto/img_avatar.png"
     st.title(f"💬 {user_name}")
-
-    with st.sidebar:
-        paging()
-
-        selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=0, on_change=save_lang, key="language_select")
-        if 'lang_setting' in st.session_state:
-            lang_setting = st.session_state['lang_setting']
-        else:
-            lang_setting = selected_lang
-            st.session_state['lang_setting'] = lang_setting
-
-        st_c_1 = st.container(border=True)
-        with st_c_1:
-            st.image("https://www.w3schools.com/howto/img_avatar.png")
-
     st_c_chat = st.container(border=True)
-
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    else:
-        for msg in st.session_state.messages:
-            if msg["role"] == "user":
-                if user_image:
-                    st_c_chat.chat_message(msg["role"],avatar=user_image).markdown((msg["content"]))
-                else:
-                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
-            elif msg["role"] == "assistant":
-                st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
-            else:
-                try:
-                    image_tmp = msg.get("image")
-                    if image_tmp:
-                        st_c_chat.chat_message(msg["role"],avatar=image_tmp).markdown((msg["content"]))
-                except:
-                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
+    UIHelper.setup_chat()
 
     def extract_mermaid_blocks(markdown_text):
         """Extract only the Mermaid code blocks from a markdown string."""
@@ -201,32 +162,32 @@ def main():
                 response.chat_history.append({"role": "assistant", "content": "Ending the chat as no helpful answer can be provided."})
             return response.chat_history
 
-    def show_chat_history(chat_hsitory):
-        for entry in chat_hsitory:
-            role = entry.get('role')
-            name = entry.get('name')
-            content = entry.get('content')
-            st.session_state.messages.append({"role": f"{role}", "content": content})
+    def show_chat_history(chat_history):
+        for entry in chat_history:
+            role = entry.get("role", "assistant")
+            content = entry.get("content", "").strip()
 
-            if len(content.strip()) != 0: 
-                if 'ALL DONE' in content:
-                    return 
-                else: 
-                    if role != 'assistant':
-                        st_c_chat.chat_message(f"{role}").write((content))
-                    else:
-                        st_c_chat.chat_message("user",avatar=user_image).write(content)
+            # Add to session state for future reference
+            st.session_state.messages.append({"role": role, "content": content})
+
+            if not content:
+                continue
+
+            # Display with appropriate avatar
+            if role == "user":
+                st_c_chat.chat_message("user", avatar=user_image).markdown(content)
+            elif role == "assistant":
+                st_c_chat.chat_message("assistant", avatar=assistant_image).markdown(content)
+            else:
+                # Fallback: use generic avatar if available or none
+                st_c_chat.chat_message(role).markdown(content)
 
     # Chat function section (timing included inside function)
     def chat(prompt: str):
-        # Add user message to chat log (and UI)
-        st_c_chat.chat_message("user", avatar=user_image).markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
+        st_c_chat.chat_message("user", avatar=user_image).markdown(prompt)
 
-        # Generate response from agent
         response = generate_response(prompt)
-
-        # Add assistant messages
         show_chat_history(response)
 
 
