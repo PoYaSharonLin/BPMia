@@ -41,10 +41,7 @@ class UIHelper:
 
     @staticmethod
     def setup_chat():
-        user_name = "Mentor"
         user_image = "https://www.w3schools.com/howto/img_avatar.png"
-
-        st.title(f"💬 {user_name}")
         st_c_chat = st.container(border=True)
 
         if "messages" not in st.session_state:
