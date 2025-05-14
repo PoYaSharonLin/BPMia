@@ -13,13 +13,16 @@ import pandas as pd
 from dataclasses import dataclass
 from typing import List, Optional, Dict
 from utils.ui_helper import UIHelper
-import os, nltk
+import os
+
+nltk_data_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'nltk_data'))
+nltk.data.path.append(nltk_data_path)
 
 # Download NLTK data
-# nltk.download('punkt')
-# nltk.download('stopwords')
-# nltk.download('averaged_perceptron_tagger_eng')
-nltk.data.path.append(os.path.join(os.getcwd(), "nltk_data"))
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger_eng')
+
 
 @dataclass
 class Config:
