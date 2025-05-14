@@ -8,14 +8,16 @@ import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk import pos_tag
 import pandas as pd
 from dataclasses import dataclass
 from typing import List, Optional, Dict
 from utils.ui_helper import UIHelper
 
 # Download NLTK data
-nltk.download('punkt_tab')
+nltk.download('punkt')
 nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger_eng')
 
 @dataclass
 class Config:
@@ -48,14 +50,19 @@ class TextProcessor:
     @staticmethod
     @st.cache_data
     def preprocess(text: str) -> List[str]:
-        """Preprocesses text by cleaning, tokenizing, and removing stopwords."""
+        """Preprocesses text by cleaning, tokenizing, and keeping only adjectives and adverbs."""
         # Convert to lowercase and remove non-alphabetic characters
         text = re.sub(r'[^a-zA-Z\s]', '', text.lower())
         # Tokenize
         tokens = word_tokenize(text)
         # Remove stopwords and short words
         stop_words = set(stopwords.words('english'))
-        return [word for word in tokens if word not in stop_words and len(word) > 2]
+        filtered_tokens = [word for word in tokens if word not in stop_words and len(word) > 2]
+        # POS tagging
+        tagged_tokens = pos_tag(filtered_tokens)
+        # Keep only adjectives (JJ*) and adverbs (RB*)
+        allowed_tags = ('JJ', 'JJR', 'JJS', 'RB', 'RBR', 'RBS')
+        return [word for word, tag in tagged_tokens if tag.startswith(allowed_tags)]
 
 class WordCloudGenerator:
     """Generates word cloud visualizations and frequency tables."""
