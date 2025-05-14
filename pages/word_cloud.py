@@ -16,9 +16,9 @@ from utils.ui_helper import UIHelper
 import os, nltk
 
 # Download NLTK data
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('averaged_perceptron_tagger_eng')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('averaged_perceptron_tagger_eng')
 nltk.data.path.append(os.path.join(os.getcwd(), "nltk_data"))
 
 @dataclass
