@@ -13,11 +13,13 @@ import pandas as pd
 from dataclasses import dataclass
 from typing import List, Optional, Dict
 from utils.ui_helper import UIHelper
+import os, nltk
 
 # Download NLTK data
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger_eng')
+nltk.data.path.append(os.path.join(os.getcwd(), "nltk_data"))
 
 @dataclass
 class Config:
@@ -112,7 +114,7 @@ class WordCloudApp:
         st.title("Dynamic Word Cloud Generator")
         st.write("Visualize key themes in enterprise culture from webpage text.")
         
-        default_url = "https://www.iss.nthu.edu.tw/About-us/About--us"
+        default_url = "https://research.google/philosophy"
         url = st.text_input("Enter URL to scrape:", value=default_url)
         
         if not url:
