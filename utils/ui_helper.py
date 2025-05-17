@@ -40,9 +40,9 @@ class UIHelper:
         st.session_state['lang_setting'] = st.session_state.get("language_select")
 
     @staticmethod
-    def setup_chat():
+    def setup_chat(st_c_chat):
         user_image = "https://www.w3schools.com/howto/img_avatar.png"
-        st_c_chat = st.container(border=True)
+        # st_c_chat = st.container(border=True)
 
         if "messages" not in st.session_state:
             st.session_state.messages = []

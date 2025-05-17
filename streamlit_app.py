@@ -11,7 +11,7 @@ from autogen import ConversableAgent, LLMConfig
 from autogen import AssistantAgent, UserProxyAgent, LLMConfig
 from autogen.code_utils import content_str
 from coding.constant import JOB_DEFINITION, RESPONSE_FORMAT
-
+from utils.ui_helper import UIHelper
 
 # Load environment variables from .env file
 load_dotenv(override=True)
@@ -37,7 +37,6 @@ GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
 placeholderstr = "Please input your command"
 user_name = "On-boarding Mentor"
 user_image = "https://www.w3schools.com/howto/img_avatar.png"
-assistant_image = "https://www.w3schools.com/howto/img_avatar2.png"
 seed = 42
 
 llm_config_gemini = LLMConfig(
@@ -100,41 +99,22 @@ def paging():
 def main():
     # Show title and description.
     st.title(f"💬 {user_name}")
+    UIHelper.setup_sidebar()
+    # with st.sidebar:
+    #     paging()
+    #     selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=0, on_change=save_lang, key="language_select")
+    #     if 'lang_setting' in st.session_state:
+    #         lang_setting = st.session_state['lang_setting']
+    #     else:
+    #         lang_setting = selected_lang
+    #         st.session_state['lang_setting'] = lang_setting
 
-    with st.sidebar:
-        paging()
-        selected_lang = st.selectbox("Language", ["English", "繁體中文"], index=0, on_change=save_lang, key="language_select")
-        if 'lang_setting' in st.session_state:
-            lang_setting = st.session_state['lang_setting']
-        else:
-            lang_setting = selected_lang
-            st.session_state['lang_setting'] = lang_setting
-
-        st_c_1 = st.container(border=True)
-        with st_c_1:
-            st.image("https://www.w3schools.com/howto/img_avatar.png")
+    #     st_c_1 = st.container(border=True)
+    #     with st_c_1:
+    #         st.image("https://www.w3schools.com/howto/img_avatar.png")
 
     st_c_chat = st.container(border=True)
-
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-    else:
-        for msg in st.session_state.messages:
-            if msg["role"] == "user":
-                if user_image:
-                    st_c_chat.chat_message(msg["role"],avatar=user_image).markdown((msg["content"]))
-                else:
-                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
-            elif msg["role"] == "assistant":
-                st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
-            else:
-                try:
-                    image_tmp = msg.get("image")
-                    if image_tmp:
-                        st_c_chat.chat_message(msg["role"],avatar=image_tmp).markdown((msg["content"]))
-                except:
-                    st_c_chat.chat_message(msg["role"]).markdown((msg["content"]))
-
+    UIHelper.setup_chat(st_c_chat)
 
     def generate_response(prompt):
 
@@ -167,8 +147,8 @@ def main():
 
     # Chat function section (timing included inside function)
     def chat(prompt: str):
-        st_c_chat.chat_message("user",avatar=user_image).write(prompt)
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        # st_c_chat.chat_message("user",avatar=user_image).write(prompt)
+        # st.session_state.messages.append({"role": "user", "content": prompt})
 
         response = generate_response(prompt)
         show_chat_history(response)
