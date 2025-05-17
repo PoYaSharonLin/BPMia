@@ -88,7 +88,6 @@ def main():
     try:
         UIHelper.config_page()
         UIHelper.setup_sidebar()
-        UIHelper.setup_chat()
         
         uploader = DocumentUploader()
         uploader.render()
