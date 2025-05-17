@@ -39,23 +39,23 @@ class UIHelper:
     def save_lang():
         st.session_state['lang_setting'] = st.session_state.get("language_select")
 
-    # @staticmethod
-    # def setup_chat(st_c_chat):
-    #     user_image = "https://www.w3schools.com/howto/img_avatar.png"
-    #     # st_c_chat = st.container(border=True)
+    @staticmethod
+    def setup_chat(st_c_chat):
+        user_image = "https://www.w3schools.com/howto/img_avatar.png"
+        # st_c_chat = st.container(border=True)
 
-    #     if "messages" not in st.session_state:
-    #         st.session_state.messages = []
-    #     else:
-    #         for msg in st.session_state.messages:
-    #             if msg["role"] == "user":
-    #                 st_c_chat.chat_message(msg["role"], avatar=user_image).markdown(msg["content"])
-    #             elif msg["role"] == "assistant":
-    #                 st_c_chat.chat_message(msg["role"]).markdown(msg["content"])
-    #             else:
-    #                 try:
-    #                     image_tmp = msg.get("image")
-    #                     if image_tmp:
-    #                         st_c_chat.chat_message(msg["role"], avatar=image_tmp).markdown(msg["content"])
-    #                 except:
-    #                     st_c_chat.chat_message(msg["role"]).markdown(msg["content"])
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+        else:
+            for msg in st.session_state.messages:
+                if msg["role"] == "user":
+                    st_c_chat.chat_message(msg["role"], avatar=user_image).markdown(msg["content"])
+                elif msg["role"] == "assistant":
+                    st_c_chat.chat_message(msg["role"]).markdown(msg["content"])
+                else:
+                    try:
+                        image_tmp = msg.get("image")
+                        if image_tmp:
+                            st_c_chat.chat_message(msg["role"], avatar=image_tmp).markdown(msg["content"])
+                    except:
+                        st_c_chat.chat_message(msg["role"]).markdown(msg["content"])
