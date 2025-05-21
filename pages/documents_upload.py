@@ -32,13 +32,23 @@ class DocumentUploader:
             return []
 
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
-        """Display uploaded files in expander."""
-        with st.expander(f"📄 View uploaded files in {doc_type}"):
-            if files:
-                for fname in files:
-                    st.markdown(f"- `{fname}`")
-            else:
-                st.info("No files uploaded yet.")
+        """Display uploaded files with individual expanders (not nested)."""
+        st.markdown(f"### 📄 Uploaded files in {doc_type}")
+        
+        if files:
+            for fname in files:
+                file_path = os.path.join(self.base_upload_dir, self.doc_types[doc_type], fname)
+                with st.expander(f"📄 {fname}"):
+                    try:
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            content = f.read()
+                            st.markdown(content, unsafe_allow_html=False)
+                    except Exception as e:
+                        st.error(f"Error reading `{fname}`: {str(e)}")
+        else:
+            st.info("No files uploaded yet.")
+
+
 
     def handle_file_upload(self, uploaded_file, upload_dir: str) -> None:
         """Handle file upload and preview."""
