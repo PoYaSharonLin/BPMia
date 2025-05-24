@@ -1,8 +1,3 @@
----
-title: CRM Training Session
-
----
-
 # CRM Training Session
 *Date*: 2025-04-11  
 *Tags*: [CRM, Sales, Training]  
@@ -18,8 +13,8 @@ Learned about the CRM system used by the Sales team during today’s training.
 - *Concepts*: CRM = Customer Relationship Management; Lead Scoring = Ranking potential customers.
 
 ## Action Items
-[ ] Request Salesforce access from Mike Brown by Monday.
-[ ] Complete Salesforce beginner tutorial by Wednesday.
+- [ ] Request Salesforce access from Mike Brown by Monday.
+- [ ] Complete Salesforce beginner tutorial by Wednesday.
 
 
 ## Observations
@@ -32,11 +27,5 @@ Who approves changes to CRM fields?
 
 ## Attachments/References
 [Salesforce Tutorial Link](https://salesforce.com/beginner)
-See training_slides.pdf in my uploads.
-
-404
-36分鐘前傳送
-撰寫內容給Ya Po
-
 
 
