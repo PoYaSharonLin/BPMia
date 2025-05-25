@@ -172,6 +172,7 @@ def display_action_items():
 
 # Main Streamlit app
 def main():
+    st.title("Action Items Manager")
     UIHelper.config_page()
     UIHelper.setup_sidebar()
 
