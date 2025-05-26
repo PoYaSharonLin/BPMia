@@ -9,3 +9,9 @@ ag2[openai]
 beautifulsoup4
 wordcloud
 nltk>=3.5
+
+# action items 
+flask
+python-dateutil
+watchdog
+markdown2
