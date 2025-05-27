@@ -1,14 +1,8 @@
----
-title: Leave Application Process
+# Leave Application Process
+*Date*: 2025-05-17  
+*Tags*: [HR, Leave Policy, Onboarding]
+*Related To*: [Helen Chang, eLeave System, HR Team]
 
----
-
----
-Title: Leave Application Process
-Author: Sophia Chen (Marketing Department)
-Date: 2025-05-17
-Tags: [HR, Leave Policy, Onboarding]
-Related To: [Helen Chang, eLeave System, HR Team]
 ---
 # Summary
 Leave requests must be submitted at least one working day in advance. Sick leave beyond 2 days requires a doctor’s note.
@@ -24,8 +18,9 @@ Leave requests must be submitted at least one working day in advance. Sick leave
 
 - Concepts: Annual leave accrues with tenure; personal leave must be planned; emergency leave requires comment
 # Action Items
-- [ ] Activate eLeave account and test one request
-- [ ] Ask HR how to check your leave balance
+- [ ] Activate eLeave account and test one request (due: 2025-06-01)
+- [ ] Ask HR how to check your leave balance (due: 2025-06-02)
+
 # Observations
 If a supervisor doesn’t review your leave within 48 hours, it will be rejected automatically.
 # Questions

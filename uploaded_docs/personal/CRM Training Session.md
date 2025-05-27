@@ -13,8 +13,8 @@ Learned about the CRM system used by the Sales team during today’s training.
 - *Concepts*: CRM = Customer Relationship Management; Lead Scoring = Ranking potential customers.
 
 ## Action Items
-- [x] Test 123 by Monday
-- [ ] Complete Salesforce beginner tutorial by Wednesday.
+- [x] Practice CRM system (due: 2025-05-31)
+- [ ] Complete Salesforce beginner tutorial (due: 2025-05-28)
 
 
 ## Observations

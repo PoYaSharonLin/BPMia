@@ -1,14 +1,8 @@
----
-title: Timesheet System Overview
+# Timesheet System Overview
+*Date*: 2025-05-17  
+*Tags*: [IT, Timesheet, Onboarding]
+*Related To*: [Kevin Lin, IT Helpdesk, Timesheet Platform]
 
----
-
----
-Title: Timesheet System Overview
-Author: Sophia Chen (Marketing Department)
-Date: 2025-05-17
-Tags: [IT, Timesheet, Onboarding]
-Related To: [Kevin Lin, IT Helpdesk, Timesheet Platform]
 ---
 # Summary
 Weekly timesheets must be submitted using the internal platform. Use the VPN and 2FA to log in securely.
@@ -26,8 +20,9 @@ People: Kevin Lin – IT Helpdesk Lead
 
 
 # Action Items
-- [ ] Test VPN login and platform access
-- [ ] Ask your team lead for the correct project code
+- [ ] Test VPN login and platform access (due: 2025-06-06)
+- [ ] Ask your team lead for the correct project code (due: 2025-06-06)
+
 # Observations
 System auto-logs out at 11:59 PM. Save your work frequently.
 # Questions
