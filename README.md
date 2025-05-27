@@ -34,7 +34,6 @@ GEMINI_API_KEY = <YOUR API KEY>
 ### Live Demo
 https://main-deploy.streamlit.app/
 
-
 4. Setup virtual environment 
 setup
 ```bash
@@ -45,3 +44,4 @@ activate
 ```bash
 source venv/bin/activate
 ```
+

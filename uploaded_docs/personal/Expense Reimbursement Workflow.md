@@ -1,14 +1,8 @@
----
-title: Expense Reimbursement Workflow
+# Expense Reimbursement Workflow
+*Date*: 2025-05-17  
+*Tags*: [Finance, Reimbursement, Onboarding]
+*Related To*: [Emily Wu, Team Lead, Expense System]
 
----
-
----
-Ttile: Expense Reimbursement Workflow
-Author: Sophia Chen (Marketing Department)
-Date: 2025-05-17
-Tags: [Finance, Reimbursement, Onboarding]
-Related To: [Emily Wu, Team Lead, Expense System]
 ---
 # Summary
 Invoices must be uploaded within 14 days. Once approved by a supervisor, reimbursements are processed.
@@ -24,8 +18,8 @@ Invoices must be uploaded within 14 days. Once approved by a supervisor, reimbur
 
 - Concepts: Invoice must have correct header; delayed or incomplete forms slow down payment
 # Action Items
-- [ ] Request access to the expense system and link your bank account
-- [ ] Ask if educational expenses need pre-approval
+- [ ] Request access to the expense system and link your bank account (due: 2025-05-31)
+- [ ] Ask if educational expenses need pre-approval (due: 2025-05-31)
 # Observations
 Include context for each claim to speed up review. Emily recommends uploading all items with explanations.
 # Questions

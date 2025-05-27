@@ -22,6 +22,7 @@ class UIHelper:
             st.page_link("pages/rag_agents.py", label="Chat with Notes", icon="🤖")
             st.page_link("pages/documents_upload.py", label="Upload Notes", icon="📄")
             st.page_link("pages/word_cloud.py", label="Create Word Cloud", icon="☁️")
+            st.page_link("pages/action_items.py", label="Check Action Items", icon="📝")
 
 
             selected_lang = st.selectbox(
