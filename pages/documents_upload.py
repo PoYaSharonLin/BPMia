@@ -2,6 +2,8 @@ import streamlit as st
 import os
 from typing import List
 from utils.ui_helper import UIHelper
+from streamlit_mermaid import st_mermaid
+import re
 
 class DocumentUploader:
     def __init__(self):
@@ -30,6 +32,19 @@ class DocumentUploader:
         except Exception as e:
             st.error(f"Error listing files: {str(e)}")
             return []
+        
+    def extract_and_render_mermaid_blocks(self,markdown_text: str):
+        """Extract Mermaid code blocks and render them using st_mermaid."""
+        pattern = r"```mermaid\n(.*?)\n```"
+        matches = re.findall(pattern, markdown_text, re.DOTALL)
+
+        for code in matches:
+            st_mermaid(code)
+
+        # Remove mermaid blocks from markdown so they don't appear as raw code
+        cleaned_text = re.sub(pattern, '', markdown_text, flags=re.DOTALL)
+        return cleaned_text.strip()
+
 
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
         """Display uploaded files with individual expanders (not nested)."""
@@ -42,7 +57,9 @@ class DocumentUploader:
                     try:
                         with open(file_path, "r", encoding="utf-8") as f:
                             content = f.read()
-                            st.markdown(content, unsafe_allow_html=False)
+                            rendered_md = self.extract_and_render_mermaid_blocks(content)
+                            if rendered_md:
+                                st.markdown(rendered_md, unsafe_allow_html=True)
                     except Exception as e:
                         st.error(f"Error reading `{fname}`: {str(e)}")
         else:
