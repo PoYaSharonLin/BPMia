@@ -7,8 +7,6 @@ title: Organization Chart
 title: Organization Chart
 ---
 
-
-
 ```mermaid
 flowchart LR
 
