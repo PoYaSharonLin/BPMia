@@ -1,9 +1,9 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import os
+import re
 from typing import List
 from utils.ui_helper import UIHelper
-from streamlit_mermaid import st_mermaid
-import re
 
 class DocumentUploader:
     def __init__(self):
@@ -12,7 +12,7 @@ class DocumentUploader:
             "Personal Notes": "personal",
             "Organizational Structure": "org"
         }
-        
+
     def setup_directories(self, folder: str) -> str:
         """Create and return upload directory path."""
         upload_dir = os.path.join(self.base_upload_dir, folder)
@@ -32,62 +32,64 @@ class DocumentUploader:
         except Exception as e:
             st.error(f"Error listing files: {str(e)}")
             return []
-        
-    def extract_and_render_mermaid_blocks(self,markdown_text: str):
-        """Extract Mermaid code blocks and render them using st_mermaid."""
-        pattern = r"```mermaid\n(.*?)\n```"
-        matches = re.findall(pattern, markdown_text, re.DOTALL)
 
-        for code in matches:
-            st_mermaid(code)
+    def render_mermaid_raw(self, code: str, height=700):
+        html_code = f"""
+        <div class="mermaid">
+        {code}
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script>
+        mermaid.initialize({{ startOnLoad: true }});
+        </script>
+        """
+        components.html(html_code, height=height, scrolling=True)
 
-        # Remove mermaid blocks from markdown so they don't appear as raw code
+    def extract_and_render_mermaid_blocks(self, markdown_text: str):
+        pattern = r"```mermaid\s*\n([\s\S]*?)```"
+        matches = re.findall(pattern, markdown_text)
+
+        for i, code in enumerate(matches):
+            #st.markdown(f"### Mermaid block #{i+1}")
+            #st.code(code, language="mermaid")
+            cleaned = code.strip().replace("\\n", "<br>").replace('\r\n', '\n').replace('\r', '\n')
+            self.render_mermaid_raw(cleaned)
+
         cleaned_text = re.sub(pattern, '', markdown_text, flags=re.DOTALL)
-        return cleaned_text.strip()
-
+        if cleaned_text.strip():
+            st.markdown("---")
+            st.markdown(cleaned_text, unsafe_allow_html=True)
 
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
-        """Display uploaded files with individual expanders (not nested)."""
         st.markdown(f"### 📄 Uploaded files in {doc_type}")
-        
-        if files:
-            for fname in files:
-                file_path = os.path.join(self.base_upload_dir, self.doc_types[doc_type], fname)
-                with st.expander(f"📄 {fname}"):
-                    try:
-                        with open(file_path, "r", encoding="utf-8") as f:
-                            content = f.read()
-                            rendered_md = self.extract_and_render_mermaid_blocks(content)
-                            if rendered_md:
-                                st.markdown(rendered_md, unsafe_allow_html=True)
-                    except Exception as e:
-                        st.error(f"Error reading `{fname}`: {str(e)}")
-        else:
-            st.info("No files uploaded yet.")
 
+        for fname in files:
+            file_path = os.path.join(self.base_upload_dir, self.doc_types[doc_type], fname)
 
+            # use a toggle to show/hide file content
+            show = st.toggle(f"📄 {fname}", key=f"toggle-{fname}")
+            if show:
+                try:
+                    with open(file_path, "r", encoding="utf-8") as f:
+                        content = f.read()
 
+                    with st.container():
+                        st.markdown("⬇️ Mermaid chart：")
+                        self.extract_and_render_mermaid_blocks(content)
+
+                except Exception as e:
+                    st.error(f"Error reading `{fname}`: {str(e)}")
+
+                    
     def handle_file_upload(self, uploaded_file, upload_dir: str) -> None:
-        """Handle file upload and preview."""
         if uploaded_file is None:
             return
-
-        try:
-            file_path = os.path.join(upload_dir, uploaded_file.name)
-            with open(file_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            
-            st.success("✅ Upload Successful!")
-            st.markdown(f"**File saved as:** `{uploaded_file.name}`")
-
-            st.subheader("📝 File Preview")
-            try:
-                file_content = uploaded_file.getvalue().decode("utf-8")
-                st.markdown(file_content, unsafe_allow_html=False)
-            except UnicodeDecodeError:
-                st.error("Error: Unable to decode file content. Please ensure the file is a valid text file.")
-        except Exception as e:
-            st.error(f"Error uploading file: {str(e)}")
+        file_path = os.path.join(upload_dir, uploaded_file.name)
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        st.success("✅ Upload successful!")
+        file_content = uploaded_file.getvalue().decode("utf-8")
+        self.extract_and_render_mermaid_blocks(file_content)
 
     def render(self):
         """Render the document uploader interface."""
@@ -110,6 +112,7 @@ class DocumentUploader:
             self.handle_file_upload(uploaded_file, upload_dir)
         except Exception as e:
             st.error(f"Error rendering interface: {str(e)}")
+
 
 def main():
     try:
