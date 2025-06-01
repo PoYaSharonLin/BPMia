@@ -15,3 +15,8 @@ flask
 python-dateutil
 watchdog
 markdown2
+
+# === Word & PDF Processing ===
+python-docx      # For .docx files
+pymupdf          # For PDF parsing using fitz (PyMuPDF)
+dateparser
