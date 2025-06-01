@@ -6,13 +6,13 @@ class UIHelper:
         st.set_page_config(
             page_title='Knowledge Assistant',
             layout='wide',
-            initial_sidebar_state='auto',
+            initial_sidebar_state='expanded',
+            page_icon="💼",
             menu_items={
                 'Get Help': 'https://streamlit.io/',
                 'Report a bug': 'https://github.com',
                 'About': 'About your application: **Hello world**'
-            },
-            page_icon="img/favicon.ico"
+            }
         )
 
     @staticmethod
@@ -23,6 +23,7 @@ class UIHelper:
             st.page_link("pages/documents_upload.py", label="Upload Notes", icon="📄")
             st.page_link("pages/word_cloud.py", label="Create Word Cloud", icon="☁️")
             st.page_link("pages/action_items.py", label="Check Action Items", icon="📝")
+            st.page_link("pages/bye_bingo.py", label="Resignation Bingo", icon="💢")
 
 
             selected_lang = st.selectbox(
@@ -31,10 +32,6 @@ class UIHelper:
             )
             if 'lang_setting' not in st.session_state:
                 st.session_state['lang_setting'] = selected_lang
-
-            st_c_1 = st.container(border=True)
-            with st_c_1:
-                st.image("https://www.w3schools.com/howto/img_avatar.png")
 
     @staticmethod
     def save_lang():
