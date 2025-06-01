@@ -109,10 +109,28 @@ class ChatManager:
         generic_phrases = Config.TERMINATION_PHRASES
         return all(any(generic in resp for generic in generic_phrases) for resp in last_few)
 
+    def _get_avatar(self, role: str) -> str:
+        if role == "user_proxy":
+            return "🧠"
+        elif role == "user":
+            return "🤖"
+        elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
+            return "🤖"
+        else:
+            return Config.USER_IMAGE
+
+    def stream_response(self, text: str):
+        for word in text.split():
+            yield word + " "
+            time.sleep(0.03)
+
     def generate_response(self, prompt: str) -> List[Dict]:
         docs = DocumentLoader.load_documents()
         prompt_lower = prompt.lower()
         is_org_related = any(keyword in prompt_lower for keyword in Config.ORG_KEYWORDS)
+
+        # Create initial chat history with system prompt inserted FIRST
+        chat_history = [{"role": "user_proxy", "content": prompt}]
 
         if is_org_related:
             mermaid_blocks = []
@@ -125,17 +143,21 @@ class ChatManager:
                 "Do not include any Mermaid diagrams or raw reference material in your response:\n\n"
                 f"{mermaid_diagrams}\n\nUser's question: {prompt}"
             )
+
+            # Run the chat with history
             response = self.user_proxy.initiate_chat(
                 self.graph_agent,
                 message=final_prompt,
                 summary_method="reflection_with_llm",
                 max_turns=1
             )
+
             if self.should_stop(response.chat_history):
                 response.chat_history.append({
                     "role": self.graph_agent.name,
                     "content": "Ending the chat as no relevant answer can be provided."
                 })
+
         else:
             personal_content = "\n\n".join(
                 f"# {fname}\n{content}"
@@ -146,35 +168,63 @@ class ChatManager:
                 "Do not include any raw personal notes or reference material in your response:\n\n"
                 f"{personal_content}\n\nUser's question: {prompt}"
             )
+
             response = self.user_proxy.initiate_chat(
                 self.text_agent,
                 message=final_prompt,
                 summary_method="reflection_with_llm",
                 max_turns=1
             )
+
             if self.should_stop(response.chat_history):
                 response.chat_history.append({
                     "role": self.text_agent.name,
                     "content": "Ending the chat as no helpful answer can be provided."
                 })
-        # Enhanced filtering to remove any messages containing reference material
+
+        # Clean history
         filtered_history = [
             msg for msg in response.chat_history
-            if not any(keyword in msg.get("content", "").lower() for keyword in ["```mermaid", "# personal", "based on the following", "use the following"])
+            if not any(keyword in msg.get("content", "").lower() for keyword in [
+                "```mermaid", "# personal", "based on the following", "use the following"
+            ])
         ]
         return filtered_history
 
+
+
     def show_chat_history(self, chat_history: List[Dict], container) -> None:
-        for entry in chat_history:
+        for i, entry in enumerate(chat_history):
             role = entry.get("role", "assistant")
             content = entry.get("content", "").strip()
             if not content:
                 continue
-            st.session_state.rag_messages.append({"role": role, "content": content})
-            if role in ["user", "user_proxy"]:
-                container.chat_message("user", avatar=Config.USER_IMAGE).write(content)
+
+            avatar = self._get_avatar(role)
+            st.session_state.rag_messages.append({"role": role, "content": content, "avatar": avatar})
+
+            # Handle user input
+            if role == "user_proxy":
+                container.chat_message("user", avatar="🧠").write(f"*System prompted:* {content}")
+            elif role == "user":
+                container.chat_message("user", avatar="🤖").write(content)
+
+            # Handle agent responses
+            elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
+                with container.chat_message("assistant", avatar="🤖"):
+                    if i == len(chat_history) - 1:
+                        st.write_stream(self.stream_response(content))  # Stream the newest reply
+                    else:
+                        st.markdown(content)  # Older replies render instantly
             else:
-                container.chat_message(role).write(content)
+                with container.chat_message("assistant", avatar=Config.USER_IMAGE):
+                    if i == len(chat_history) - 1:
+                        st.write_stream(self.stream_response(content))
+                    else:
+                        st.markdown(content)
+
+
+
 
 def stream_data(stream_str: str) -> str:
     for word in stream_str.split(" "):
@@ -197,15 +247,31 @@ def main():
     # Display existing chat history
     for msg in st.session_state.rag_messages:
         role = msg.get("role", "assistant")
-        content = msg.get("content", "").strip()
+        content = msg.get("content", "")
+        avatar = msg.get("avatar", "🤖")  
+
         if role in ["user", "user_proxy"]:
-            st_c_chat.chat_message("user", avatar=Config.USER_IMAGE).write(content)
+            st_c_chat.chat_message("user", avatar=avatar).markdown(content)
         else:
-            st_c_chat.chat_message(role).write(content)
+            st_c_chat.chat_message("assistant", avatar=avatar).markdown(content)
+
 
     if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
+        # Show user prompt immediately
+        st_c_chat.chat_message("user", avatar="🧠").write(f"*System prompted:* {prompt}")
+        
+        # Save immediately to session
+        st.session_state.rag_messages.append({
+            "role": "user_proxy",
+            "content": prompt,
+            "avatar": "🧠"
+        })
+
+        # Then generate and stream the assistant response
         response = chat_manager.generate_response(prompt)
         chat_manager.show_chat_history(response, st_c_chat)
+
+
 
 if __name__ == "__main__":
     main()
