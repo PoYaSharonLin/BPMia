@@ -1,18 +1,34 @@
 [
   {
-    "id": "CRM Training Session.md_0",
-    "task": "",
-    "completed": true,
-    "due_date": null,
+    "id": "CRM Training Session.md_2",
+    "task": "Prepare deck in 3 days",
+    "completed": false,
+    "due_date": "2025-04-14T00:00:00",
     "filename": "CRM Training Session.md",
-    "markdown": ""
+    "markdown": "Prepare deck in 3 days"
   },
   {
     "id": "CRM Training Session.md_1",
-    "task": "",
+    "task": "Schedule follow-up demo with Mike next Wednesday",
     "completed": false,
-    "due_date": null,
+    "due_date": "2025-04-16T00:00:00",
     "filename": "CRM Training Session.md",
-    "markdown": ""
+    "markdown": "Schedule follow-up demo with Mike next Wednesday"
+  },
+  {
+    "id": "CRM Training Session.md_0",
+    "task": "Ask Jane for CRM pipeline format by next Friday",
+    "completed": false,
+    "due_date": "2025-04-18T00:00:00",
+    "filename": "CRM Training Session.md",
+    "markdown": "Ask Jane for CRM pipeline format by next Friday"
+  },
+  {
+    "id": "CRM Training Session.md_3",
+    "task": "Respond to email before Friday",
+    "completed": false,
+    "due_date": "2025-04-18T00:00:00",
+    "filename": "CRM Training Session.md",
+    "markdown": "Respond to email before Friday"
   }
 ]
