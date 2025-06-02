@@ -20,3 +20,4 @@ markdown2
 python-docx      # For .docx files
 pymupdf          # For PDF parsing using fitz (PyMuPDF)
 dateparser
+PyPDF2
