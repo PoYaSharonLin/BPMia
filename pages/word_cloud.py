@@ -125,7 +125,7 @@ Evaluate compatibility and respond starting with:
 """
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3
         )

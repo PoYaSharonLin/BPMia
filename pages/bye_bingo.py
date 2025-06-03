@@ -139,7 +139,7 @@ Return comma-separated category keys (e.g. workload, toxic_culture, misc).
 """
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2
         )
