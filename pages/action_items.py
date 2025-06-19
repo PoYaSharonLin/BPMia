@@ -1,18 +1,17 @@
-import streamlit as st
+import streamlit as st  # type: ignore
 import os
 import re
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.parser import parse
 from utils.ui_helper import UIHelper
-from dateutil.relativedelta import relativedelta, MO, TU, WE, TH, FR, SA, SU
-import dateparser
+import dateparser  # type: ignore
 
 UPLOAD_FOLDER = "uploaded_docs/personal"
 ACTION_ITEMS_FILE = "action_items.json"
 CURRENT_DATE = datetime.now()
 
-# === Helper: Parse relative or absolute due dates ===
+
 def parse_due_date(task_text, base_date):
     """
     Extract due date from natural language phrases within task text.
@@ -22,7 +21,8 @@ def parse_due_date(task_text, base_date):
     lowered = task_text.lower()
 
     # Common keywords after which a due phrase usually follows
-    trigger_keywords = ["by", "on", "before", "due", "around", "this", "next", "in", "within", "after", "at", "until"]
+    trigger_keywords = ["by", "on", "before", "due", "around", "this", "next",
+                        "in", "within", "after", "at", "until"]
 
     # Look for a phrase following a keyword
     for kw in trigger_keywords:
@@ -34,7 +34,8 @@ def parse_due_date(task_text, base_date):
                     "RELATIVE_BASE": base,
                     "PREFER_DATES_FROM": "future",
                     "RETURN_AS_TIMEZONE_AWARE": False,
-                    "PARSERS": ["relative-time", "absolute-time", "custom-formats"]
+                    "PARSERS": ["relative-time",
+                                "absolute-time", "custom-formats"]
                 }
             )
             if parsed:
@@ -53,14 +54,13 @@ def parse_due_date(task_text, base_date):
     return parsed
 
 
-
-# === Extract action items from markdown files ===
 def load_action_items():
     items = []
     for filename in os.listdir(UPLOAD_FOLDER):
         if not filename.endswith(".md"):
             continue
-        with open(os.path.join(UPLOAD_FOLDER, filename), "r", encoding="utf-8") as f:
+        with open(os.path.join
+                  (UPLOAD_FOLDER, filename), "r", encoding="utf-8") as f:
             content = f.read()
         date_match = re.search(r"\*Date\*: (\d{4}-\d{2}-\d{2})", content)
         doc_date = parse(date_match.group(1)) if date_match else None
@@ -86,10 +86,14 @@ def load_action_items():
         json.dump(items, f, indent=2)
     return items
 
-def get_file_hash():
-    return sum(os.path.getmtime(os.path.join(UPLOAD_FOLDER, f)) for f in os.listdir(UPLOAD_FOLDER) if f.endswith(".md"))
 
-def update_markdown_file(item_id, new_task, new_completed, new_due, new_filename):
+def get_file_hash():
+    return sum(os.path.getmtime(os.path.join(UPLOAD_FOLDER, f))
+               for f in os.listdir(UPLOAD_FOLDER) if f.endswith(".md"))
+
+
+def update_markdown_file(item_id, new_task, new_completed,
+                         new_due, new_filename):
     old_filename, index = item_id.rsplit("_", 1)
     index = int(index)
     file_path = os.path.join(UPLOAD_FOLDER, old_filename)
@@ -114,7 +118,12 @@ def update_markdown_file(item_id, new_task, new_completed, new_due, new_filename
         new_line += f" by {new_due}"
     new_line += "\n"
     new_section = section.replace(full_line, new_line)
-    updated = content[:match.start(1)] + match.group(1) + new_section + content[match.end(2):]
+    updated = (
+        content[:match.start(1)]
+        + match.group(1)
+        + new_section
+        + content[match.end(2):]
+    )
 
     new_path = os.path.join(UPLOAD_FOLDER, new_filename)
     if new_filename != old_filename and os.path.exists(new_path):
@@ -126,27 +135,54 @@ def update_markdown_file(item_id, new_task, new_completed, new_due, new_filename
         f.write(updated)
     return True
 
+
 def display_action_items():
     for item in st.session_state.action_items:
         with st.container():
             st.markdown(f"**Task**: {item['task']}")
-            st.markdown(f"**Due Date**: {item['due_date'][:10] if item['due_date'] else 'No due date'}")
-            st.markdown(f"**Completed**: {'Yes' if item['completed'] else 'No'}")
+            due_str = (
+                item['due_date'][:10] if item['due_date'] else 'No due date'
+            )
+            st.markdown(f"**Due Date**: {due_str}")
+            st.markdown(
+                f"**Completed**: {'Yes' if item['completed'] else 'No'}"
+            )
             st.markdown(f"**Source**: {item['filename']}")
             if st.button("Edit", key=f"edit_{item['id']}"):
                 st.session_state[f"editing_{item['id']}"] = True
 
             if st.session_state.get(f"editing_{item['id']}", False):
-                new_task = st.text_area("Edit Task", value=item['task'], key=f"task_{item['id']}")
-                new_due = st.text_input("Edit Due Date", value=item['due_date'][:10] if item['due_date'] else "", key=f"due_{item['id']}")
-                new_completed = st.checkbox("Completed", value=item['completed'], key=f"complete_{item['id']}")
-                new_filename = st.text_input("Edit Filename", value=item['filename'], key=f"file_{item['id']}")
+                new_task = st.text_area(
+                    "Edit Task",
+                    value=item['task'],
+                    key=f"task_{item['id']}"
+                )
+                new_due = st.text_input(
+                    "Edit Due Date",
+                    value=item['due_date'][:10] if item['due_date'] else "",
+                    key=f"due_{item['id']}"
+                )
+                new_completed = st.checkbox(
+                    "Completed",
+                    value=item['completed'],
+                    key=f"complete_{item['id']}"
+                )
+                new_filename = st.text_input(
+                    "Edit Filename",
+                    value=item['filename'],
+                    key=f"file_{item['id']}"
+                )
 
                 col1, col2 = st.columns(2)
                 with col1:
                     if st.button("Save", key=f"save_{item['id']}"):
-                        parsed_due = parse_due_date(new_due, None) if new_due else None
-                        if update_markdown_file(item['id'], new_task, new_completed, new_due, new_filename):
+                        if update_markdown_file(
+                            item['id'],
+                            new_task,
+                            new_completed,
+                            new_due,
+                            new_filename
+                        ):
                             st.session_state[f"editing_{item['id']}"] = False
                             st.rerun()
                 with col2:
@@ -154,6 +190,7 @@ def display_action_items():
                         st.session_state[f"editing_{item['id']}"] = False
                         st.rerun()
             st.markdown("---")
+
 
 def main():
     UIHelper.config_page()
@@ -165,6 +202,7 @@ def main():
         st.session_state.file_hash = get_file_hash()
         st.session_state.action_items = load_action_items()
     display_action_items()
+
 
 if __name__ == "__main__":
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
