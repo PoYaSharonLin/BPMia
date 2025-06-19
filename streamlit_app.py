@@ -2,11 +2,7 @@ import streamlit as st  # type: ignore
 import time
 from autogen.code_utils import content_str  # type: ignore
 from utils.ui_helper import UIHelper
-from utils.llm_setup import (
-    load_api_keys,
-    create_assistant,
-    create_user_proxy,
-)
+from utils.llm_setup import LLMSetup  # type: ignore
 
 
 class OrchestratorAgent:
@@ -20,10 +16,10 @@ class OrchestratorAgent:
         self._setup_llm()
 
     def _load_api_keys(self):
-        self.gemini1_api_key, self.gemini2_api_key = load_api_keys()
+        self.gemini1_api_key, self.gemini2_api_key = LLMSetup.load_api_keys()
 
     def _setup_llm(self):
-        self.assistant = create_assistant(
+        self.assistant = LLMSetup.create_assistant(
             system_message=(
                 "'This website helps you get familiar with onboarding"
                 "website allows you to: "
@@ -34,7 +30,7 @@ class OrchestratorAgent:
             ),
             api_key=self.gemini1_api_key,
         )
-        self.user_proxy = create_user_proxy(
+        self.user_proxy = LLMSetup.create_user_proxy(
             is_termination_msg=lambda x: (
                 "ALL DONE" in content_str(x.get("content", ""))
             )

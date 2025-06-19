@@ -6,16 +6,12 @@ from autogen import ConversableAgent, UserProxyAgent  # type: ignore
 from autogen.code_utils import content_str  # type: ignore
 from typing import Dict, List  # type: ignore
 from utils.ui_helper import UIHelper
-from utils.llm_setup import (
-    load_api_keys,
-    create_llm_config,
-    create_user_proxy,
-)
+from utils.llm_setup import LLMSetup   # type: ignore
 
 
 class Config:
     """Configuration class for API keys and constants."""
-    GEMINI1_API_KEY, GEMINI2_API_KEY = load_api_keys()
+    GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
     USER_NAME = "Mentor"
     USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
     PLACEHOLDER = "Please input your command"
@@ -74,7 +70,7 @@ class AgentFactory:
             "Use precise and accurate information retrieved from the graph DB"
             "If the query is unclear or the information is unavailable,"
             "politely explain and ask for clarification.",
-            llm_config=create_llm_config(Config.GEMINI2_API_KEY)
+            llm_config=LLMSetup.create_llm_config(Config.GEMINI2_API_KEY)
         )
 
     @staticmethod
@@ -90,12 +86,12 @@ class AgentFactory:
             "If the notes lack relevant information,"
             "inform the user and"
             "suggest rephrasing or providing more details.",
-            llm_config=create_llm_config(Config.GEMINI1_API_KEY)
+            llm_config=LLMSetup.create_llm_config(Config.GEMINI1_API_KEY)
         )
 
     @staticmethod
     def create_user_proxy() -> UserProxyAgent:
-        return create_user_proxy(
+        return LLMSetup.create_user_proxy(
             is_termination_msg=lambda x: any(
                 phrase in content_str(x.get("content", "")).lower()
                 for phrase in Config.TERMINATION_PHRASES
@@ -232,11 +228,11 @@ class ChatManager:
                     "user", avatar="🧠").write(f"*System prompted:* {content}")
             elif role == "user":
                 container.chat_message(
-                    "user", avatar="🤖").write(content)
+                    "user", avatar="👩‍💼").write(content)
 
             # Handle agent responses
             elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-                with container.chat_message("assistant", avatar="🤖"):
+                with container.chat_message("assistant", avatar="👩‍💼"):
                     if i == len(chat_history) - 1:
                         st.write_stream(self.stream_response(content))
                     else:
@@ -272,7 +268,7 @@ def main():
     for msg in st.session_state.rag_messages:
         role = msg.get("role", "assistant")
         content = msg.get("content", "")
-        avatar = msg.get("avatar", "🤖")
+        avatar = msg.get("avatar", "👩‍💼")
 
         if role in ["user", "user_proxy"]:
             st_c_chat.chat_message("user", avatar=avatar).markdown(content)
