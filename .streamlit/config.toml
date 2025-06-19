@@ -41,7 +41,7 @@ toolbarMode = "auto"
 
 # Controls whether to display the default sidebar page navigation in a
 # multi-page app. This only applies when app's pages are defined by the
-# `pages/` directory.
+# `services/` directory.
 # Default: true
 showSidebarNavigation = false
 

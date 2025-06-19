@@ -1,12 +1,11 @@
-# 💬 Chatbot template
+# On Boarding Mentor 
 
-A simple Streamlit app that shows how to build a chatbot using OpenAI's GPT-3.5.
+Demo: https://main-deploy.streamlit.app/
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://chatbot-template.streamlit.app/)
 
-### How to run it on your own machine
+## How to run it on your own machine
 
-1. Setup virtual environment 
+###  01 Setup virtual environment 
 setup
 ```bash
 python3 -m venv venv
@@ -17,15 +16,14 @@ activate
 source venv/bin/activate
 ```
 
-2. Install the requirements
+### 02 Install the requirements
 
    ```
    $ pip install -r requirements.txt
    ```
 
-3. Apply for API key 
-Apply API key from: 
-- https://aistudio.google.com/app/apikey
+### 03 Apply for API key 
+Apply API key from: https://aistudio.google.com/app/apikey
 
 Replace <YOUR API KEY> with your real API key in `.streamlit/secrets.toml` file:
 
@@ -35,18 +33,13 @@ GEMINI2_API_KEY = "<YOUR API KEY>"
 ```
 
 
-4. Run the app
+### 04 Run the app
 
    ```
    $ streamlit run streamlit_app.py
    ```
 
-### Live Demo
-https://main-deploy.streamlit.app/
-
-
-
-5. For Developers 
+### 05 For Developers 
 
 VS Code Extensions
 

@@ -3,11 +3,6 @@ autogen-agentchat
 google-generativeai
 ag2[gemini]
 
-# word cloud 
-beautifulsoup4
-wordcloud
-nltk>=3.5
-
 # action items 
 flask
 python-dateutil
