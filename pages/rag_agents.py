@@ -2,16 +2,20 @@ import streamlit as st  # type: ignore
 import re
 import os
 import time
-from autogen import ConversableAgent, UserProxyAgent, LLMConfig  # type: ignore
+from autogen import ConversableAgent, UserProxyAgent  # type: ignore
 from autogen.code_utils import content_str  # type: ignore
 from typing import Dict, List  # type: ignore
 from utils.ui_helper import UIHelper
+from utils.llm_setup import (
+    load_api_keys,
+    create_llm_config,
+    create_user_proxy,
+)
 
 
 class Config:
     """Configuration class for API keys and constants."""
-    GEMINI1_API_KEY = st.secrets["GEMINI1_API_KEY"]
-    GEMINI2_API_KEY = st.secrets["GEMINI2_API_KEY"]
+    GEMINI1_API_KEY, GEMINI2_API_KEY = load_api_keys()
     USER_NAME = "Mentor"
     USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
     PLACEHOLDER = "Please input your command"
@@ -70,11 +74,7 @@ class AgentFactory:
             "Use precise and accurate information retrieved from the graph DB"
             "If the query is unclear or the information is unavailable,"
             "politely explain and ask for clarification.",
-            llm_config=LLMConfig(
-                api_type="google",
-                model="gemini-2.0-flash-lite",
-                api_key=Config.GEMINI2_API_KEY
-            )
+            llm_config=create_llm_config(Config.GEMINI2_API_KEY)
         )
 
     @staticmethod
@@ -90,19 +90,12 @@ class AgentFactory:
             "If the notes lack relevant information,"
             "inform the user and"
             "suggest rephrasing or providing more details.",
-            llm_config=LLMConfig(
-                api_type="google",
-                model="gemini-2.0-flash-lite",
-                api_key=Config.GEMINI1_API_KEY
-            )
+            llm_config=create_llm_config(Config.GEMINI1_API_KEY)
         )
 
     @staticmethod
     def create_user_proxy() -> UserProxyAgent:
-        return UserProxyAgent(
-            "user_proxy",
-            human_input_mode="NEVER",
-            code_execution_config=False,
+        return create_user_proxy(
             is_termination_msg=lambda x: any(
                 phrase in content_str(x.get("content", "")).lower()
                 for phrase in Config.TERMINATION_PHRASES

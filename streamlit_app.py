@@ -1,9 +1,12 @@
 import streamlit as st  # type: ignore
 import time
-from dotenv import load_dotenv  # type: ignore
-from autogen import AssistantAgent, UserProxyAgent, LLMConfig  # type: ignore
 from autogen.code_utils import content_str  # type: ignore
 from utils.ui_helper import UIHelper
+from utils.llm_setup import (
+    load_api_keys,
+    create_assistant,
+    create_user_proxy,
+)
 
 
 class OrchestratorAgent:
@@ -12,26 +15,15 @@ class OrchestratorAgent:
         self.assistant_avatar = "🧠"
         self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
         self.placeholderstr = "Please input your command"
-        self._load_environment()
         UIHelper.config_page()
-        self._setup_llm_configs()
-        self._initialize_agents()
+        self._load_api_keys()
+        self._setup_llm()
 
-    def _load_environment(self):
-        load_dotenv(override=True)
-        self.gemini1_api_key = st.secrets["GEMINI1_API_KEY"]
-        self.gemini2_api_key = st.secrets["GEMINI2_API_KEY"]
+    def _load_api_keys(self):
+        self.gemini1_api_key, self.gemini2_api_key = load_api_keys()
 
-    def _setup_llm_configs(self):
-        self.llm_config_gemini = LLMConfig(
-            api_type="google",
-            model="gemini-2.0-flash-lite",
-            api_key=self.gemini1_api_key
-        )
-
-    def _initialize_agents(self):
-        self.assistant = AssistantAgent(
-            name="assistant",
+    def _setup_llm(self):
+        self.assistant = create_assistant(
             system_message=(
                 "'This website helps you get familiar with onboarding"
                 "website allows you to: "
@@ -40,14 +32,9 @@ class OrchestratorAgent:
                 "3. Grow with the company using your personal note.' "
                 "Answer all user questions in a concise and helpful."
             ),
-            llm_config=self.llm_config_gemini,
-            max_consecutive_auto_reply=1
+            api_key=self.gemini1_api_key,
         )
-
-        self.user_proxy = UserProxyAgent(
-            name="user_proxy",
-            human_input_mode="NEVER",
-            code_execution_config=False,
+        self.user_proxy = create_user_proxy(
             is_termination_msg=lambda x: (
                 "ALL DONE" in content_str(x.get("content", ""))
             )
