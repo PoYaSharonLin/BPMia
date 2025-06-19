@@ -1,6 +1,6 @@
 # On Boarding Mentor 
 
-Demo: https://main-deploy.streamlit.app/
+Demo: https://on-boarding-mentor.streamlit.app/
 
 
 ## How to run it on your own machine
