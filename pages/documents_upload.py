@@ -1,9 +1,10 @@
-import streamlit as st
-import streamlit.components.v1 as components
+import streamlit as st  # type: ignore
+import streamlit.components.v1 as components  # type: ignore
 import os
 import re
 from typing import List
 from utils.ui_helper import UIHelper
+
 
 class DocumentUploader:
     def __init__(self):
@@ -38,7 +39,9 @@ class DocumentUploader:
         <div class="mermaid">
         {code}
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <script src=
+        "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js">
+        </script>
         <script>
         mermaid.initialize({{ startOnLoad: true }});
         </script>
@@ -50,9 +53,14 @@ class DocumentUploader:
         matches = re.findall(pattern, markdown_text)
 
         for i, code in enumerate(matches):
-            #st.markdown(f"### Mermaid block #{i+1}")
-            #st.code(code, language="mermaid")
-            cleaned = code.strip().replace("\\n", "<br>").replace('\r\n', '\n').replace('\r', '\n')
+            # st.markdown(f"### Mermaid block #{i+1}")
+            # st.code(code, language="mermaid")
+            cleaned = (
+                code.strip()
+                .replace("\\n", "<br>")
+                .replace('\r\n', '\n')
+                .replace('\r', '\n')
+            )
             self.render_mermaid_raw(cleaned)
 
         cleaned_text = re.sub(pattern, '', markdown_text, flags=re.DOTALL)
@@ -64,7 +72,11 @@ class DocumentUploader:
         st.markdown(f"### 📄 Uploaded files in {doc_type}")
 
         for fname in files:
-            file_path = os.path.join(self.base_upload_dir, self.doc_types[doc_type], fname)
+            file_path = os.path.join(
+                self.base_upload_dir,
+                self.doc_types[doc_type],
+                fname
+            )
 
             # use a toggle to show/hide file content
             show = st.toggle(f"📄 {fname}", key=f"toggle-{fname}")
@@ -80,7 +92,6 @@ class DocumentUploader:
                 except Exception as e:
                     st.error(f"Error reading `{fname}`: {str(e)}")
 
-                    
     def handle_file_upload(self, uploaded_file, upload_dir: str) -> None:
         if uploaded_file is None:
             return
@@ -94,21 +105,21 @@ class DocumentUploader:
     def render(self):
         """Render the document uploader interface."""
         try:
-            doc_type = st.radio("Select Upload Category", list(self.doc_types.keys()))
+            doc_type = st.radio(
+                "Select Upload Category",
+                list(self.doc_types.keys()))
             upload_dir = self.setup_directories(self.doc_types[doc_type])
             if not upload_dir:
                 return
-                
             uploaded_files = self.get_uploaded_files(upload_dir)
-            st.sidebar.markdown(f"📁 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
-            
+            st.sidebar.markdown(
+                f"📁 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
             self.display_uploaded_files(uploaded_files, doc_type)
-            
+
             uploaded_file = st.file_uploader(
                 f"Upload your markdown (.md) file for {doc_type}",
                 type=["md"]
             )
-            
             self.handle_file_upload(uploaded_file, upload_dir)
         except Exception as e:
             st.error(f"Error rendering interface: {str(e)}")
@@ -118,11 +129,11 @@ def main():
     try:
         UIHelper.config_page()
         UIHelper.setup_sidebar()
-        
         uploader = DocumentUploader()
         uploader.render()
     except Exception as e:
         st.error(f"Error in main application: {str(e)}")
+
 
 if __name__ == "__main__":
     main()

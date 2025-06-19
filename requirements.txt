@@ -1,9 +1,7 @@
 streamlit
-openai
 autogen-agentchat
-autogen-ext[openai]
+google-generativeai
 ag2[gemini]
-ag2[openai]
 
 # word cloud 
 beautifulsoup4
@@ -16,8 +14,8 @@ python-dateutil
 watchdog
 markdown2
 
-# === Word & PDF Processing ===
-python-docx      # For .docx files
-pymupdf          # For PDF parsing using fitz (PyMuPDF)
+# word & PDF Processing
+python-docx     
+pymupdf          
 dateparser
 PyPDF2
