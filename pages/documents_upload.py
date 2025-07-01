@@ -46,8 +46,42 @@ class DocumentUploader:
             return []
 
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
-        st.markdown(f"### 📄 Uploaded files in {doc_type}")
+        st.markdown(f"### 📄 Uploaded Files in {doc_type}")
 
+        if not files:
+            st.info("No files uploaded yet.")
+            return
+
+        # Table-like layout with headers
+        with st.container(border=True):
+            col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
+            with col1:
+                st.markdown(
+                    "<div style='text-align: center;'><b>File Name</b></div>",
+                    unsafe_allow_html=True
+                )
+            with col2:
+                st.markdown(
+                    "<div style='text-align: center;'><b>Preview</b></div>",
+                    unsafe_allow_html=True
+                )
+            with col3:
+                st.markdown(
+                    "<div style='text-align: center;'><b>Edit</b></div>",
+                    unsafe_allow_html=True
+                )
+            with col4:
+                st.markdown(
+                    "<div style='text-align: center;'><b>Download</b></div>",
+                    unsafe_allow_html=True
+                )
+            with col5:
+                st.markdown(
+                    "<div style='text-align: center;'><b>Delete</b></div>",
+                    unsafe_allow_html=True
+                )
+
+        # Display each file in a table-like row
         for fname in files:
             file_path = os.path.join(
                 self.base_upload_dir,
@@ -55,65 +89,88 @@ class DocumentUploader:
                 fname
             )
 
-            # Create columns for file operations
-            col1, col2, col3, col4 = st.columns([3, 1, 1, 1])
+            with st.container(border=True):
+                col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
 
-            with col1:
-                show = st.toggle(f"📄 {fname}", key=f"toggle-{fname}")
+                with col1:
+                    st.markdown(f"{fname}")
 
-            with col2:
-                if st.button("✏️ Edit", key=f"edit-{fname}"):
-                    st.session_state[f"editing_{fname}"] = True
-
-            with col3:
-                if st.button("📥 Download", key=f"download-{fname}"):
-                    content = self.crud_processor.read_file(file_path)
-                    if content:
-                        st.download_button(
-                            label="💾 Download",
-                            data=content,
-                            file_name=fname,
-                            mime="text/markdown",
-                            key=f"download_btn_{fname}"
+                with col2:
+                    if st.button(
+                        "👁️",
+                        key=f"preview-{fname}",
+                        use_container_width=True
+                    ):
+                        st.session_state[f"previewing_{fname}"] = not (
+                            st.session_state.get(f"previewing_{fname}", False)
                         )
 
-            with col4:
-                if st.button("🗑️ Delete",
-                             key=f"delete-{fname}", type="secondary"):
-                    if st.session_state.get(f"confirm_delete_{fname}", False):
-                        if self.crud_processor.delete_file(file_path):
-                            st.rerun()
-                    else:
-                        st.session_state[f"confirm_delete_{fname}"] = True
-                        st.warning(
-                            (
-                                f"⚠️ Click delete again to confirm deletion "
-                                f"{fname}"
+                with col3:
+                    if st.button(
+                        "✏️",
+                        key=f"edit-{fname}",
+                        use_container_width=True
+                    ):
+                        st.session_state[f"editing_{fname}"] = True
+
+                with col4:
+                    if st.button(
+                        "📥",
+                        key=f"download-{fname}",
+                        use_container_width=True
+                    ):
+                        content = self.crud_processor.read_file(file_path)
+                        if content:
+                            st.download_button(
+                                label="💾 Download",
+                                data=content,
+                                file_name=fname,
+                                mime="text/markdown",
+                                key=f"download_btn_{fname}",
+                                use_container_width=True
                             )
-                        )
 
-            # Handle file editing
-            if st.session_state.get(f"editing_{fname}", False):
-                self._handle_file_editing(file_path, fname, doc_type)
+                with col5:
+                    if st.button(
+                        "🗑️",
+                        key=f"delete-{fname}",
+                        type="secondary",
+                        use_container_width=True
+                    ):
+                        if st.session_state.get(
+                            f"confirm_delete_{fname}", False
+                        ):
+                            if self.crud_processor.delete_file(file_path):
+                                st.rerun()
+                        else:
+                            st.session_state[f"confirm_delete_{fname}"] = True
+                            st.warning(
+                                (
+                                    f"⚠️ Click delete again to confirm"
+                                    f"of {fname}"
+                                )
+                            )
 
-            # Show file content and Mermaid charts
-            if show:
+            # Handle file preview
+            if st.session_state.get(f"previewing_{fname}", False):
                 try:
                     content = self.crud_processor.read_file(file_path)
                     if content:
                         with st.container():
-                            # Show file content in expandable section
-                            with st.expander("📝 File Content", expanded=False):
+                            with st.expander(
+                                f"📝 Preview: {fname}", expanded=True
+                            ):
                                 st.markdown(content)
-
-                            st.markdown("⬇️ Mermaid chart：")
-                            mermaid_processor = MermaidProcessor()
-                            mermaid_processor.render_mermaid_blocks(
-                                content
-                            )
-
+                                mermaid_processor = MermaidProcessor()
+                                mermaid_processor.render_mermaid_blocks(
+                                    content
+                                )
                 except Exception as e:
-                    st.error(f"Error reading `{fname}`: {str(e)}")
+                    st.error(f"Error previewing `{fname}`: {str(e)}")
+
+            # Handle file editing
+            if st.session_state.get(f"editing_{fname}", False):
+                self._handle_file_editing(file_path, fname, doc_type)
 
     def _handle_file_editing(
         self, file_path: str, fname: str, doc_type: str
