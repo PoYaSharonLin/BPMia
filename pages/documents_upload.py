@@ -114,8 +114,7 @@ class DocumentUploader:
                     st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "👁️",
-                        key=f"preview-{fname}",
-                        use_container_width=True
+                        key=f"preview-{fname}"
                     ):
                         st.session_state[f"previewing_{fname}"] = not (
                             st.session_state.get(f"previewing_{fname}", False)
@@ -126,8 +125,7 @@ class DocumentUploader:
                     st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "✏️",
-                        key=f"edit-{fname}",
-                        use_container_width=True
+                        key=f"edit-{fname}"
                     ):
                         st.session_state[f"editing_{fname}"] = True
                     st.markdown('</div>', unsafe_allow_html=True)
@@ -137,8 +135,7 @@ class DocumentUploader:
                     st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "📥",
-                        key=f"download-{fname}",
-                        use_container_width=True
+                        key=f"download-{fname}"
                     ):
                         content = self.crud_processor.read_file(file_path)
                         if content:
@@ -147,8 +144,7 @@ class DocumentUploader:
                                 data=content,
                                 file_name=fname,
                                 mime="text/markdown",
-                                key=f"download_btn_{fname}",
-                                use_container_width=True
+                                key=f"download_btn_{fname}"
                             )
                     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -157,8 +153,7 @@ class DocumentUploader:
                     if st.button(
                         "🗑️",
                         key=f"delete-{fname}",
-                        type="secondary",
-                        use_container_width=True
+                        type="secondary"
                     ):
                         if st.session_state.get(
                             f"confirm_delete_{fname}", False
