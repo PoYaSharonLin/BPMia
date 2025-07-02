@@ -110,16 +110,16 @@ class DocumentUploader:
                 with col1:
                     st.markdown(f"{fname}")
 
-                with col2: 
-                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)  
-                    if st.button( 
+                with col2:
+                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
+                    if st.button(
                         "👁️",
                         key=f"preview-{fname}"
-                    ): 
-                        st.session_state[f"previewing_{fname}"] = not 
-                        ( st.session_state.get(f"previewing_{fname}", False) ) 
+                    ):
+                        st.session_state[f"previewing_{fname}"] = not (
+                            st.session_state.get(f"previewing_{fname}", False)
+                        )
                     st.markdown('</div>', unsafe_allow_html=True)
-
 
                 with col3:
                     st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
