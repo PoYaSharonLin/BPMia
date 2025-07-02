@@ -5,6 +5,21 @@ from utils.ui_helper import UIHelper
 from services.document_processor.document_crud import CRUDProcessor
 from services.document_processor.document_mermaid import MermaidProcessor
 
+# define transparent button css
+st.markdown("""
+    <style>
+    .transparent-button button {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        font-size: 1.2em;
+        cursor: pointer;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 
 class MermaidBlockExtractionError(Exception):
     """Custom exception for Mermaid block extraction failures."""
@@ -96,6 +111,7 @@ class DocumentUploader:
                     st.markdown(f"{fname}")
 
                 with col2:
+                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "👁️",
                         key=f"preview-{fname}",
@@ -104,16 +120,21 @@ class DocumentUploader:
                         st.session_state[f"previewing_{fname}"] = not (
                             st.session_state.get(f"previewing_{fname}", False)
                         )
+                    st.markdown('</div>', unsafe_allow_html=True)
 
                 with col3:
+                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "✏️",
                         key=f"edit-{fname}",
                         use_container_width=True
                     ):
                         st.session_state[f"editing_{fname}"] = True
+                    st.markdown('</div>', unsafe_allow_html=True)
+
 
                 with col4:
+                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "📥",
                         key=f"download-{fname}",
@@ -129,8 +150,10 @@ class DocumentUploader:
                                 key=f"download_btn_{fname}",
                                 use_container_width=True
                             )
+                    st.markdown('</div>', unsafe_allow_html=True)
 
                 with col5:
+                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "🗑️",
                         key=f"delete-{fname}",
@@ -150,7 +173,8 @@ class DocumentUploader:
                                     f"of {fname}"
                                 )
                             )
-
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
             # Handle file preview
             if st.session_state.get(f"previewing_{fname}", False):
                 try:
