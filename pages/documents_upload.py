@@ -34,7 +34,7 @@ class DocumentUploader:
             st.error(f"Error listing files: {str(e)}")
             return []
 
-    def render_mermaid_raw(self, code: str, height=700):
+    def render_mermaid_raw(self, code: str, height=700, theme="neutral"):
         html_code = f"""
         <div class="mermaid">
         {code}
