@@ -108,16 +108,16 @@ class ChatManager:
         if 'rag_messages' not in st.session_state:
             st.session_state.rag_messages = []
 
-    def should_stop(self, chat_history: List[Dict]) -> bool:
-        agent_roles = ["TextRAG_Agent", "GraphRAG_Agent"]
-        last_few = [
-            msg["content"].strip().lower()
-            for msg in chat_history[-3:]
-            if msg["role"] in agent_roles
-        ]
-        generic_phrases = Config.TERMINATION_PHRASES
-        return all(any(generic in resp
-                       for generic in generic_phrases)for resp in last_few)
+    # def should_stop(self, chat_history: List[Dict]) -> bool:
+    #     agent_roles = ["TextRAG_Agent", "GraphRAG_Agent"]
+    #     last_few = [
+    #         msg["content"].strip().lower()
+    #         for msg in chat_history[-3:]
+    #         if msg["role"] in agent_roles
+    #     ]
+    #     generic_phrases = Config.TERMINATION_PHRASES
+    #     return all(any(generic in resp
+    #                    for generic in generic_phrases)for resp in last_few)
 
     def _get_avatar(self, role: str) -> str:
         if role == "user_proxy":
@@ -165,12 +165,12 @@ class ChatManager:
                 max_turns=1
             )
 
-            if self.should_stop(response.chat_history):
-                response.chat_history.append({
-                    "role": self.graph_agent.name,
-                    "content": "Ending the chat as "
-                    "no relevant answer can be provided."
-                })
+            # if self.should_stop(response.chat_history):
+            #     response.chat_history.append({
+            #         "role": self.graph_agent.name,
+            #         "content": "Ending the chat as "
+            #         "no relevant answer can be provided."
+            #     })
 
         else:
             personal_content = "\n\n".join(
@@ -192,12 +192,12 @@ class ChatManager:
                 max_turns=1
             )
 
-            if self.should_stop(response.chat_history):
-                response.chat_history.append({
-                    "role": self.text_agent.name,
-                    "content": "Ending the chat as no helpful"
-                    "answer can be provided."
-                })
+            # if self.should_stop(response.chat_history):
+            #     response.chat_history.append({
+            #         "role": self.text_agent.name,
+            #         "content": "Ending the chat as no helpful"
+            #         "answer can be provided."
+            #     })
 
         # Clean history
         filtered_history = [
