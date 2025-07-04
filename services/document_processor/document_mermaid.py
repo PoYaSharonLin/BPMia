@@ -13,7 +13,8 @@ class MermaidProcessor:
         "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js">
         </script>
         <script>
-        mermaid.initialize({{ startOnLoad: true }});
+        mermaid.initialize({{ startOnLoad: true, 
+                                theme: "{theme}" }});
         </script>
         """
         components.html(html_code, height=height, scrolling=True)
