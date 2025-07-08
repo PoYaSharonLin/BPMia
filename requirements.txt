@@ -3,6 +3,7 @@ autogen-agentchat
 google-generativeai
 ag2[gemini]
 langchain
+langchain-community
 transformers
 
 # action items 
