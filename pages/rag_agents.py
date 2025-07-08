@@ -7,6 +7,8 @@ from autogen.code_utils import content_str  # type: ignore
 from typing import Dict, List  # type: ignore
 from utils.ui_helper import UIHelper
 from utils.llm_setup import LLMSetup   # type: ignore
+from sentence_transformers import SentenceTransformer, util
+
 
 
 class Config:
@@ -28,6 +30,7 @@ class Config:
         "no relevant answer",
         "I apologize"
     ]
+    EMBEDDING_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
 
 class DocumentLoader:
@@ -126,8 +129,23 @@ class ChatManager:
     def generate_response(self, prompt: str) -> List[Dict]:
         docs = DocumentLoader.load_documents()
         prompt_lower = prompt.lower()
-        is_org_related = any(keyword in prompt_lower for
-                             keyword in Config.ORG_KEYWORDS)
+        
+        org_keywords = Config.ORG_KEYWORDS
+        org_embeddings = model.encode(org_keywords, convert_to_tensor=True)
+
+        
+        def is_org_related_semantically(prompt: str, threshold: float = 0.6) -> bool:
+            prompt_embedding = model.encode(prompt, convert_to_tensor=True)
+            cosine_scores = util.cos_sim(prompt_embedding, org_embeddings)
+                return cosine_scores.max().item() > threshold
+        
+        # related: keyowrd & keyword embedding 
+        is_org_related = (
+             any(keyword in prompt_lower for keyword in Config.ORG_KEYWORDS) or
+             is_org_related_semantically(prompt_lower)
+        )
+
+
         if is_org_related:
             mermaid_blocks = []
             for content in docs.get("org", {}).values():
