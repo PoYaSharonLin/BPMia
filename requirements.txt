@@ -2,6 +2,7 @@ streamlit
 autogen-agentchat
 google-generativeai
 ag2[gemini]
+sentence-transformers
 
 # action items 
 flask
