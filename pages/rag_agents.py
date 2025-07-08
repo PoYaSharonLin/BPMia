@@ -7,7 +7,11 @@ from autogen.code_utils import content_str  # type: ignore
 from typing import Dict, List  # type: ignore
 from utils.ui_helper import UIHelper
 from utils.llm_setup import LLMSetup   # type: ignore
-from sentence_transformers import SentenceTransformer, util
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
 
 
 
@@ -30,7 +34,7 @@ class Config:
         "no relevant answer",
         "I apologize"
     ]
-    EMBEDDING_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+    EMBEDDING_MODEL = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 
 class DocumentLoader:
@@ -131,13 +135,13 @@ class ChatManager:
         prompt_lower = prompt.lower()
         
         org_keywords = Config.ORG_KEYWORDS
-        org_embeddings = Config.EMBEDDING_MODEL.encode(org_keywords, convert_to_tensor=True)
+        org_embeddings = Config.EMBEDDING_MODEL.embed_documents(org_keywords)
 
         
         def is_org_related_semantically(prompt: str, threshold: float = 0.6) -> bool:
-            prompt_embedding = model.encode(prompt, convert_to_tensor=True)
-            cosine_scores = util.cos_sim(prompt_embedding, org_embeddings)
-            return cosine_scores.max().item() > threshold
+            prompt_embedding = Config.EMBEDDING_MODEL.embed_query(prompt)
+            similarities = cosine_similarity([prompt_embedding], org_embeddings)
+            return np.max(similarities) > threshold
 
         # related: keyowrd & keyword embedding 
         is_org_related = (
