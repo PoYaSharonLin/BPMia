@@ -138,7 +138,7 @@ class ChatManager:
             prompt_embedding = model.encode(prompt, convert_to_tensor=True)
             cosine_scores = util.cos_sim(prompt_embedding, org_embeddings)
                 return cosine_scores.max().item() > threshold
-        
+
         # related: keyowrd & keyword embedding 
         is_org_related = (
             any(keyword in prompt_lower for keyword in Config.ORG_KEYWORDS) or
