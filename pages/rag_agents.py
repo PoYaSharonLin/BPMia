@@ -131,7 +131,7 @@ class ChatManager:
         prompt_lower = prompt.lower()
         
         org_keywords = Config.ORG_KEYWORDS
-        org_embeddings = model.encode(org_keywords, convert_to_tensor=True)
+        org_embeddings = Config.EMBEDDING_MODEL.encode(org_keywords, convert_to_tensor=True)
 
         
         def is_org_related_semantically(prompt: str, threshold: float = 0.6) -> bool:
@@ -144,7 +144,6 @@ class ChatManager:
             any(keyword in prompt_lower for keyword in Config.ORG_KEYWORDS) or
             is_org_related_semantically(prompt_lower)
         )
-
         
         if is_org_related:
             mermaid_blocks = []
