@@ -114,22 +114,22 @@ class OrchestratorAgent:
                 ).markdown(content)
 
         
-        # Show recommended prompts only if conversation hasn't started
-        if not st.session_state.conversation_started:
-            recommended_prompts = [
-                "What can you do?",
-                "How do I write a formal email?"
-            ]
+        # # Show recommended prompts only if conversation hasn't started
+        # if not st.session_state.conversation_started:
+        #     recommended_prompts = [
+        #         "What can you do?",
+        #         "How do I write a formal email?"
+        #     ]
         
-            cols = st.columns(len(recommended_prompts))
+        #     cols = st.columns(len(recommended_prompts))
         
-            for i, prompt in enumerate(recommended_prompts):
-                if cols[i].button(prompt):
-                    st.session_state.conversation_started = True  # Mark as started
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                    history = self.generate_response(prompt)
-                    self.show_chat_history(history, chat_container)
-                    st.rerun()  # Force rerun to hide buttons immediately
+        #     for i, prompt in enumerate(recommended_prompts):
+        #         if cols[i].button(prompt):
+        #             st.session_state.conversation_started = True  # Mark as started
+        #             st.session_state.messages.append({"role": "user", "content": prompt})
+        #             history = self.generate_response(prompt)
+        #             self.show_chat_history(history, chat_container)
+        #             st.rerun()  # Force rerun to hide buttons immediately
 
         
 
