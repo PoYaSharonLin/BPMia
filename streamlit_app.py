@@ -121,7 +121,6 @@ class OrchestratorAgent:
                 "How do I write a formal email?"
             ]
         
-            st.markdown("#### 💡 Recommended Questions:")
             cols = st.columns(len(recommended_prompts))
         
             for i, prompt in enumerate(recommended_prompts):
