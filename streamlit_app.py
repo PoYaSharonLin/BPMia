@@ -128,6 +128,7 @@ class OrchestratorAgent:
                     st.session_state.conversation_started = True  # Mark as started
                     st.session_state.messages.append({"role": "user", "content": prompt})
                     history = self.generate_response(prompt)
+                    st.rerun()  # Force rerun to hide buttons immediately
                     self.show_chat_history(history, chat_container)
 
         
