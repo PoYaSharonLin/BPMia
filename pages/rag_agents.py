@@ -231,6 +231,8 @@ class ChatManager:
 
     def run(self):
         st.title(f"💬 {Config.USER_NAME}")
+        st.write("Feeling a bit overload with the incoming information? This is where you can chat with the notes.")
+        st.write("Chat with the notes to understand the terminologies and stakeholders involved.")
         chat_container = st.container()
         UIHelper.config_page()
         UIHelper.setup_sidebar()
