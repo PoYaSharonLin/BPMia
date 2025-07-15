@@ -75,26 +75,42 @@ class OrchestratorAgent:
         UIHelper.setup_sidebar()
         chat_container = st.container()
 
-        
-        recommended_prompts = [
-            "Who are the key stakeholders?",
-            "How do I write a formal email?",
-            "Tell me about the company culture.",
-        ]
-        
-        st.markdown("#### 💡 Recommended Questions:")
-        cols = st.columns(len(recommended_prompts))
-        
-        for i, prompt in enumerate(recommended_prompts):
-            if cols[i].button(prompt):
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                history = self.generate_response(prompt)
-                self.show_chat_history(history, chat_container)
-        
-
+        # Initialize messages & flags 
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
+        if "conversation_started" not in st.session_state: 
+            st.session_state.conversation_started = False
+
+
+        # Prompt input
+        if prompt := st.chat_input(
+                placeholder=self.placeholderstr, key="chat_bot"):
+            st.session_state.conversation_started = True
+            st.session_state.messages.append(
+                {"role": "user", "content": prompt}
+            )
+            history = self.generate_response(prompt)
+            self.show_chat_history(history, chat_container)
+        
+        # Show recommended prompts only if conversation hasn't started
+        if not st.session_state.conversation_started:
+            recommended_prompts = [
+                "What can you do?",
+                "How do I write a formal email?"
+            ]
+        
+            st.markdown("#### 💡 Recommended Questions:")
+            cols = st.columns(len(recommended_prompts))
+        
+            for i, prompt in enumerate(recommended_prompts):
+                if cols[i].button(prompt):
+                    st.session_state.conversation_started = True  # Mark as started
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    history = self.generate_response(prompt)
+                    self.show_chat_history(history, chat_container)
+
+        
         # Render chat history
         for i, msg in enumerate(st.session_state.messages):
             # Skip the last message if it's a user input just rendered above
@@ -114,14 +130,6 @@ class OrchestratorAgent:
                     "assistant", avatar=self.assistant_avatar
                 ).markdown(content)
 
-        # Prompt input
-        if prompt := st.chat_input(
-                placeholder=self.placeholderstr, key="chat_bot"):
-            st.session_state.messages.append(
-                {"role": "user", "content": prompt}
-            )
-            history = self.generate_response(prompt)
-            self.show_chat_history(history, chat_container)
 
 
 if __name__ == "__main__":
