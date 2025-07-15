@@ -10,7 +10,7 @@ class OrchestratorAgent:
         self.user_name = "Mentor"
         self.assistant_avatar = "🧠"
         self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
-        self.placeholderstr = "Please input your command"
+        self.placeholderstr = "Chat with On-boarding Mentor to start on-boarding"
         UIHelper.config_page()
         self._load_api_keys()
         self._setup_llm()
@@ -23,9 +23,8 @@ class OrchestratorAgent:
             system_message=(
                 "'This website helps you get familiar with onboarding"
                 "website allows you to: "
-                "1. Visualize the enterprise culture, "
-                "2. Understand organization stakeholders, and "
-                "3. Grow with the company using your personal note.' "
+                "1. Understand organization stakeholders, and "
+                "2. Get to know with the company using notes.' "
                 "Answer all user questions in a concise and helpful."
             ),
             api_key=self.gemini1_api_key,
