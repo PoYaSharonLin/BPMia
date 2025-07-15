@@ -68,20 +68,20 @@ class OrchestratorAgent:
                 ).markdown(content)
 
     def run(self):
-        st.title(f"💬 On-boarding Mentor")
-        st.write("This is a website that could answers your queston about the department. ")
-        st.write("Agent at this page could help you with general issues, such as drafting an email.")
-        
         # Create two columns: one for the text, one for the button
-        col1, col2 = st.columns([5, 1])  # Adjust the ratio as needed
+        col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
         with col1:
-            st.write("As for question answering with domain specific knowledge, please visit Chat with Notes!")
+            st.title(f"💬 On-boarding Mentor")
 
         with col2:
             if st.button("🔄 Restart Session"):
                 st.session_state.clear()
                 st.rerun()
+        
+        st.write("This is a website that could answers your queston about the department. ")
+        st.write("Agent at this page could help you with general issues, such as drafting an email.")
+        st.write("As for question answering with domain specific knowledge, please visit Chat with Notes!")
 
         UIHelper.setup_sidebar()
         chat_container = st.container()
@@ -107,21 +107,21 @@ class OrchestratorAgent:
 
 
         
-        # Show recommended prompts only if conversation hasn't started
-        if not st.session_state.conversation_started:
-            recommended_prompts = [
-                "What can you do?",
-                "How do I write a formal email?"
-            ]
+        # # Show recommended prompts only if conversation hasn't started
+        # if not st.session_state.conversation_started:
+        #     recommended_prompts = [
+        #         "What can you do?",
+        #         "How do I write a formal email?"
+        #     ]
         
-            cols = st.columns(len(recommended_prompts))
+        #     cols = st.columns(len(recommended_prompts))
         
-            for i, prompt in enumerate(recommended_prompts):
-                if cols[i].button(prompt):
-                    st.session_state.conversation_started = True  # Mark as started
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                    history = self.generate_response(prompt)
-                    self.show_chat_history(history, chat_container)
+        #     for i, prompt in enumerate(recommended_prompts):
+        #         if cols[i].button(prompt):
+        #             st.session_state.conversation_started = True  # Mark as started
+        #             st.session_state.messages.append({"role": "user", "content": prompt})
+        #             history = self.generate_response(prompt)
+        #             self.show_chat_history(history, chat_container)
 
         
 
