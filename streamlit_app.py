@@ -76,6 +76,7 @@ class OrchestratorAgent:
 
         with col2:
             st.write(" ")
+            st.write(" ")
             if st.button("🔄 Restart Session"):
                 st.session_state.clear()
                 st.rerun()
