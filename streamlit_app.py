@@ -75,6 +75,7 @@ class OrchestratorAgent:
             st.title(f"💬 On-boarding Mentor")
 
         with col2:
+            st.write(" ")
             if st.button("🔄 Restart Session"):
                 st.session_state.clear()
                 st.rerun()
