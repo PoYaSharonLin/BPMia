@@ -7,7 +7,7 @@ from utils.llm_setup import LLMSetup  # type: ignore
 
 class OrchestratorAgent:
     def __init__(self):
-        self.user_name = "On-boarding Mentor"
+        # self.user_name = "On-boarding Mentor"
         self.assistant_avatar = "🧠"
         self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
         self.placeholderstr = "Chat with On-boarding Mentor to start on-boarding"
@@ -68,7 +68,10 @@ class OrchestratorAgent:
                 ).markdown(content)
 
     def run(self):
-        st.title(f"💬 {self.user_name}")
+        st.title(f"💬 On-boarding Mentor")
+        st.write("This is a website that could answers your queston about the department. ")
+        st.write("Agent at this page could help you with general issues, such as drafting an email.")
+        st.write("As for question answering with domain specific knowledge, please visit Chat with Notes!")
         UIHelper.setup_sidebar()
         chat_container = st.container()
 
