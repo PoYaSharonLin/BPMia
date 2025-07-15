@@ -230,7 +230,18 @@ class ChatManager:
 
 
     def run(self):
-        st.title(f"💬 {Config.USER_NAME}")
+        col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
+
+        with col1:
+            st.title(f"💬 {Config.USER_NAME}")
+
+        with col2:
+            st.write(" ")
+            st.write(" ")
+            if st.button("🔄 Restart Session"):
+                st.session_state.clear()
+                st.rerun()
+        
         st.write("Feeling a bit overload with the incoming information? This is where you can chat with the notes.")
         st.write("Chat with the notes to understand the terminologies and stakeholders involved.")
         st.write("Agent at this page answers specifically about notes. For general purpose support, please visit home.")
