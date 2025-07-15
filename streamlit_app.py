@@ -7,7 +7,7 @@ from utils.llm_setup import LLMSetup  # type: ignore
 
 class OrchestratorAgent:
     def __init__(self):
-        self.user_name = "Mentor"
+        self.user_name = "On-boarding Mentor"
         self.assistant_avatar = "🧠"
         self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
         self.placeholderstr = "Chat with On-boarding Mentor to start on-boarding"
