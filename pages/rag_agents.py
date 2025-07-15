@@ -235,9 +235,11 @@ def save_lang():
     st.session_state['lang_setting'] = st.session_state.get("language_select")
 
 
-def main():
+def run(self):
     st.title(f"💬 {Config.USER_NAME}")
+    chat_container = st.container()
     chat_manager = ChatManager()
+    
     # Display existing chat history
     for msg in st.session_state.rag_messages:
         role = msg.get("role", "assistant")
@@ -245,14 +247,14 @@ def main():
         avatar = msg.get("avatar", "👩‍💼")
 
         if role in ["user", "user_proxy"]:
-            st_c_chat.chat_message("user", avatar=avatar).markdown(content)
+            chat_container.chat_message("user", avatar=avatar).markdown(content)
         else:
-            st_c_chat.chat_message(
+            chat_container.chat_message(
                 "assistant", avatar=avatar).markdown(content)
 
     if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
         # Show user prompt immediately
-        st_c_chat.chat_message(
+        chat_container.chat_message(
             "user", avatar="🧠").write(f"*System prompted:* {prompt}")
         # Save immediately to session
         st.session_state.rag_messages.append({
@@ -263,8 +265,9 @@ def main():
 
         # Then generate and stream the assistant response
         response = chat_manager.generate_response(prompt)
-        chat_manager.show_chat_history(response, st_c_chat)
+        chat_manager.show_chat_history(response, chat_container)
 
 
 if __name__ == "__main__":
-    main()
+    chatmanager = ChatManager()
+    chatmanager.run()
