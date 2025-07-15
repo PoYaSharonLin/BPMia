@@ -105,6 +105,8 @@ class ChatManager:
         self.graph_agent = AgentFactory.create_graph_agent()
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
+        UIHelper.config_page()
+        UIHelper.setup_sidebar()
         if 'rag_messages' not in st.session_state:
             st.session_state.rag_messages = []
 
@@ -234,11 +236,7 @@ def save_lang():
 
 
 def main():
-    UIHelper.config_page()
-    UIHelper.setup_sidebar()
     st.title(f"💬 {Config.USER_NAME}")
-    st_c_chat = st.container(border=True)
-    UIHelper.setup_chat(st_c_chat)
     chat_manager = ChatManager()
     # Display existing chat history
     for msg in st.session_state.rag_messages:
