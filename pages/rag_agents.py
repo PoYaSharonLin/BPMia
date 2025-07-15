@@ -12,9 +12,6 @@ from utils.llm_setup import LLMSetup   # type: ignore
 class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
-    USER_NAME = "Mentor"
-    USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
-    PLACEHOLDER = "Please input your command"
     SEED = 42
     ORG_KEYWORDS = ["org", "organization", "structure",
                     "team", "manager", "lead", "report",
@@ -105,6 +102,11 @@ class ChatManager:
         self.graph_agent = AgentFactory.create_graph_agent()
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
+        self.user_name = "OMT Project Management Office, Business Planning"
+        self.assistant_avatar = "🧠"
+        self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
+        self.placeholderstr = "Chat with On-boarding Mentor to start on-boarding"
+        
         if 'rag_messages' not in st.session_state:
             st.session_state.rag_messages = []
 
@@ -260,7 +262,7 @@ def save_lang():
 def main():
     UIHelper.config_page()
     UIHelper.setup_sidebar()
-    st.title(f"💬 {Config.USER_NAME}")
+    st.title(f"💬 {user_name}")
     st_c_chat = st.container(border=True)
     UIHelper.setup_chat(st_c_chat)
     chat_manager = ChatManager()
