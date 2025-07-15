@@ -224,48 +224,48 @@ class ChatManager:
                     else:
                         st.markdown(content)
 
-
-def stream_data(stream_str: str):
-    for word in stream_str.split(" "):
-        yield word + " "
-        time.sleep(0.05)
-
-
-def save_lang():
-    st.session_state['lang_setting'] = st.session_state.get("language_select")
-
-
-def run(self):
-    st.title(f"💬 {Config.USER_NAME}")
-    chat_container = st.container()
-    chat_manager = ChatManager()
     
-    # Display existing chat history
-    for msg in st.session_state.rag_messages:
-        role = msg.get("role", "assistant")
-        content = msg.get("content", "")
-        avatar = msg.get("avatar", "👩‍💼")
+    def stream_data(stream_str: str):
+        for word in stream_str.split(" "):
+            yield word + " "
+            time.sleep(0.05)
 
-        if role in ["user", "user_proxy"]:
-            chat_container.chat_message("user", avatar=avatar).markdown(content)
-        else:
+
+    def save_lang():
+        st.session_state['lang_setting'] = st.session_state.get("language_select")
+
+
+    def run(self):
+        st.title(f"💬 {Config.USER_NAME}")
+        chat_container = st.container()
+        chat_manager = ChatManager()
+        
+        # Display existing chat history
+        for msg in st.session_state.rag_messages:
+            role = msg.get("role", "assistant")
+            content = msg.get("content", "")
+            avatar = msg.get("avatar", "👩‍💼")
+    
+            if role in ["user", "user_proxy"]:
+                chat_container.chat_message("user", avatar=avatar).markdown(content)
+            else:
+                chat_container.chat_message(
+                    "assistant", avatar=avatar).markdown(content)
+    
+        if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
+            # Show user prompt immediately
             chat_container.chat_message(
-                "assistant", avatar=avatar).markdown(content)
-
-    if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
-        # Show user prompt immediately
-        chat_container.chat_message(
-            "user", avatar="🧠").write(f"*System prompted:* {prompt}")
-        # Save immediately to session
-        st.session_state.rag_messages.append({
-            "role": "user_proxy",
-            "content": prompt,
-            "avatar": "🧠"
-        })
-
-        # Then generate and stream the assistant response
-        response = chat_manager.generate_response(prompt)
-        chat_manager.show_chat_history(response, chat_container)
+                "user", avatar="🧠").write(f"*System prompted:* {prompt}")
+            # Save immediately to session
+            st.session_state.rag_messages.append({
+                "role": "user_proxy",
+                "content": prompt,
+                "avatar": "🧠"
+            })
+    
+            # Then generate and stream the assistant response
+            response = chat_manager.generate_response(prompt)
+            chat_manager.show_chat_history(response, chat_container)
 
 
 if __name__ == "__main__":
