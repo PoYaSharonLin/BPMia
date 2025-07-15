@@ -75,6 +75,23 @@ class OrchestratorAgent:
         UIHelper.setup_sidebar()
         chat_container = st.container()
 
+        
+        recommended_prompts = [
+            "Who are the key stakeholders?",
+            "How do I write a formal email?",
+            "Tell me about the company culture.",
+        ]
+        
+        st.markdown("#### 💡 Recommended Questions:")
+        cols = st.columns(len(recommended_prompts))
+        
+        for i, prompt in enumerate(recommended_prompts):
+            if cols[i].button(prompt):
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                history = self.generate_response(prompt)
+                self.show_chat_history(history, chat_container)
+        
+
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
