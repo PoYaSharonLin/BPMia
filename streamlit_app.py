@@ -74,6 +74,11 @@ class OrchestratorAgent:
         st.write("As for question answering with domain specific knowledge, please visit Chat with Notes!")
         UIHelper.setup_sidebar()
         chat_container = st.container()
+        
+        if st.button("🔄 Restart Session"):
+            st.session_state.clear()
+            st.rerun()
+
 
         # Initialize messages & flags 
         if "messages" not in st.session_state:
