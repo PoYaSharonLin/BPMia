@@ -105,7 +105,7 @@ class OrchestratorAgent:
                 {"role": "user", "content": prompt}
             )
             history = self.generate_response(prompt)
-            self.show_chat_history(chat_container)
+            self.show_chat_history(history, chat_container)
 
 
         
