@@ -93,43 +93,24 @@ class OrchestratorAgent:
             history = self.generate_response(prompt)
             self.show_chat_history(history, chat_container)
 
-        
-        #  # Render chat history
-        # for i, msg in enumerate(st.session_state.messages):
-        #     # Skip the last message if it's a user input just rendered above
-        #     if (
-        #         i == len(st.session_state.messages) - 1
-        #         and msg["role"] in ["user", "user_proxy"]
-        #     ):
-        #         continue
-        #     role = msg["role"]
-        #     content = msg["content"]
-        #     if role in ["user", "user_proxy"]:
-        #         chat_container.chat_message(
-        #             "user", avatar=self.user_avatar
-        #         ).markdown(f"**{content}**")
-        #     else:
-        #         chat_container.chat_message(
-        #             "assistant", avatar=self.assistant_avatar
-        #         ).markdown(content)
 
         
-        # # Show recommended prompts only if conversation hasn't started
-        # if not st.session_state.conversation_started:
-        #     recommended_prompts = [
-        #         "What can you do?",
-        #         "How do I write a formal email?"
-        #     ]
+        # Show recommended prompts only if conversation hasn't started
+        if not st.session_state.conversation_started:
+            recommended_prompts = [
+                "What can you do?",
+                "How do I write a formal email?"
+            ]
         
-        #     cols = st.columns(len(recommended_prompts))
+            cols = st.columns(len(recommended_prompts))
         
-        #     for i, prompt in enumerate(recommended_prompts):
-        #         if cols[i].button(prompt):
-        #             st.session_state.conversation_started = True  # Mark as started
-        #             st.session_state.messages.append({"role": "user", "content": prompt})
-        #             history = self.generate_response(prompt)
-        #             self.show_chat_history(history, chat_container)
-        #             st.rerun()  # Force rerun to hide buttons immediately
+            for i, prompt in enumerate(recommended_prompts):
+                if cols[i].button(prompt):
+                    st.session_state.conversation_started = True  # Mark as started
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    history = self.generate_response(prompt)
+                    self.show_chat_history(history, chat_container)
+                    st.rerun()  # Force rerun to hide buttons immediately
 
         
 
