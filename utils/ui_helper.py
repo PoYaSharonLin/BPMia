@@ -29,8 +29,8 @@ class UIHelper:
                              label="Chat with Notes", icon="📄")
                 st.page_link("pages/documents_upload.py",
                              label="Upload Notes", icon="📁")
-                st.page_link("pages/action_items.py",
-                             label="Check Action Items", icon="✅")
+                # st.page_link("pages/action_items.py",
+                #              label="Check Action Items", icon="✅")
 
             selected_lang = st.selectbox(
                 "Language", ["English"],
