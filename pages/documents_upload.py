@@ -231,7 +231,7 @@ class DocumentUploader:
                 return
 
             uploaded_files = self.get_uploaded_files(upload_dir)
-            st.sidebar.markdown(
+            st.markdown(
                 f"📁 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
 
             # Display uploaded files with CRUD operations
