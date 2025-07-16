@@ -222,7 +222,7 @@ class DocumentUploader:
         """Render the document uploader interface."""
         crud_processor = CRUDProcessor()
         try:
-            doc_type = st.sidebar.radio(
+            doc_type = st.sidebar.selectbox(
                 "Select Upload Category",
                 list(self.doc_types.keys()))
 
