@@ -56,11 +56,11 @@ class DocumentUploader:
         # Table-like layout with headers
         with st.container(border=True):
             col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
-            col1.title("**File Name**")
-            col2.title("**Preview**")
-            col3.title("**Edit**")
-            col4.title("**Download**")
-            col5.title("**Delete**")
+            col1.caption("**File Name**")
+            col2.caption("**Preview**")
+            col3.caption("**Edit**")
+            col4.caption("**Download**")
+            col5.caption("**Delete**")
     
 
         # Display each file in a table-like row
