@@ -56,11 +56,11 @@ class DocumentUploader:
         # Table-like layout with headers
         with st.container(border=True):
             col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
-            col1.markdown("**File Name**")
-            col2.markdown("**Preview**")
-            col3.markdown("**Edit**")
-            col4.markdown("**Download**")
-            col5.markdown("**Delete**")
+            col1.title("**File Name**")
+            col2.title("**Preview**")
+            col3.title("**Edit**")
+            col4.title("**Download**")
+            col5.title("**Delete**")
     
 
         # Display each file in a table-like row
@@ -74,7 +74,7 @@ class DocumentUploader:
             with st.container(border=True):
                 col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
 
-                col1.markdown(f"{fname}")
+                col1.header(f"{fname}")
 
                 
                 if col2.button("👁️", key=f"preview-{fname}"):
