@@ -48,7 +48,7 @@ class DocumentUploader:
     def display_upload_section(self, files: List[str], doc_type: str) -> None: 
         st.markdown("---")
         st.markdown("### 📤 Upload New File")
-        uploaded_file = st.file_uploader(
+        uploaded_files = st.file_uploader(
             f"Upload your markdown (.md) file for {doc_type}",
             type=["md"]
         )
