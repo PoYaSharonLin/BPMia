@@ -46,8 +46,6 @@ class DocumentUploader:
             return []
 
     def display_upload_section(self, files: List[str], doc_type: str) -> None: 
-        # File upload section
-        self.display_upload_section(uploaded_files, doc_type)
         st.markdown("---")
         st.markdown("### 📤 Upload New File")
         uploaded_file = st.file_uploader(
