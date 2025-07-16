@@ -243,14 +243,13 @@ class DocumentUploader:
             st.markdown(
                 f"### 📝 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
 
-            # # File upload section
-            self.display_upload_section(uploaded_files, doc_type)
-            # st.markdown("---")
-            # st.markdown("### 📤 Upload New File")
-            # uploaded_file = st.file_uploader(
-            #     f"Upload your markdown (.md) file for {doc_type}",
-            #     type=["md"]
-            # )
+            # File upload section
+            st.markdown("---")
+            st.markdown("### 📤 Upload New File")
+            uploaded_file = st.file_uploader(
+                f"Upload your markdown (.md) file for {doc_type}",
+                type=["md"]
+            )
 
             # Handle file upload using CRUD processor
             crud_processor.handle_file_upload(uploaded_files, upload_dir)
