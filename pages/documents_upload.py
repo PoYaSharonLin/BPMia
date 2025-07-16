@@ -56,31 +56,12 @@ class DocumentUploader:
         # Table-like layout with headers
         with st.container(border=True):
             col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
-            with col1:
-                st.markdown(
-                    "<div style='text-align: center;'><b>File Name</b></div>",
-                    unsafe_allow_html=True
-                )
-            with col2:
-                st.markdown(
-                    "<div style='text-align: center;'><b>Preview</b></div>",
-                    unsafe_allow_html=True
-                )
-            with col3:
-                st.markdown(
-                    "<div style='text-align: center;'><b>Edit</b></div>",
-                    unsafe_allow_html=True
-                )
-            with col4:
-                st.markdown(
-                    "<div style='text-align: center;'><b>Download</b></div>",
-                    unsafe_allow_html=True
-                )
-            with col5:
-                st.markdown(
-                    "<div style='text-align: center;'><b>Delete</b></div>",
-                    unsafe_allow_html=True
-                )
+            col1.markdown("**File Name**")
+            col2.markdown("**Preview**")
+            col3.markdown("**Edit**")
+            col4.markdown("**Download**")
+            col5.markdown("**Delete**")
+    
 
         # Display each file in a table-like row
         for fname in files:
