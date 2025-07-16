@@ -234,10 +234,7 @@ class DocumentUploader:
             uploaded_files = self.get_uploaded_files(upload_dir)
             st.markdown(
                 f"### 📝 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
-
-            # Display uploaded files with CRUD operations
-            self.display_uploaded_files(uploaded_files, doc_type)
-
+            
             # File upload section
             st.markdown("---")
             st.markdown("### 📤 Upload New File")
@@ -247,10 +244,11 @@ class DocumentUploader:
             )
 
             # Handle file upload using CRUD processor
-            crud_processor.handle_file_upload(uploaded_files, upload_dir)
+            crud_processor.handle_file_upload(uploaded_file, upload_dir)
 
             
-
+            # Display uploaded files with CRUD operations
+            self.display_uploaded_files(uploaded_files, doc_type)
             
 
         except Exception as e:
