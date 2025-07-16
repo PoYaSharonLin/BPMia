@@ -45,6 +45,16 @@ class DocumentUploader:
             st.error(f"Error listing files: {str(e)}")
             return []
 
+    def display_upload_section(self, files: List[str], doc_type: str) -> None: 
+        # File upload section
+        self.display_upload_section(uploaded_files, doc_type)
+        st.markdown("---")
+        st.markdown("### 📤 Upload New File")
+        uploaded_file = st.file_uploader(
+            f"Upload your markdown (.md) file for {doc_type}",
+            type=["md"]
+        )
+        
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
         st.markdown("---")
         st.markdown(f"### 📁 Uploaded Files in {doc_type}")
@@ -235,13 +245,14 @@ class DocumentUploader:
             st.markdown(
                 f"### 📝 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
 
-            # File upload section
-            st.markdown("---")
-            st.markdown("### 📤 Upload New File")
-            uploaded_file = st.file_uploader(
-                f"Upload your markdown (.md) file for {doc_type}",
-                type=["md"]
-            )
+            # # File upload section
+            self.display_upload_section(uploaded_files, doc_type)
+            # st.markdown("---")
+            # st.markdown("### 📤 Upload New File")
+            # uploaded_file = st.file_uploader(
+            #     f"Upload your markdown (.md) file for {doc_type}",
+            #     type=["md"]
+            # )
 
             # Handle file upload using CRUD processor
             crud_processor.handle_file_upload(uploaded_file, upload_dir)
