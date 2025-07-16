@@ -74,32 +74,19 @@ class DocumentUploader:
             with st.container(border=True):
                 col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1, 1])
 
-                with col1:
-                    st.markdown(f"{fname}")
+                col1.markdown(f"{fname}")
 
-                with col2:
-                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
-                    if st.button(
-                        "👁️",
-                        key=f"preview-{fname}"
-                    ):
-                        st.session_state[f"previewing_{fname}"] = not (
-                            st.session_state.get(f"previewing_{fname}", False)
-                        )
-                    st.markdown('</div>', unsafe_allow_html=True)
+                
+                if col2.button("👁️", key=f"preview-{fname}"):
+                    st.session_state[f"previewing_{fname}"] = not st.session_state.get(f"previewing_{fname}", False)
 
-                with col3:
-                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
-                    if st.button(
-                        "✏️",
-                        key=f"edit-{fname}"
-                    ):
-                        st.session_state[f"editing_{fname}"] = True
-                    st.markdown('</div>', unsafe_allow_html=True)
+
+                
+                if col3.button("✏️", key=f"edit-{fname}"):
+                    st.session_state[f"editing_{fname}"] = True
 
 
                 with col4:
-                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "📥",
                         key=f"download-{fname}"
@@ -113,14 +100,11 @@ class DocumentUploader:
                                 mime="text/markdown",
                                 key=f"download_btn_{fname}"
                             )
-                    st.markdown('</div>', unsafe_allow_html=True)
 
                 with col5:
-                    st.markdown('<div class="transparent-button">', unsafe_allow_html=True)
                     if st.button(
                         "🗑️",
-                        key=f"delete-{fname}",
-                        type="secondary"
+                        key=f"delete-{fname}"
                     ):
                         if st.session_state.get(
                             f"confirm_delete_{fname}", False
@@ -135,7 +119,6 @@ class DocumentUploader:
                                     f"of {fname}"
                                 )
                             )
-                    st.markdown('</div>', unsafe_allow_html=True)
                     
             # Handle file preview
             if st.session_state.get(f"previewing_{fname}", False):
