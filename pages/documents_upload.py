@@ -44,14 +44,6 @@ class DocumentUploader:
         except Exception as e:
             st.error(f"Error listing files: {str(e)}")
             return []
-
-    def display_upload_section(self, files: List[str], doc_type: str) -> None: 
-        st.markdown("---")
-        st.markdown("### 📤 Upload New File")
-        uploaded_files = st.file_uploader(
-            f"Upload your markdown (.md) file for {doc_type}",
-            type=["md"]
-        )
         
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
         st.markdown("---")
