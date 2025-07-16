@@ -5,21 +5,6 @@ from utils.ui_helper import UIHelper
 from services.document_processor.document_crud import CRUDProcessor
 from services.document_processor.document_mermaid import MermaidProcessor
 
-# define transparent button css
-st.markdown("""
-    <style>
-    .transparent-button button {
-        background-color: transparent;
-        border: none;
-        box-shadow: none;
-        padding: 0;
-        font-size: 1.2em;
-        cursor: pointer;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-
 
 class MermaidBlockExtractionError(Exception):
     """Custom exception for Mermaid block extraction failures."""
@@ -237,7 +222,7 @@ class DocumentUploader:
         """Render the document uploader interface."""
         crud_processor = CRUDProcessor()
         try:
-            doc_type = st.radio(
+            doc_type = st.sidebar.radio(
                 "Select Upload Category",
                 list(self.doc_types.keys()))
 
