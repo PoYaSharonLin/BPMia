@@ -46,6 +46,7 @@ class DocumentUploader:
             return []
 
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
+        st.markdown("---")
         st.markdown(f"### 📁 Uploaded Files in {doc_type}")
 
         if not files:
