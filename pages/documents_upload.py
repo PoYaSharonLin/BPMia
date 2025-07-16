@@ -46,7 +46,7 @@ class DocumentUploader:
             return []
 
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
-        st.markdown(f"### 📄 Uploaded Files in {doc_type}")
+        st.markdown(f"### 📁 Uploaded Files in {doc_type}")
 
         if not files:
             st.info("No files uploaded yet.")
@@ -232,10 +232,7 @@ class DocumentUploader:
 
             uploaded_files = self.get_uploaded_files(upload_dir)
             st.markdown(
-                f"### 📁 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
-
-            # Display uploaded files with CRUD operations
-            self.display_uploaded_files(uploaded_files, doc_type)
+                f"### 📝 **{doc_type} Files Uploaded:** `{len(uploaded_files)}`")
 
             # File upload section
             st.markdown("---")
@@ -247,6 +244,11 @@ class DocumentUploader:
 
             # Handle file upload using CRUD processor
             crud_processor.handle_file_upload(uploaded_file, upload_dir)
+
+            # Display uploaded files with CRUD operations
+            self.display_uploaded_files(uploaded_files, doc_type)
+
+            
 
         except Exception as e:
             st.error(f"Error rendering interface: {str(e)}")
