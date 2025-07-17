@@ -155,7 +155,7 @@ class DocumentUploader:
         )
 
         # Action buttons
-        col1, col2, col3 = st.columns([1, 1, 2])
+        col1, col2 = st.columns([1, 1])
 
         with col1:
             if st.button("💾 Save", key=f"save_{fname}", type="primary"):
@@ -168,13 +168,6 @@ class DocumentUploader:
             if st.button("❌ Cancel", key=f"cancel_{fname}"):
                 st.session_state[f"editing_{fname}"] = False
                 st.rerun()
-
-        with col3:
-            # Preview updated Mermaid charts
-            if st.button("👁️ Preview Changes", key=f"preview_{fname}"):
-                st.markdown("**Preview of changes:**")
-                mermaid_processor = MermaidProcessor()
-                mermaid_processor.render_mermaid_blocks(edited_content)
 
     def render(self):
         """Render the document uploader interface."""
