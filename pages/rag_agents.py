@@ -244,7 +244,7 @@ class ChatManager:
         
         st.write("Feeling a bit overload with the incoming information? This is where you can chat with the notes.")
         st.write("Chat with the notes to understand the terminologies and stakeholders involved.")
-        st.write("Agent at this page answers specifically about notes. For general purpose support, please visit home.")
+        st.write("Agent at this page answers specifically about notes. For general purpose support, please visit :blue-background[Home].")
         chat_container = st.container()
         UIHelper.config_page()
         UIHelper.setup_sidebar()
