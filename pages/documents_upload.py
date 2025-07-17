@@ -155,16 +155,16 @@ class DocumentUploader:
         )
 
         # Action buttons
-        col1, col2 = st.columns([1, 1])
+        spacer, col_cancel, col_save = st.columns([6, 1, 1])
 
-        with col1:
+        with col_cancel:
             if st.button("💾 Save", key=f"save_{fname}", type="primary"):
                 if self.crud_processor.update_file(file_path, edited_content):
                     st.session_state[f"editing_{fname}"] = False
                     st.success(f"✅ {fname} updated successfully!")
                     st.rerun()
 
-        with col2:
+        with col_save:
             if st.button("❌ Cancel", key=f"cancel_{fname}"):
                 st.session_state[f"editing_{fname}"] = False
                 st.rerun()
