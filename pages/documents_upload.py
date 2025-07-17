@@ -115,9 +115,9 @@ class DocumentUploader:
                             st.session_state[f"confirm_delete_{fname}"] = True
                             st.warning(
                                 (
-                                    f"⚠️ Click Again"
-                                    f"to confirm ⚠️"
-                                )
+                                    f"⚠️ Click Again\nto confirm ⚠️"
+
+                                   )
                             )
                     
             # Handle file preview
