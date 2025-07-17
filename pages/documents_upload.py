@@ -127,13 +127,11 @@ class DocumentUploader:
                     if content:
                         with st.container():
                             with st.expander(
-                                f"📝 Preview: {fname}", expanded=True
+                                f"#### 📝 Preview: {fname}", expanded=True
                             ):
-                                st.markdown(content)
+                                # st.markdown(content)
                                 mermaid_processor = MermaidProcessor()
-                                mermaid_processor.render_mermaid_blocks(
-                                    content
-                                )
+                                mermaid_processor.render_mermaid_blocks(content)
                 except Exception as e:
                     st.error(f"Error previewing `{fname}`: {str(e)}")
 
