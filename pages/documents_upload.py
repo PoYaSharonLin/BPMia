@@ -147,14 +147,6 @@ class DocumentUploader:
             st.error("Failed to read file content")
             return
 
-        # Text area for editing
-        edited_content = st.text_area(
-            "Edit file content:",
-            value=current_content,
-            height=400,
-            key=f"edit_area_{fname}"
-        )
-
         # Action buttons
         col1, col2, col3 = st.columns([1, 1, 2])
 
