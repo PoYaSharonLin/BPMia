@@ -83,7 +83,7 @@ class OrchestratorAgent:
         
         st.write("This is a website that could answers your queston about the department. ")
         st.write("Agent at this page could help you with general issues, such as drafting an email.")
-        st.write("As for question answering with domain specific knowledge, please visit Chat with Notes!")
+        st.write("As for question answering with domain specific knowledge, please visit :blue-background[Chat with Notes]!")
 
         UIHelper.setup_sidebar()
         chat_container = st.container()
