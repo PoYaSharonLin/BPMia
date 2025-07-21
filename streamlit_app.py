@@ -21,13 +21,13 @@ class OrchestratorAgent:
     def _setup_llm(self):
         self.assistant = LLMSetup.create_assistant(
             system_message=(
-                "'This website helps users get familiar with onboarding"
-                "website allows users to: "
+                "'This website helps you get familiar with onboarding"
+                "website allows you to: "
                 "1. Understand organization stakeholders using Chat with Notes, and "
                 "2. Get to know with the company using notes with Chat with Notes.' "
                 "If the user does not know where to start with,"
-                "Recommend user to start uploading the notes and try out the agents"
-                "Answer all user questions in a concise and helpful."
+                "Recommend you to start uploading the notes and try out the agents"
+                "Answer all your questions in a concise and helpful. Do not wrap the reply in ****"
             ),
             api_key=self.gemini1_api_key,
         )
