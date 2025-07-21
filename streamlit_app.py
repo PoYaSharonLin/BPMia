@@ -114,6 +114,7 @@ class OrchestratorAgent:
                         st.session_state.messages.append({"role": "user", "content": prompt})
                         history = self.generate_response(prompt)
                         self.show_chat_history(history, chat_container)
+                        st.rerun()
 
         # Prompt input
         if prompt := st.chat_input(
