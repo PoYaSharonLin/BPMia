@@ -284,7 +284,7 @@ class ChatManager:
         if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
             # Show user prompt immediately
             chat_container.chat_message(
-                "user", avatar="🧠").write(f"*System prompted:* {prompt}")
+                "user", avatar="🧠").write({prompt})
             # Save immediately to session
             st.session_state.rag_messages.append({
                 "role": "user_proxy",
