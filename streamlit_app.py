@@ -105,7 +105,7 @@ class OrchestratorAgent:
             recommended_prompts = [
                 "What is this website for?",
                 "Where should I start?",
-                "How do I draft a formal email?",
+                "How to write en email to my manager?",
             ]
             
             # Create one column per prompt
