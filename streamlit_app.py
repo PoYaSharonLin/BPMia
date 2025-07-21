@@ -98,23 +98,21 @@ class OrchestratorAgent:
         if "conversation_started" not in st.session_state: 
             st.session_state.conversation_started = False
         
-        # Recommended prompts
-        recommended_prompts = [
-            "What is this website for?",
-            "Where should I start?",
-            "How do I draft a formal email?",
-        ]
-
         
-        if not st.session_state.conversation_started:
-            with st.dialog("💡 Recommended Prompts to Start With"): 
-                for prompt in recommended_prompts:
-                    if st.button(prompt, key=prompt):
-                        st.session_state.conversation_started = True
-                        st.session_state.messages.append({"role": "user", "content": prompt})
-                        history = self.generate_response(prompt)
-                        self.show_chat_history(history, chat_container)
-
+        @st.dialog("💡 Recommended Prompts")
+        def show_recommended_prompts():
+            st.write("Choose a question to get started:")
+            recommended_prompts = [
+                "What is this website for?",
+                "Where should I start?",
+                "How do I draft a formal email?",
+            ]
+            for prompt in recommended_prompts:
+                if st.button(prompt, key=f"dialog_{prompt}"):
+                    st.session_state.conversation_started = True
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    st.session_state.selected_prompt = prompt  # Store for processing after rerun
+                    st.rerun()
 
         # Prompt input
         if prompt := st.chat_input(
