@@ -47,11 +47,3 @@ class LLMSetup:
             code_execution_config=False,
             is_termination_msg=is_termination_msg,
         )
-    @staticmethod
-    def initiate_chat(self, recipient, message, chat_history=None):
-        """
-        Initiate a chat with optional chat history.
-        """
-        if chat_history:
-            self._chat_history = chat_history  # Inject custom history
-        return super().initiate_chat(recipient=recipient, message=message)
