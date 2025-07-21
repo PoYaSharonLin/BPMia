@@ -105,16 +105,23 @@ class OrchestratorAgent:
             "How do I draft a formal email?",
         ]
 
-        # Show recommended prompts only if conversation hasn't started
+        
         if not st.session_state.conversation_started:
-            with st.expander("💡 Recommended Prompts", expanded=True):
-                for prompt in recommended_prompts:
-                    if st.button(prompt, key=prompt):
-                        st.session_state.conversation_started = True
-                        st.session_state.messages.append({"role": "user", "content": prompt})
-                        history = self.generate_response(prompt)
-                        self.show_chat_history(history, chat_container)
-                        st.rerun()  # Refresh to hide prompts
+            with st.expander("💡 Recommended Prompts", expanded=True): 
+                if st.button(prompt, key=prompt):
+                    st.session_state.conversation_started = True
+                    st.session_state.messages.append({"role": "user", "content": prompt})
+                    history = self.generate_response(prompt)
+
+        # Prompt input
+        if prompt := st.chat_input(
+                placeholder=self.placeholderstr, key="chat_bot"):
+            st.session_state.conversation_started = True
+            st.session_state.messages.append(
+                {"role": "user", "content": prompt}
+            )
+            history = self.generate_response(prompt)
+            self.show_chat_history(history, chat_container)
 
 
 if __name__ == "__main__":
