@@ -8,6 +8,16 @@ from typing import Dict, List  # type: ignore
 from utils.ui_helper import UIHelper
 from utils.llm_setup import LLMSetup   # type: ignore
 
+# Dialog to update USER_NAME
+if "show_dialog" not in st.session_state:
+    st.session_state.show_dialog = True
+
+if st.session_state.show_dialog:
+    with st.dialog("Enter Department Name"):
+        name_input = st.text_input("Department Name", Config.USER_NAME)
+        if st.button("Confirm"):
+            Config.USER_NAME = name_input
+            st.session_state.show_dialog = False
 
 class Config:
     """Configuration class for API keys and constants."""
@@ -15,18 +25,6 @@ class Config:
     
     # Default value
     USER_NAME = "On-Boarding Mentor"
-
-    # Dialog to update USER_NAME
-    if "show_dialog" not in st.session_state:
-        st.session_state.show_dialog = True
-
-    if st.session_state.show_dialog:
-        with st.dialog("Enter Department Name"):
-            name_input = st.text_input("Department Name", Config.USER_NAME)
-            if st.button("Confirm"):
-                Config.USER_NAME = name_input
-                st.session_state.show_dialog = False
-
     USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
     PLACEHOLDER = "Please input your command"
     SEED = 42
