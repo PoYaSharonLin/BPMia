@@ -12,24 +12,6 @@ from utils.llm_setup import LLMSetup   # type: ignore
 class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
-
-    # Show dialog trigger
-    if "show_dialog" not in st.session_state:
-        st.session_state.show_dialog = True
-    
-    # Define the dialog
-    @st.dialog("Enter Department Name")
-    def name_dialog():
-        name_input = st.text_input("Department Name", USER_NAME)
-        if st.button("Confirm"):
-            USER_NAME = name_input
-            st.session_state.show_dialog = False
-            st.rerun()
-    
-    # Show the dialog
-    if st.session_state.show_dialog:
-        name_dialog()
-    
     USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
     PLACEHOLDER = "Please input your command"
     SEED = 42
@@ -247,10 +229,29 @@ class ChatManager:
 
 
     def run(self):
+        # Initialize session state
+        if "user_name" not in st.session_state:
+            st.session_state.user_name = Config.USER_NAME
+        if "show_dialog" not in st.session_state:
+            st.session_state.show_dialog = True
+        
+        # Dialog to update user name
+        @st.dialog("Enter Department Name")
+        def name_dialog():
+            name_input = st.text_input("Department Name", st.session_state.user_name)
+            if st.button("Confirm"):
+                st.session_state.user_name = name_input
+                st.session_state.show_dialog = False
+                st.rerun()
+        
+        # Show dialog if triggered
+        if st.session_state.show_dialog:
+            name_dialog()
+
         col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
         with col1:
-            st.title(f"💬 {Config.USER_NAME}")
+            st.title(f"💬 {session_state.user_name}")
 
         with col2:
             st.write(" ")
