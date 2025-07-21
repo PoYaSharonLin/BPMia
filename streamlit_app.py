@@ -107,7 +107,7 @@ class OrchestratorAgent:
 
         
         if not st.session_state.conversation_started:
-            with st.dialog("💡 Recommended Prompts", expanded=True): 
+            with st.dialog("💡 Recommended Prompts to Start With"): 
                 for prompt in recommended_prompts:
                     if st.button(prompt, key=prompt):
                         st.session_state.conversation_started = True
