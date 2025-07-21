@@ -23,7 +23,7 @@ class Config:
     # Define the dialog
     @st.dialog("Enter Department Name")
     def name_dialog():
-        name_input = st.text_input("Department Name", Config.USER_NAME)
+        name_input = st.text_input("Department Name", USER_NAME)
         if st.button("Confirm"):
             USER_NAME = name_input
             st.session_state.show_dialog = False
