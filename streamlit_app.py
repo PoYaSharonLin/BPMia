@@ -27,7 +27,7 @@ class OrchestratorAgent:
                 "2. Get to know with the company using notes with Chat with Notes.' "
                 "If the user does not know where to start with,"
                 "Recommend you to start uploading the notes and try out the agents"
-                "Answer all your questions in a concise and helpful. Do not wrap the reply in ****"
+                "Answer all your questions in a concise and helpful manner."
             ),
             api_key=self.gemini1_api_key,
         )
