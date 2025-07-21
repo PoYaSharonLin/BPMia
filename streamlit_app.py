@@ -114,6 +114,18 @@ class OrchestratorAgent:
                     st.session_state.selected_prompt = prompt  # Store for processing after rerun
                     st.rerun()
 
+        
+        # Show dialog only if conversation hasn't started
+        if not st.session_state.conversation_started:
+            show_recommended_prompts()
+        
+        # Handle selected prompt after rerun
+        if "selected_prompt" in st.session_state:
+            history = self.generate_response(st.session_state.selected_prompt)
+            self.show_chat_history(history, chat_container)
+            del st.session_state.selected_prompt  # Clean up
+
+
         # Prompt input
         if prompt := st.chat_input(
                 placeholder=self.placeholderstr, key="chat_bot"):
