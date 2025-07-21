@@ -103,8 +103,8 @@ class OrchestratorAgent:
         def show_recommended_prompts():
             st.write("Choose a question to get started:")
             recommended_prompts = [
-                "What is this website for?",
-                "Where should I start?",
+                "What is this website for? \n",
+                "Where should I start? \n",
                 "How to write en email to my manager?",
             ]
             
