@@ -233,7 +233,7 @@ class ChatManager:
         col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
         with col1:
-            st.title(f"💬 {session_state.user_name}")
+            st.title(f"💬 {st.session_state.user_name}")
 
         with col2:
             st.write(" ")
