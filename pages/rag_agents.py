@@ -12,9 +12,6 @@ from utils.llm_setup import LLMSetup   # type: ignore
 class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
-    
-    # Default value
-    USER_NAME = "On-Boarding Mentor"
 
     # Show dialog trigger
     if "show_dialog" not in st.session_state:
