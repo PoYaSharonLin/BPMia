@@ -103,9 +103,9 @@ class OrchestratorAgent:
         def show_recommended_prompts():
             st.write("Choose a question to get started:")
             recommended_prompts = [
-                "What is this website for? \n",
-                "Where should I start? \n",
-                "How to write en email to my manager?",
+                "What is this On-boarding website for?",
+                "Where should I start with using this?",
+                "Help me write email to my manager",
             ]
             
             # Create one column per prompt
