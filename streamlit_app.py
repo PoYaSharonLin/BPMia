@@ -108,10 +108,11 @@ class OrchestratorAgent:
         
         if not st.session_state.conversation_started:
             with st.expander("💡 Recommended Prompts", expanded=True): 
-                if st.button(prompt, key=prompt):
-                    st.session_state.conversation_started = True
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                    history = self.generate_response(prompt)
+                for prompt in recommended_prompts:
+                    if st.button(prompt, key=prompt):
+                        st.session_state.conversation_started = True
+                        st.session_state.messages.append({"role": "user", "content": prompt})
+                        history = self.generate_response(prompt)
 
         # Prompt input
         if prompt := st.chat_input(
