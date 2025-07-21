@@ -25,7 +25,7 @@ class Config:
     def name_dialog():
         name_input = st.text_input("Department Name", Config.USER_NAME)
         if st.button("Confirm"):
-            Config.USER_NAME = name_input
+            USER_NAME = name_input
             st.session_state.show_dialog = False
             st.rerun()
     
