@@ -7,7 +7,7 @@ from utils.llm_setup import LLMSetup  # type: ignore
 
 class OrchestratorAgent:
     def __init__(self):
-        self.user_name = "OMT Project Management Office, Business Planning"
+        self.user_name = "Default: On-boarding Mentor"
         self.assistant_avatar = "🧠"
         self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
         self.placeholderstr = "Chat with On-boarding Mentor to start on-boarding"
@@ -27,7 +27,7 @@ class OrchestratorAgent:
                 "2. Get to know with the company using notes with Chat with Notes.' "
                 "If the user does not know where to start with,"
                 "Recommend you to start uploading the notes and try out the agents"
-                "Answer all your questions in a concise and helpful manner."
+                "Answer all your questions in a concise."
             ),
             api_key=self.gemini1_api_key,
         )
@@ -63,7 +63,7 @@ class OrchestratorAgent:
             if role in ["user", "user_proxy"]:
                 container.chat_message(
                     "user", avatar=self.user_avatar
-                ).markdown(f"**{content}**")
+                ).markdown(content)
             else:
                 container.chat_message(
                     "assistant", avatar=self.assistant_avatar
