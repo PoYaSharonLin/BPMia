@@ -107,14 +107,18 @@ class OrchestratorAgent:
                 "Where should I start?",
                 "How do I draft a formal email?",
             ]
-            for prompt in recommended_prompts:
-                if st.button(prompt, key=f"dialog_{prompt}"):
-                    st.session_state.conversation_started = True
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                    st.session_state.selected_prompt = prompt  # Store for processing after rerun
-                    st.rerun()
-
+            
+            # Create one column per prompt
+            cols = st.columns(len(recommended_prompts))
         
+            for col, prompt in zip(cols, recommended_prompts):
+                with col:
+                    if st.button(prompt, key=f"dialog_{prompt}"):
+                        st.session_state.conversation_started = True
+                        st.session_state.messages.append({"role": "user", "content": prompt})
+                        st.session_state.selected_prompt = prompt
+                        st.rerun()
+
         # Show dialog only if conversation hasn't started
         if not st.session_state.conversation_started:
             show_recommended_prompts()
