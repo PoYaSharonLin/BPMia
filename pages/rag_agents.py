@@ -230,6 +230,25 @@ class ChatManager:
 
 
     def run(self):
+        # Initialize session state
+        if "user_name" not in st.session_state:
+            st.session_state.user_name = Config.USER_NAME
+        if "show_dialog" not in st.session_state:
+            st.session_state.show_dialog = True
+        
+        # Dialog to update user name
+        @st.dialog("Enter Department Name")
+        def name_dialog():
+            name_input = st.text_input("Department Name", st.session_state.user_name)
+            if st.button("Confirm"):
+                st.session_state.user_name = name_input
+                st.session_state.show_dialog = False
+                st.rerun()
+        
+        # Show dialog if triggered
+        if st.session_state.show_dialog:
+            name_dialog()
+        
         col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
         with col1:
@@ -249,25 +268,6 @@ class ChatManager:
         UIHelper.config_page()
         UIHelper.setup_sidebar()
         chat_manager = ChatManager()
-        
-        # Initialize session state
-        if "user_name" not in st.session_state:
-            st.session_state.user_name = Config.USER_NAME
-        if "show_dialog" not in st.session_state:
-            st.session_state.show_dialog = True
-        
-        # Dialog to update user name
-        @st.dialog("Enter Department Name")
-        def name_dialog():
-            name_input = st.text_input("Department Name", st.session_state.user_name)
-            if st.button("Confirm"):
-                st.session_state.user_name = name_input
-                st.session_state.show_dialog = False
-                st.rerun()
-        
-        # Show dialog if triggered
-        if st.session_state.show_dialog:
-            name_dialog()
         
         # Display existing chat history
         for msg in st.session_state.rag_messages:
