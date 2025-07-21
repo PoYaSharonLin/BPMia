@@ -21,10 +21,12 @@ class OrchestratorAgent:
     def _setup_llm(self):
         self.assistant = LLMSetup.create_assistant(
             system_message=(
-                "'This website helps you get familiar with onboarding"
-                "website allows you to: "
-                "1. Understand organization stakeholders, and "
-                "2. Get to know with the company using notes.' "
+                "'This website helps users get familiar with onboarding"
+                "website allows users to: "
+                "1. Understand organization stakeholders using Chat with Notes, and "
+                "2. Get to know with the company using notes with Chat with Notes.' "
+                "If the user does not know where to start with,"
+                "Recommend user to start uploading the notes and try out the agents"
                 "Answer all user questions in a concise and helpful."
             ),
             api_key=self.gemini1_api_key,
@@ -95,20 +97,25 @@ class OrchestratorAgent:
 
         if "conversation_started" not in st.session_state: 
             st.session_state.conversation_started = False
-
-
-        # Prompt input
-        if prompt := st.chat_input(
-                placeholder=self.placeholderstr, key="chat_bot"):
-            st.session_state.conversation_started = True
-            st.session_state.messages.append(
-                {"role": "user", "content": prompt}
-            )
-            history = self.generate_response(prompt)
-            self.show_chat_history(history, chat_container)
-
-
         
+        # Recommended prompts
+        recommended_prompts = [
+            "What is this website for?",
+            "Where should I start?",
+            "How do I draft a formal email?",
+        ]
+
+        # Show recommended prompts only if conversation hasn't started
+        if not st.session_state.conversation_started:
+            with st.expander("💡 Recommended Prompts", expanded=True):
+                for prompt in recommended_prompts:
+                    if st.button(prompt, key=prompt):
+                        st.session_state.conversation_started = True
+                        st.session_state.messages.append({"role": "user", "content": prompt})
+                        history = self.generate_response(prompt)
+                        self.show_chat_history(history, chat_container)
+                        st.rerun()  # Refresh to hide prompts
+
 
 if __name__ == "__main__":
     orchestrator = OrchestratorAgent()
