@@ -12,6 +12,7 @@ from utils.llm_setup import LLMSetup   # type: ignore
 class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
+    USER_NAME = "Default: On-boarding Mentor"
     USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
     PLACEHOLDER = "Please input your command"
     SEED = 42
