@@ -13,7 +13,6 @@ class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
     USER_NAME = "Default: On-boarding Mentor"
-    USER_IMAGE = "https://www.w3schools.com/howto/img_avatar.png"
     PLACEHOLDER = "Please input your command"
     SEED = 42
     ORG_KEYWORDS = ["org", "organization", "structure",
@@ -33,7 +32,7 @@ class Config:
 class DocumentLoader:
     """Handles loading of markdown documents from specified directories."""
     @staticmethod
-    def load_documents() -> Dict[str, Dict[str, str]]:
+    def load_documents():
         base_dirs = {
             "personal": "uploaded_docs/personal",
             "org": "uploaded_docs/org"
@@ -60,7 +59,7 @@ class MermaidExtractor:
 class AgentFactory:
     """Creates and configures autogen agents."""
     @staticmethod
-    def create_graph_agent() -> ConversableAgent:
+    def create_graph_agent():
         return ConversableAgent(
             name="GraphRAG_Agent",
             system_message="You are a GraphRAG Agent specializing "
@@ -74,7 +73,7 @@ class AgentFactory:
         )
 
     @staticmethod
-    def create_text_agent() -> ConversableAgent:
+    def create_text_agent():
         return ConversableAgent(
             name="TextRAG_Agent",
             system_message="You are a TextRAG Agent designed to"
@@ -90,7 +89,7 @@ class AgentFactory:
         )
 
     @staticmethod
-    def create_user_proxy() -> UserProxyAgent:
+    def create_user_proxy():
         return LLMSetup.create_user_proxy(
             is_termination_msg=lambda x: any(
                 phrase in content_str(x.get("content", "")).lower()
@@ -108,12 +107,7 @@ class ChatManager:
         self.assistant_avatar = "🧠"
         self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
 
-    def stream_response(self, text: str):
-        for word in text.split():
-            yield word + " "
-            time.sleep(0.03)
-
-    def generate_response(self, prompt: str) -> List[Dict]:
+    def generate_response(self, prompt):
         docs = DocumentLoader.load_documents()
         prompt_lower = prompt.lower()
         is_org_related = any(keyword in prompt_lower for
@@ -177,7 +171,7 @@ class ChatManager:
         return filtered_history
 
     def show_chat_history(self, chat_history, container):
-        for i, entry in enumerate(chat_history):
+        for entry in chat_history:
             role = entry.get("role")
             content = entry.get("content", "").strip()
             if not content:
@@ -191,14 +185,7 @@ class ChatManager:
                 container.chat_message(
                     "user", avatar=self.user_avatar
                 ).markdown(content)
-
-            # # Handle agent responses
-            # elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-            #     with container.chat_message("user", avatar=self.user_avatar):
-            #         if i == len(chat_history) - 1:
-            #             st.write_stream(self.stream_response(content))
-            #         else:
-            #             st.markdown(content)  # Older replies render instantly
+            
             else:
                 container.chat_message(
                     "assistant", avatar=self.assistant_avatar
