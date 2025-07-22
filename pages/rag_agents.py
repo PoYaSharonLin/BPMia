@@ -292,16 +292,15 @@ class ChatManager:
         if "rag_selected_prompt" in st.session_state: 
             history = self.generate_response(st.session_state.rag_selected_prompt)
             self.show_chat_history(history, chat_container)
+            del st.session_state.rag_selected_prompt  # Clean up
         
     
-        if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
-            chat_container.chat_message(
-                "user", avatar="🧠").write({prompt})
-            # Save immediately to session
+        if prompt := st.chat_input(
+                placeholder=Config.PLACEHOLDER, key="chat_bot"):
+            st.session_state.first_conversation = False
             st.session_state.rag_messages.append(
                 {"role": "user", "content": prompt}
             )
-    
             history = chat_manager.generate_response(prompt)
             chat_manager.show_chat_history(history, chat_container)
 
