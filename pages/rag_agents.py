@@ -178,10 +178,13 @@ class ChatManager:
 
     def show_chat_history(self, chat_history, container):
         for i, entry in enumerate(chat_history):
-            role = entry.get("role", "assistant")
+            role = entry.get("role")
             content = entry.get("content", "").strip()
             if not content:
                 continue
+
+            st.session_state.rag_messages.append(
+                {"role": role, "content": content})
 
             # 🧠 for user input, avatar icon for assistant
             if role in ["user", "user_proxy"]:
@@ -189,32 +192,17 @@ class ChatManager:
                     "user", avatar=self.user_avatar
                 ).markdown(content)
 
-            # else:
-            #     container.chat_message(
-            #         "assistant", avatar=self.assistant_avatar
-            #     ).markdown(content)
-
-            # Handle agent responses
-            elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-                with container.chat_message("user", avatar=self.user_avatar):
-                    if i == len(chat_history) - 1:
-                        st.write_stream(self.stream_response(content))
-                    else:
-                        st.markdown(content)  # Older replies render instantly
+            # # Handle agent responses
+            # elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
+            #     with container.chat_message("user", avatar=self.user_avatar):
+            #         if i == len(chat_history) - 1:
+            #             st.write_stream(self.stream_response(content))
+            #         else:
+            #             st.markdown(content)  # Older replies render instantly
             else:
                 with container.chat_message(
                     "assistant", avatar=self.assistant_avatar
-                ):
-                    if i == len(chat_history) - 1:
-                        st.write_stream(self.stream_response(content))
-                    else:
-                        st.markdown(content)
-
-    
-    def stream_data(stream_str: str):
-        for word in stream_str.split(" "):
-            yield word + " "
-            time.sleep(0.05)
+                ).markdown(content)
 
 
     def run(self):
