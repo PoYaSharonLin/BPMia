@@ -236,10 +236,26 @@ class ChatManager:
         if "show_dialog" not in st.session_state:
             st.session_state.show_dialog = True
         
-        # Dialog to update user name
+        # Dialog to update user name & show recommended prompts 
         @st.dialog("Enter Department Name")
         def name_dialog():
             name_input = st.text_input("Department Name", st.session_state.user_name)
+            st.write("Choose a question to get started:")
+            recommended_prompts = [
+                "What is this On-boarding website for?",
+                "Where should I start with using this?",
+                "Help me write email to my manager",
+            ]
+
+            # Create one column per prompt 
+            cols = st.columns(len(recommended_prompts))
+
+            for col, prompt in zip(cols, recommended_prompts):
+                with col: 
+                    if st.button(prompt, key=f"dialog_{prompt}"):
+                        st.session_state.messages.append({"role": "user", "content": prompt})
+                        st.session_state.selected_prompt = prompt 
+            
             if st.button("Confirm"):
                 st.session_state.user_name = name_input
                 st.session_state.show_dialog = False
