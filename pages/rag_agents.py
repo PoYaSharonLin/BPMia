@@ -265,6 +265,7 @@ class ChatManager:
                 {"role": "user", "content": prompt}
             )
             history = chat_manager.generate_response(prompt)
+            st.session_state.rag_messages.extend(history)
             chat_manager.show_chat_history(history, chat_container)
 
 
