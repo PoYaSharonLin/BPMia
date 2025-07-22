@@ -200,7 +200,7 @@ class ChatManager:
             #         else:
             #             st.markdown(content)  # Older replies render instantly
             else:
-                with container.chat_message(
+                container.chat_message(
                     "assistant", avatar=self.assistant_avatar
                 ).markdown(content)
 
