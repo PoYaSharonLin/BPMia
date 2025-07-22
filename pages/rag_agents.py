@@ -230,6 +230,15 @@ class ChatManager:
 
 
     def run(self):
+        # Initialize messages & flags 
+        if "user_name" not in st.session_state:
+            st.session_state.user_name = Config.USER_NAME
+        if "rag_messages" not in st.session_state:
+            st.session_state.rag_messages = []
+        if "first_conversation" not in st.session_state: 
+            st.session_state.first_conversation = True
+
+        # Define UI
         col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
         with col1:
@@ -250,13 +259,6 @@ class ChatManager:
         chat_container = st.container()
         chat_manager = ChatManager()
         
-        # Initialize messages & flags 
-        if "user_name" not in st.session_state:
-            st.session_state.user_name = Config.USER_NAME
-        if "rag_messages" not in st.session_state:
-            st.session_state.rag_messages = []
-        if "first_conversation" not in st.session_state: 
-            st.session_state.first_conversation = True
         
         # Dialog to update user name & show recommended prompts 
         @st.dialog("Enter Department Name")
