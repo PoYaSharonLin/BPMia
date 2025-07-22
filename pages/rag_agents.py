@@ -230,43 +230,6 @@ class ChatManager:
 
 
     def run(self):
-        # Initialize session state
-        if "user_name" not in st.session_state:
-            st.session_state.user_name = Config.USER_NAME
-        if "show_dialog" not in st.session_state:
-            st.session_state.show_dialog = True
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-        
-        # Dialog to update user name & show recommended prompts 
-        @st.dialog("Enter Department Name")
-        def name_dialog():
-            name_input = st.text_input("Department Name", st.session_state.user_name)
-            st.write("Choose a question to get started:")
-            recommended_prompts = [
-                "What is this On-boarding website for?",
-                "Where should I start with using this?",
-                "Help me write email to my manager",
-            ]
-
-            # Create one column per prompt 
-            cols = st.columns(len(recommended_prompts))
-
-            for col, prompt in zip(cols, recommended_prompts):
-                with col: 
-                    if st.button(prompt, key=f"dialog_{prompt}"):
-                        st.session_state.messages.append({"role": "user", "content": prompt})
-                        st.session_state.selected_prompt = prompt 
-            
-            if st.button("Confirm"):
-                st.session_state.user_name = name_input
-                st.session_state.show_dialog = False
-                st.rerun()
-        
-        # Show dialog if triggered
-        if st.session_state.show_dialog:
-            name_dialog()
-        
         col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
         with col1:
@@ -282,37 +245,63 @@ class ChatManager:
         st.write("Feeling a bit overload with the incoming information? This is where you can chat with the notes.")
         st.write("Chat with the notes to understand the terminologies and stakeholders involved.")
         st.write("Agent at this page answers specifically about notes. For general purpose support, please visit :blue-background[Home].")
-        chat_container = st.container()
         UIHelper.config_page()
         UIHelper.setup_sidebar()
+        chat_container = st.container()
         chat_manager = ChatManager()
         
-        # Display existing chat history
-        for msg in st.session_state.rag_messages:
-            role = msg.get("role", "assistant")
-            content = msg.get("content", "")
-            avatar = msg.get("avatar", "👩‍💼")
-    
-            if role in ["user", "user_proxy"]:
-                chat_container.chat_message("user", avatar=avatar).markdown(content)
-            else:
-                chat_container.chat_message(
-                    "assistant", avatar=avatar).markdown(content)
+        # Initialize messages & flags 
+        if "user_name" not in st.session_state:
+            st.session_state.user_name = Config.USER_NAME
+        if "rag_messages" not in st.session_state:
+            st.session_state.rag_messages = []
+        if "first_conversation" not in st.session_state: 
+            st.session_state.first_conversation = True
+        
+        # Dialog to update user name & show recommended prompts 
+        @st.dialog("Enter Department Name")
+        def name_dialog():
+            name_input = st.text_input("Department Name", st.session_state.user_name)
+            st.write("Choose a question to get started:")
+            rag_recommended_prompts = [
+                "What is this On-boarding website for?",
+                "Where should I start with using this?",
+                "Help me write email to my manager",
+            ]
+
+            cols = st.columns(len(rag_recommended_prompts))
+            for col, prompt in zip(cols, rag_recommended_prompts):
+                with col: 
+                    if st.button(prompt, key=f"dialog_{prompt}"):
+                        st.session_state.first_conversation = False
+                        st.session_state.rag_messages.append({"role": "user", "content": prompt})
+                        st.session_state.rag_selected_prompt = prompt 
+                        st.rerun()
+            
+            if st.button("Confirm"):
+                st.session_state.user_name = name_input
+                st.rerun()
+        
+        # Show dialog only if it is the first conversation
+        if st.session_state.first_conversation:
+            name_dialog()
+
+        # Handle selected prompt after rerun 
+        if "selected_prompt" in st.session_state: 
+            history = self.generate_response(st.session_state.selected_prompt)
+            self.show_chat_history(history, chat_container)
+        
     
         if prompt := st.chat_input(placeholder=Config.PLACEHOLDER, key="chat_bot"):
-            # Show user prompt immediately
             chat_container.chat_message(
                 "user", avatar="🧠").write({prompt})
             # Save immediately to session
-            st.session_state.rag_messages.append({
-                "role": "user_proxy",
-                "content": prompt,
-                "avatar": "🧠"
-            })
+            st.session_state.rag_messages.append(
+                {"role": "user", "content": prompt}
+            )
     
-            # Then generate and stream the assistant response
-            response = chat_manager.generate_response(prompt)
-            chat_manager.show_chat_history(response, chat_container)
+            history = chat_manager.generate_response(prompt)
+            chat_manager.show_chat_history(history, chat_container)
 
 
 if __name__ == "__main__":
