@@ -235,6 +235,8 @@ class ChatManager:
             st.session_state.user_name = Config.USER_NAME
         if "show_dialog" not in st.session_state:
             st.session_state.show_dialog = True
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
         
         # Dialog to update user name & show recommended prompts 
         @st.dialog("Enter Department Name")
