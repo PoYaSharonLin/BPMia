@@ -105,18 +105,8 @@ class ChatManager:
         self.graph_agent = AgentFactory.create_graph_agent()
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
-        if 'rag_messages' not in st.session_state:
-            st.session_state.rag_messages = []
-
-    def _get_avatar(self, role: str) -> str:
-        if role == "user_proxy":
-            return "🧠"
-        elif role == "user":
-            return "👩‍💼"
-        elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-            return "👩‍💼"
-        else:
-            return Config.USER_IMAGE
+        self.assistant_avatar = "🧠"
+        self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
 
     def stream_response(self, text: str):
         for word in text.split():
@@ -186,7 +176,7 @@ class ChatManager:
         ]
         return filtered_history
 
-    def show_chat_history(self, chat_history: List[Dict], container) -> None:
+    def show_chat_history(self, chat_history, container):
         for i, entry in enumerate(chat_history):
             role = entry.get("role", "assistant")
             content = entry.get("content", "").strip()
@@ -194,28 +184,30 @@ class ChatManager:
                 continue
 
             avatar = self._get_avatar(role)
-            st.session_state.rag_messages.append({"role": role,
-                                                  "content": content,
-                                                  "avatar": avatar})
+            st.session_state.rag_messages.append(
+                {"role": role, "content": content})
 
-            # Handle user input
-            if role == "user_proxy":
+            # 🧠 for user input, avatar icon for assistant
+            if role in ["user", "user_proxy"]:
                 container.chat_message(
-                    "user", avatar="🧠").write(f"*System prompted:* {content}")
-            elif role == "user":
-                container.chat_message(
-                    "user", avatar="👩‍💼").write(content)
+                    "user", avatar=self.user_avatar
+                ).markdown(content)
+
+            # else:
+            #     container.chat_message(
+            #         "assistant", avatar=self.assistant_avatar
+            #     ).markdown(content)
 
             # Handle agent responses
             elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-                with container.chat_message("assistant", avatar="👩‍💼"):
+                with container.chat_message("user", avatar=self.user_avatar):
                     if i == len(chat_history) - 1:
                         st.write_stream(self.stream_response(content))
                     else:
                         st.markdown(content)  # Older replies render instantly
             else:
                 with container.chat_message(
-                    "assistant", avatar=Config.USER_IMAGE
+                    "assistant", avatar=self.assistant_avatar
                 ):
                     if i == len(chat_history) - 1:
                         st.write_stream(self.stream_response(content))
