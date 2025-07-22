@@ -183,10 +183,6 @@ class ChatManager:
             if not content:
                 continue
 
-            avatar = self._get_avatar(role)
-            st.session_state.rag_messages.append(
-                {"role": role, "content": content})
-
             # 🧠 for user input, avatar icon for assistant
             if role in ["user", "user_proxy"]:
                 container.chat_message(
