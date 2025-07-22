@@ -287,8 +287,8 @@ class ChatManager:
             name_dialog()
 
         # Handle selected prompt after rerun 
-        if "selected_prompt" in st.session_state: 
-            history = self.generate_response(st.session_state.selected_prompt)
+        if "rag_selected_prompt" in st.session_state: 
+            history = self.generate_response(st.session_state.rag_selected_prompt)
             self.show_chat_history(history, chat_container)
         
     
