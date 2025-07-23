@@ -37,11 +37,6 @@ class OrchestratorAgent:
             )
         )
 
-    def stream_data(self, stream_str):
-        for word in stream_str.split(" "):
-            yield word + " "
-            time.sleep(0.05)
-
     def generate_response(self, prompt):
         result = self.user_proxy.initiate_chat(
             recipient=self.assistant,
