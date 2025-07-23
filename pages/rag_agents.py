@@ -229,9 +229,9 @@ class ChatManager:
             name_input = st.text_input("Department Name", st.session_state.user_name)
             st.write("Choose a question to get started:")
             rag_recommended_prompts = [
-                "What is this On-boarding website for?",
-                "Where should I start with using this?",
-                "Help me write email to my manager",
+                "What are some import portals or aliases?",
+                "What is the organization structure like?",
+                "What are required for taking a sick leave?",
             ]
 
             cols = st.columns(len(rag_recommended_prompts))
