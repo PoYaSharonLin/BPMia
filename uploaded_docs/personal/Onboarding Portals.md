@@ -1,8 +1,6 @@
 # OBM Onboarding Portals
 **Date:** 2025-07-23  
-**Tags:** [Onboarding, HR, Facilities, Finance, IT]  
-**Related To:** [Sophie Lin – HR Manager, Kevin Yu – Workplace Services, Emily Wu – Team Lead]  
-
+**Tags:** [Portals, Links, Facilities, Finance, IT]  
 ---
 
 ## Summary  
