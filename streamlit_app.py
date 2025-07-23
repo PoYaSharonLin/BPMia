@@ -52,15 +52,6 @@ class OrchestratorAgent:
         return st.session_state.messages
 
     def show_chat_history(self, chat_history, container):
-        for entry in chat_history:
-            role = entry.get("role")
-            content = entry.get("content", "").strip()
-            if not content or "ALL DONE" in content:
-                continue
-
-            st.session_state.messages.append(
-                {"role": role, "content": content})
-
             # 🧠 for user input, avatar icon for assistant
             if role in ["user", "user_proxy"]:
                 container.chat_message(
