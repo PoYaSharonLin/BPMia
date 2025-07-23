@@ -231,7 +231,7 @@ class ChatManager:
             rag_recommended_prompts = [
                 "What are some import portals or aliases?",
                 "What is the organization structure like?",
-                "What are required for taking a sick leave?",
+                "What are required for a sick leave?",
             ]
 
             cols = st.columns(len(rag_recommended_prompts))
