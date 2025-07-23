@@ -46,25 +46,25 @@ class OrchestratorAgent:
         return result.chat_history
 
     def show_chat_history(self, chat_history, container):
-            for entry in chat_history:
-                role = entry.get("role")
-                content = entry.get("content", "").strip()
-                if not content or "ALL DONE" in content:
-                    continue
+        for entry in chat_history:
+            role = entry.get("role")
+            content = entry.get("content", "").strip()
+            if not content or "ALL DONE" in content:
+                continue
 
-            st.session_state.messages.append(
-                {"role": role, "content": content})
+        st.session_state.messages.append(
+            {"role": role, "content": content})
 
-        
-            # 🧠 for user input, avatar icon for assistant
-            if role in ["user", "user_proxy"]:
-                container.chat_message(
-                    "user", avatar=self.user_avatar
-                ).markdown(content)
-            else:
-                container.chat_message(
-                    "assistant", avatar=self.assistant_avatar
-                ).markdown(content)
+    
+        # 🧠 for user input, avatar icon for assistant
+        if role in ["user", "user_proxy"]:
+            container.chat_message(
+                "user", avatar=self.user_avatar
+            ).markdown(content)
+        else:
+            container.chat_message(
+                "assistant", avatar=self.assistant_avatar
+            ).markdown(content)
 
     def run(self):
         # Create two columns: one for the text, one for the button
