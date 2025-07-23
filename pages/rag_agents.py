@@ -229,7 +229,7 @@ class ChatManager:
             name_input = st.text_input("Department Name", st.session_state.user_name)
             st.write("Choose a question to get started:")
             rag_recommended_prompts = [
-                "What are some import portals or aliases?",
+                "What are some import internal portals?",
                 "What is the organization structure like?",
                 "What are required for a sick leave?",
             ]
