@@ -135,9 +135,6 @@ class OrchestratorAgent:
             history = self.generate_response(st.session_state.selected_prompt)
             self.show_chat_history(history, chat_container)
             del st.session_state.selected_prompt  # Clean up
-        
-        if "messages" in st.session_state:
-            self.show_chat_history(st.session_state.messages, chat_container)
 
         # Prompt input
         if prompt := st.chat_input(
