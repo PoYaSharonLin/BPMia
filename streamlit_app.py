@@ -134,6 +134,7 @@ class OrchestratorAgent:
                 {"role": "user", "content": prompt}
             )
             history = self.generate_response(prompt)
+            st.session_state.messages.extend(history)
             self.show_chat_history(history, chat_container)
 
 
