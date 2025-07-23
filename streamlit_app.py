@@ -47,7 +47,14 @@ class OrchestratorAgent:
             recipient=self.assistant,
             message=prompt
         )
-        return result.chat_history
+        for entry in result.chat_history:
+            role = entry.get("role")
+            content = entry.get("content")
+            if not content or "ALL DONE" in content:
+                continue
+            st.session_state.messages.append({"role": role, "content": content})
+
+        return st.session_state.messages
 
     def show_chat_history(self, chat_history, container):
         for entry in chat_history:
@@ -128,7 +135,9 @@ class OrchestratorAgent:
             history = self.generate_response(st.session_state.selected_prompt)
             self.show_chat_history(history, chat_container)
             del st.session_state.selected_prompt  # Clean up
-
+        
+        if "messages" in st.session_state:
+            self.show_chat_history(st.session_state.messages, chat_container)
 
         # Prompt input
         if prompt := st.chat_input(
