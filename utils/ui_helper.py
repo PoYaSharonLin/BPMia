@@ -21,9 +21,7 @@ class UIHelper:
         with st.sidebar:
             # Group under a header for the main app
             st.header("👧 BP Mia")
-            # st.page_link("streamlit_app.py", label="Home", icon="🏠")
-            st.page_link("pages/rag_agents.py",
-                             label="Chat with Notes", icon="📄")
+            st.page_link("streamlit_app.py", label="Home", icon="🏠")
 
             # Group related pages under an expander
             with st.expander("Notes & Actions", expanded=True):
