@@ -168,6 +168,9 @@ class ChatManager:
                 "use the following"
             ])
         ]
+        
+        role = msg.get("role", "assistant") 
+        filtered_history.append({"role": role, "content": content})
         return filtered_history
 
     def show_chat_history(self, chat_history, container):
