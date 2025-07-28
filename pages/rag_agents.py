@@ -105,7 +105,7 @@ class ChatManager:
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
         self.assistant_avatar = "🧠"
-        self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
+        self.user_avatar = "🗣️"
 
     def generate_response(self, prompt):
         docs = DocumentLoader.load_documents()
