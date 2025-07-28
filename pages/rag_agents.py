@@ -230,8 +230,7 @@ class ChatManager:
         
         # Dialog to update user name & show recommended prompts 
         @st.dialog("Enter Department Name")
-        def name_dialog():
-            name_input = st.text_input("Department Name", st.session_state.user_name)
+        def first_dialog():
             st.write("Choose a question to get started:")
             rag_recommended_prompts = [
                 "What are some import internal portals?",
@@ -253,7 +252,7 @@ class ChatManager:
         
         # Show dialog only if it is the first conversation
         if st.session_state.first_conversation:
-            name_dialog()
+            first_dialog()
 
         # Handle selected prompt after rerun 
         if "rag_selected_prompt" in st.session_state: 
