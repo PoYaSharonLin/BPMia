@@ -247,7 +247,6 @@ class ChatManager:
                         st.session_state.rag_selected_prompt = prompt 
             
             if st.button("Confirm"):
-                st.session_state.user_name = name_input
                 st.rerun()
         
         # Show dialog only if it is the first conversation
