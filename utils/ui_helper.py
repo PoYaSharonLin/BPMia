@@ -19,25 +19,24 @@ class UIHelper:
     @staticmethod
     def setup_sidebar():
         with st.sidebar:
-            # Group under a header for the main app
-            st.header("👧 BP Mia")
+            st.header("On-boarding Mentor")
             st.page_link("streamlit_app.py", label="Home", icon="🏠")
 
             # Group related pages under an expander
             with st.expander("Notes & Actions", expanded=True):
-                # st.page_link("pages/rag_agents.py",
-                #              label="Chat with Notes", icon="📄")
+                st.page_link("pages/rag_agents.py",
+                             label="Chat with Notes", icon="📄")
                 st.page_link("pages/documents_upload.py",
                              label="Upload Notes", icon="📁")
                 # st.page_link("pages/action_items.py",
                 #              label="Check Action Items", icon="✅")
-
             selected_lang = st.selectbox(
                 "Language", ["English"],
                 index=0, on_change=UIHelper.save_lang, key="language_select"
             )
             if 'lang_setting' not in st.session_state:
                 st.session_state['lang_setting'] = selected_lang
+
 
     @staticmethod
     def save_lang():
