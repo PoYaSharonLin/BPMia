@@ -160,17 +160,19 @@ class ChatManager:
             )
 
         # Clean history
-        filtered_history = [
-            msg for msg in response.chat_history
-            if not any(keyword in msg.get("content", "").lower()
-                       for keyword in [
+        filtered_history = []
+        for msg in response.chat_history:
+            content = msg.get("content", "").strip()
+            if not content:
+                continue
+            if any(keyword in content.lower() for keyword in [
                 "```mermaid", "# personal", "based on the following",
                 "use the following"
-            ])
-        ]
-        
-        role = msg.get("role", "assistant") 
-        filtered_history.append({"role": role, "content": content})
+            ]):
+                continue
+            role = msg.get("role", "assistant") 
+            filtered_history.append({"role": role, "content": content})
+
         return filtered_history
 
     def show_chat_history(self, chat_history, container):
