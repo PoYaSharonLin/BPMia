@@ -246,7 +246,6 @@ class ChatManager:
                         st.session_state.first_conversation = False
                         st.session_state.rag_messages.append({"role": "user", "content": prompt})
                         st.session_state.rag_selected_prompt = prompt 
-                        st.rerun()
             
             if st.button("Confirm"):
                 st.session_state.user_name = name_input
