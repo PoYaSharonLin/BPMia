@@ -171,20 +171,20 @@ class ChatManager:
         return filtered_history
 
     def show_chat_history(self, chat_history, container):
-        existing_messages = st.session_state.get("rag_messages", [])
-
         for entry in chat_history:
             role = entry.get("role")
             content = entry.get("content", "").strip()
             if not content:
                 continue
             
-            new_message = {"role": role, "content": content}
-            if new_message not in existing_messages:
-                st.session_state.rag_messages.append(new_message)
+            # new_message = {"role": role, "content": content}
+            # if new_message not in existing_messages:
+            #     st.session_state.rag_messages.append(new_message)
 
             if role in ["user", "user_proxy"]:
-                container.chat_message("user", avatar=self.user_avatar).markdown(content)
+                container.chat_message(
+                    "user", avatar=self.user_avatar
+                ).markdown(content)
 
             else:
                 container.chat_message(
@@ -264,8 +264,9 @@ class ChatManager:
             st.session_state.rag_messages.append(
                 {"role": "user", "content": prompt}
             )
-            history = chat_manager.generate_response(prompt)
-            st.session_state.rag_messages.extend(history)
+            response = chat_manager.generate_response(prompt)
+            st.session_state.rag_messages.extend(response)
+            history = st.session_state.get("rag_messages", [])
             chat_manager.show_chat_history(history, chat_container)
 
 
