@@ -186,10 +186,6 @@ class ChatManager:
                 container.chat_message(
                     "user", avatar=self.user_avatar
                 ).markdown(content)
-            elif role == "user_proxy":
-                container.chat_message(
-                    "user_proxy", avatar=self.system_avatar
-                ).markdown(content)
             else:
                 container.chat_message(
                     "assistant", avatar=self.system_avatar
