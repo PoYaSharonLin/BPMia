@@ -104,7 +104,7 @@ class ChatManager:
         self.graph_agent = AgentFactory.create_graph_agent()
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
-        self.assistant_avatar = "🧠"
+        self.system_avatar = "🤖"
         self.user_avatar = "🗣️"
 
     def generate_response(self, prompt):
@@ -181,14 +181,18 @@ class ChatManager:
             # if new_message not in existing_messages:
             #     st.session_state.rag_messages.append(new_message)
 
-            if role in ["user", "user_proxy"]:
+            
+            if role == "user":
                 container.chat_message(
                     "user", avatar=self.user_avatar
                 ).markdown(content)
-
+            elif role == "user_proxy":
+                container.chat_message(
+                    "user_proxy", avatar=self.system_avatar
+                ).markdown(content)
             else:
                 container.chat_message(
-                    "assistant", avatar=self.assistant_avatar
+                    "assistant", avatar=self.system_avatar
                 ).markdown(content)
 
 
