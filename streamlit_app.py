@@ -219,9 +219,8 @@ class ChatManager:
                 st.session_state.clear()
                 st.rerun()
         
-        st.write("Feeling a bit overload with the incoming information? This is where you can chat with the notes.")
-        st.write("Chat with the notes to understand the terminologies and stakeholders involved.")
-        st.write("Agent at this page answers specifically about notes. For general purpose support, please visit :blue-background[Home].")
+        st.write("Want to find the :blue-background[internal link] that you are looking for? Ask BP Mia!")
+        st.write("If you are the new employee, we also have some useful :blue-background[system URL] for you.")
         UIHelper.config_page()
         UIHelper.setup_sidebar()
         chat_container = st.container()
