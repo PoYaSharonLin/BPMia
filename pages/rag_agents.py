@@ -12,6 +12,8 @@ from utils.llm_setup import LLMSetup   # type: ignore
 class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
+    USER_NAME = "👧 BP Mia"
+    PLACEHOLDER = "Please input your command"
     SEED = 42
     ORG_KEYWORDS = ["org", "organization", "structure",
                     "team", "manager", "lead", "report",
@@ -30,7 +32,7 @@ class Config:
 class DocumentLoader:
     """Handles loading of markdown documents from specified directories."""
     @staticmethod
-    def load_documents() -> Dict[str, Dict[str, str]]:
+    def load_documents():
         base_dirs = {
             "personal": "uploaded_docs/personal",
             "org": "uploaded_docs/org"
@@ -57,7 +59,7 @@ class MermaidExtractor:
 class AgentFactory:
     """Creates and configures autogen agents."""
     @staticmethod
-    def create_graph_agent() -> ConversableAgent:
+    def create_graph_agent():
         return ConversableAgent(
             name="GraphRAG_Agent",
             system_message="You are a GraphRAG Agent specializing "
@@ -71,7 +73,7 @@ class AgentFactory:
         )
 
     @staticmethod
-    def create_text_agent() -> ConversableAgent:
+    def create_text_agent():
         return ConversableAgent(
             name="TextRAG_Agent",
             system_message="You are a TextRAG Agent designed to"
@@ -87,7 +89,7 @@ class AgentFactory:
         )
 
     @staticmethod
-    def create_user_proxy() -> UserProxyAgent:
+    def create_user_proxy():
         return LLMSetup.create_user_proxy(
             is_termination_msg=lambda x: any(
                 phrase in content_str(x.get("content", "")).lower()
@@ -102,41 +104,10 @@ class ChatManager:
         self.graph_agent = AgentFactory.create_graph_agent()
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
-        self.user_name = "OMT Project Management Office, Business Planning"
-        self.assistant_avatar = "🧠"
-        self.user_avatar = "https://www.w3schools.com/howto/img_avatar.png"
-        self.placeholderstr = "Chat with On-boarding Mentor to start on-boarding"
-        
-        if 'rag_messages' not in st.session_state:
-            st.session_state.rag_messages = []
+        self.system_avatar = "🤖"
+        self.user_avatar = "🗣️"
 
-    def should_stop(self, chat_history: List[Dict]) -> bool:
-        agent_roles = ["TextRAG_Agent", "GraphRAG_Agent"]
-        last_few = [
-            msg["content"].strip().lower()
-            for msg in chat_history[-3:]
-            if msg["role"] in agent_roles
-        ]
-        generic_phrases = Config.TERMINATION_PHRASES
-        return all(any(generic in resp
-                       for generic in generic_phrases)for resp in last_few)
-
-    def _get_avatar(self, role: str) -> str:
-        if role == "user_proxy":
-            return "🧠"
-        elif role == "user":
-            return "👩‍💼"
-        elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-            return "👩‍💼"
-        else:
-            return Config.USER_IMAGE
-
-    def stream_response(self, text: str):
-        for word in text.split():
-            yield word + " "
-            time.sleep(0.03)
-
-    def generate_response(self, prompt: str) -> List[Dict]:
+    def generate_response(self, prompt):
         docs = DocumentLoader.load_documents()
         prompt_lower = prompt.lower()
         is_org_related = any(keyword in prompt_lower for
@@ -167,12 +138,6 @@ class ChatManager:
                 max_turns=1
             )
 
-            if self.should_stop(response.chat_history):
-                response.chat_history.append({
-                    "role": self.graph_agent.name,
-                    "content": "Ending the chat as "
-                    "no relevant answer can be provided."
-                })
 
         else:
             personal_content = "\n\n".join(
@@ -194,78 +159,117 @@ class ChatManager:
                 max_turns=1
             )
 
-            if self.should_stop(response.chat_history):
-                response.chat_history.append({
-                    "role": self.text_agent.name,
-                    "content": "Ending the chat as no helpful"
-                    "answer can be provided."
-                })
-
         # Clean history
-        filtered_history = [
-            msg for msg in response.chat_history
-            if not any(keyword in msg.get("content", "").lower()
-                       for keyword in [
+        filtered_history = []
+        for msg in response.chat_history:
+            content = msg.get("content", "").strip()
+            if not content:
+                continue
+            if any(keyword in content.lower() for keyword in [
                 "```mermaid", "# personal", "based on the following",
                 "use the following"
-            ])
-        ]
+            ]):
+                continue
+            role = msg.get("role", "assistant") 
+            filtered_history.append({"role": role, "content": content})
+
         return filtered_history
 
-    def show_chat_history(self, chat_history: List[Dict], container) -> None:
-        for i, entry in enumerate(chat_history):
-            role = entry.get("role", "assistant")
+    def show_chat_history(self, chat_history, container):
+        for entry in chat_history:
+            role = entry.get("role")
             content = entry.get("content", "").strip()
             if not content:
                 continue
+            
+            # new_message = {"role": role, "content": content}
+            # if new_message not in existing_messages:
+            #     st.session_state.rag_messages.append(new_message)
 
-            avatar = self._get_avatar(role)
-            st.session_state.rag_messages.append({"role": role,
-                                                  "content": content,
-                                                  "avatar": avatar})
-
-            # Handle user input
-            if role == "user_proxy":
+            
+            if role == "user":
                 container.chat_message(
-                    "user", avatar="🧠").write(f"*System prompted:* {content}")
-            elif role == "user":
-                container.chat_message(
-                    "user", avatar="👩‍💼").write(content)
-
-            # Handle agent responses
-            elif role in ["TextRAG_Agent", "GraphRAG_Agent"]:
-                with container.chat_message("assistant", avatar="👩‍💼"):
-                    if i == len(chat_history) - 1:
-                        st.write_stream(self.stream_response(content))
-                    else:
-                        st.markdown(content)  # Older replies render instantly
+                    "user", avatar=self.user_avatar
+                ).markdown(content)
             else:
-                with container.chat_message(
-                    "assistant", avatar=Config.USER_IMAGE
-                ):
-                    if i == len(chat_history) - 1:
-                        st.write_stream(self.stream_response(content))
-                    else:
-                        st.markdown(content)
+                container.chat_message(
+                    "assistant", avatar=self.system_avatar
+                ).markdown(content)
 
 
-def stream_data(stream_str: str):
-    for word in stream_str.split(" "):
-        yield word + " "
-        time.sleep(0.05)
+    def run(self):
+        # Initialize messages & flags 
+        if "user_name" not in st.session_state:
+            st.session_state.user_name = Config.USER_NAME
+        if "rag_messages" not in st.session_state:
+            st.session_state.rag_messages = []
+        if "first_conversation" not in st.session_state: 
+            st.session_state.first_conversation = True
 
+        # Define UI
+        col1, col2 = st.columns([4, 1])  # Adjust the ratio as needed
 
-def save_lang():
-    st.session_state['lang_setting'] = st.session_state.get("language_select")
+        with col1:
+            st.title(f"💬 {st.session_state.user_name}")
 
+        with col2:
+            st.write(" ")
+            st.write(" ")
+            if st.button("🔄 Restart Session"):
+                st.session_state.clear()
+                st.rerun()
+        
+        st.write("Feeling a bit overload with the incoming information? This is where you can chat with the notes.")
+        st.write("Chat with the notes to understand the terminologies and stakeholders involved.")
+        st.write("Agent at this page answers specifically about notes. For general purpose support, please visit :blue-background[Home].")
+        UIHelper.config_page()
+        UIHelper.setup_sidebar()
+        chat_container = st.container()
+        chat_manager = ChatManager()
+        
+        
+        # Dialog to update user name & show recommended prompts 
+        @st.dialog("Choose a question to get started:")
+        def first_dialog():
+            rag_recommended_prompts = [
+                "Give me Yield & Performance related links",
+                "Where is the working file of loading profile",
+                "Where are some userful aliases in Micron?",
+            ]
 
-def run(self):
-    UIHelper.config_page()
-    UIHelper.setup_sidebar()
-    st.title(f"💬 {user_name}")
-    st_c_chat = st.container(border=True)
-    UIHelper.setup_chat(st_c_chat)
-    chat_manager = ChatManager()
+            cols = st.columns(len(rag_recommended_prompts))
+            for col, prompt in zip(cols, rag_recommended_prompts):
+                with col: 
+                    if st.button(prompt, key=f"dialog_{prompt}"):
+                        st.session_state.first_conversation = False
+                        st.session_state.rag_messages.append({"role": "user", "content": prompt})
+                        st.session_state.rag_selected_prompt = prompt 
+            
+            if st.button("Confirm"):
+                st.rerun()
+        
+        # Show dialog only if it is the first conversation
+        if st.session_state.first_conversation:
+            first_dialog()
+
+        # Handle selected prompt after rerun 
+        if "rag_selected_prompt" in st.session_state: 
+            history = self.generate_response(st.session_state.rag_selected_prompt)
+            self.show_chat_history(history, chat_container)
+            del st.session_state.rag_selected_prompt  # Clean up
+        
+    
+        if prompt := st.chat_input(
+                placeholder=Config.PLACEHOLDER, key="chat_bot"):
+            st.session_state.first_conversation = False
+            st.session_state.rag_messages.append(
+                {"role": "user", "content": prompt}
+            )
+            response = chat_manager.generate_response(prompt)
+            st.session_state.rag_messages.extend(response)
+            history = st.session_state.get("rag_messages", [])
+            chat_manager.show_chat_history(history, chat_container)
+
 
 
 if __name__ == "__main__":

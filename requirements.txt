@@ -17,7 +17,5 @@ pymupdf
 dateparser
 PyPDF2
 
-
-# test
-pytest
-
+# DB 
+pymongo
