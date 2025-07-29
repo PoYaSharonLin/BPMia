@@ -233,7 +233,7 @@ class ChatManager:
             rag_recommended_prompts = [
                 "Give me Yield & Performance related links",
                 "Where is working file of the loading profile?",
-                "What are some useful alias?",
+                "What are some useful aliases in Micron?",
             ]
 
             cols = st.columns(len(rag_recommended_prompts))
