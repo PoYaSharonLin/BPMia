@@ -39,7 +39,13 @@ GEMINI2_API_KEY = "<YOUR API KEY>"
    $ streamlit run streamlit_app.py
    ```
 
-### 05 For Developers 
+### 05 Test the app 
+```bash
+   $ pytest tests/
+```
+
+
+### 06 For Developers 
 
 VS Code Extensions
 

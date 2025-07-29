@@ -12,7 +12,7 @@ from utils.llm_setup import LLMSetup   # type: ignore
 class Config:
     """Configuration class for API keys and constants."""
     GEMINI1_API_KEY, GEMINI2_API_KEY = LLMSetup.load_api_keys()
-    USER_NAME = "Default: On-boarding Mentor"
+    USER_NAME = "👧 BP Mia"
     PLACEHOLDER = "Please input your command"
     SEED = 42
     ORG_KEYWORDS = ["org", "organization", "structure",
@@ -229,13 +229,12 @@ class ChatManager:
         
         
         # Dialog to update user name & show recommended prompts 
-        @st.dialog("Enter Department Name")
+        @st.dialog("Choose a question to get started:")
         def first_dialog():
-            st.write("Choose a question to get started:")
             rag_recommended_prompts = [
-                "What are some import internal portals?",
-                "What is the organization structure like?",
-                "What are required for a sick leave?",
+                "Give me Yield & Performance related links",
+                "Where is the working file of loading profile",
+                "Where are some userful aliases in Micron?",
             ]
 
             cols = st.columns(len(rag_recommended_prompts))
@@ -270,6 +269,7 @@ class ChatManager:
             st.session_state.rag_messages.extend(response)
             history = st.session_state.get("rag_messages", [])
             chat_manager.show_chat_history(history, chat_container)
+
 
 
 if __name__ == "__main__":

@@ -3,11 +3,13 @@ autogen-agentchat
 google-generativeai
 ag2[gemini]
 
+
 # action items 
 flask
 python-dateutil
 watchdog
 markdown2
+dateparser
 
 # word & PDF Processing
 python-docx     
