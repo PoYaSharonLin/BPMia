@@ -19,7 +19,7 @@ class UIHelper:
     @staticmethod
     def setup_sidebar():
         with st.sidebar:
-            st.header("On-boarding Mentor")
+            st.header("OMT PMO BP")
             st.page_link("streamlit_app.py", label="BP Mia", icon="👧")
 
             # Group related pages under an expander
