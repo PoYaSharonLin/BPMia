@@ -228,13 +228,12 @@ class ChatManager:
         
         
         # Dialog to update user name & show recommended prompts 
-        @st.dialog("Enter Department Name")
+        @st.dialog("Choose a question to get started:")
         def first_dialog():
-            st.write("Choose a question to get started:")
             rag_recommended_prompts = [
-                "What are some import internal portals?",
-                "What is the organization structure like?",
-                "What are required for a sick leave?",
+                "Where can I find Yield Performance?",
+                "Where is working file of the loading profile?",
+                "What are some important internal links?",
             ]
 
             cols = st.columns(len(rag_recommended_prompts))
