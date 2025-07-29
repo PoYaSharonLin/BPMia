@@ -20,7 +20,7 @@ class UIHelper:
     def setup_sidebar():
         with st.sidebar:
             st.header("On-boarding Mentor")
-            st.page_link("streamlit_app.py", label="Home", icon="🏠")
+            st.page_link("streamlit_app.py", label="BP Mia", icon="👧")
 
             # Group related pages under an expander
             with st.expander("Notes & Actions", expanded=True):
