@@ -231,9 +231,9 @@ class ChatManager:
         @st.dialog("Choose a question to get started:")
         def first_dialog():
             rag_recommended_prompts = [
-                "Where can I find Yield Performance?",
+                "Give me Yield & Performance related links",
                 "Where is working file of the loading profile?",
-                "What are some important internal links?",
+                "What are some useful alias?",
             ]
 
             cols = st.columns(len(rag_recommended_prompts))
