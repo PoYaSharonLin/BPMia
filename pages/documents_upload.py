@@ -35,6 +35,16 @@ class DocumentUploader:
             return ""
         return upload_dir
 
+    def get_uploaded_files(self, upload_dir: str) -> List[str]:
+        """Return list of markdown files in upload directory."""
+        try:
+            return [f for f in os.listdir(upload_dir) if f.endswith(".md")]
+        except FileNotFoundError:
+            return []
+        except Exception as e:
+            st.error(f"Error listing files: {str(e)}")
+            return []
+
     def display_uploaded_files(self, files: List[str], doc_type: str) -> None:
         st.markdown("---")
         st.markdown(f"### 📁 Uploaded Files in {doc_type}")
@@ -170,6 +180,8 @@ class DocumentUploader:
             upload_dir = self.setup_directories(self.doc_types[doc_type])
             if not upload_dir:
                 return
+                
+            all_files = self.get_uploaded_files(upload_dir)
             
             # File upload section
             st.markdown("---")
@@ -184,7 +196,7 @@ class DocumentUploader:
 
             
             # Display uploaded files with CRUD operations
-            self.display_uploaded_files(uploaded_files, doc_type)
+            self.display_uploaded_files(all_files, doc_type)
             
 
         except Exception as e:
