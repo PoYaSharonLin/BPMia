@@ -1,7 +1,21 @@
 # Portals
 ---
 
+## Frontend 
+
+### Frontend Dashboard (FE Dashboard)
+https://microncorp.sharepoint.com/sites/mfg_GlobalMFG/FEMfg/FESiteOps/SitePages/Home.aspx
+
+### Frontend Discretionary Actual data (FE Discretionary Actual data)
+http://tawfac02:8093/
+
+---
+
 ## Yield & Quality 
+
+### DID Milestone & Information 
+please visit **FY<Year>/<BP Cycle>/DID milestone and information**: 
+https://microncorp.sharepoint.com/sites/OMTBP/Shared%20Documents/Forms/AllItems.aspx
 
 ### NPI PLM schedule
 https://microncorp.sharepoint.com/sites/mfg_F16NPI/SitePages/Home.aspx
@@ -12,25 +26,24 @@ https://microncorp.sharepoint.com/sites/grpTTMCY/KPIMetrics/SitePages/All%20Yiel
 ### Spectek guidance and projection
 https://o2-instance.fs-ose-mfgt1-vip.imfs.micron.com/xWeb-mili/#/?c.Category=Apps&c.Module=Earnings%20Overlay&c.View=Spectek
 
-### DID Milestone & Information 
-please visit **FY<Year>/<BP Cycle>/DID milestone and information**: 
-https://microncorp.sharepoint.com/sites/OMTBP/Shared%20Documents/Forms/AllItems.aspx
 
 ---
 ## WBR 
 
 ### WBR Meeting Slides 
-For WBR meeting slides, please visit **WBR<Year>KPI/FY<Year>** 
+For **WBR meeting slides**, please visit **WBR<Year>KPI/FY<Year>** 
 https://microncorp.sharepoint.com/:f:/r/sites/grpFab16SPMO/OMTKPI/Shared%20Documents/WBR%26KPI/FY25?csf=1&web=1&e=t2PYyN
+For **WBR reports**, please visist the link below: 
+https://microncorp.sharepoint.com/sites/grpFab16SPMO/OMTKPI/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FgrpFab16SPMO%2FOMTKPI%2FShared%20Documents%2FWBR%26KPI%2FFY25&viewid=9e7d6c6f%2Def0c%2D49b2%2D872e%2Dde1291f1ba50
 
-### Meeting follow-ups
+### WBR Meeting follow-ups
 https://microncorp.sharepoint.com/:x:/s/grpFab16SPMO/OMTKPI/EbGg-qpOFN9JjyLup56CKYUB-apzUaS2A1xIy87nEVHbVg?e=Jv3JF2
 
-### Post meeting communication
+### WBR Post meeting communication
 For Post meeting communication, please visit **WBR<Year>KPI/Weekly Business Communication**
 https://microncorp.sharepoint.com/:f:/r/sites/grpFab16SPMO/OMTKPI/Shared%20Documents/WBR%26KPI/Weekly%20Business%20Communication?csf=1&web=1&e=OiKuoU
 
-### Abnormal Events
+### WBR Abnormal Events
 https://microncorp.sharepoint.com/:x:/s/grpFab16SPMO/OMTKPI/ETGh5C-5ScpDjznNTbQ3pTcByBOgcTedhQGQ5boLvDzGfA?e=od8pUI
 
 ---
