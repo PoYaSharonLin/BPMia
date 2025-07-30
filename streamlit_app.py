@@ -172,7 +172,6 @@ class ChatManager:
                 continue
             role = msg.get("role", "assistant") 
             filtered_history.append({"role": role, "content": content})
-
         return filtered_history
 
     def show_chat_history(self, chat_history, container):
@@ -242,32 +241,24 @@ class ChatManager:
                     if st.button(prompt, key=f"dialog_{prompt}"):
                         st.session_state.first_conversation = False
                         st.session_state.rag_messages.append({"role": "user", "content": prompt})
-                        st.session_state.rag_selected_prompt = prompt 
-            
+                        response = self.generate_response(prompt)
+                        st.session_state.rag_messages.extend(response)
+                        
             if st.button("Confirm"):
                 st.rerun()
         
         # Show dialog only if it is the first conversation
         if st.session_state.first_conversation:
             first_dialog()
-
-        # Handle selected prompt after rerun 
-        if "rag_selected_prompt" in st.session_state: 
-            history = self.generate_response(st.session_state.rag_selected_prompt)
-            self.show_chat_history(history, chat_container)
-            del st.session_state.rag_selected_prompt  # Clean up
-        
     
         if prompt := st.chat_input(
                 placeholder=Config.PLACEHOLDER, key="chat_bot"):
-            st.session_state.first_conversation = False
             st.session_state.rag_messages.append(
                 {"role": "user", "content": prompt}
             )
             response = chat_manager.generate_response(prompt)
             st.session_state.rag_messages.extend(response)
-            history = st.session_state.get("rag_messages", [])
-            chat_manager.show_chat_history(history, chat_container)
+            chat_manager.show_chat_history(st.session_state.rag_messages, chat_container)
 
 
 if __name__ == "__main__":
