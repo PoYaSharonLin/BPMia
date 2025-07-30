@@ -243,6 +243,7 @@ class ChatManager:
                         st.session_state.rag_messages.append({"role": "user", "content": prompt})
                         response = self.generate_response(prompt)
                         st.session_state.rag_messages.extend(response)
+                        self.show_chat_history(st.session_state.rag_messages, chat_container)
                         
             if st.button("Confirm"):
                 st.rerun()
