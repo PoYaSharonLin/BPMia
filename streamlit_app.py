@@ -104,7 +104,7 @@ class ChatManager:
         self.graph_agent = AgentFactory.create_graph_agent()
         self.text_agent = AgentFactory.create_text_agent()
         self.user_proxy = AgentFactory.create_user_proxy()
-        self.system_avatar = "🤖"
+        self.system_avatar = "👧"
         self.user_avatar = "🗣️"
 
     def generate_response(self, prompt):
@@ -158,11 +158,16 @@ class ChatManager:
                 summary_method="reflection_with_llm",
                 max_turns=1
             )
+        
         llm_response = []
         for entry in response.chat_history:
-            content = entry.get("content", "").strip()
-            llm_response.append({"role": "assistant", "content":content})
+            content = entry.get("content", "").strip().lower()
+            if not any(keyword in content for keyword in [
+                "```mermaid", "# personal", "based on the following", "use the following"
+            ]):
+                llm_response.append({"role": "assistant", "content": content})
         return llm_response
+
 
     def show_chat_history(self, chat_history, container):
         for entry in chat_history:
