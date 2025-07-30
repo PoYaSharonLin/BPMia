@@ -172,7 +172,6 @@ class ChatManager:
                 continue
             role = msg.get("role", "assistant") 
             filtered_history.append({"role": role, "content": content})
-
         return filtered_history
 
     def show_chat_history(self, chat_history, container):
@@ -241,7 +240,7 @@ class ChatManager:
                 with col: 
                     if st.button(prompt, key=f"dialog_{prompt}"):
                         st.session_state.first_conversation = False
-                        st.session_state.rag_messages.append({"role": "user", "content": prompt})
+                        st.session_state.rag_messages.append({"role": "assistant", "content": prompt})
                         st.session_state.rag_selected_prompt = prompt 
             
             if st.button("Confirm"):
@@ -255,6 +254,7 @@ class ChatManager:
         if "rag_selected_prompt" in st.session_state: 
             history = self.generate_response(st.session_state.rag_selected_prompt)
             self.show_chat_history(history, chat_container)
+            st.write(history)
             del st.session_state.rag_selected_prompt  # Clean up
         
     
