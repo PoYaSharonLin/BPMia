@@ -158,9 +158,9 @@ class ChatManager:
                 summary_method="reflection_with_llm",
                 max_turns=1
             )
-
         llm_response = []
-        llm_response.append({"role": "assistant", "content":response})
+        content = response.chat_history.get("content", "").strip()
+        llm_response.append({"role": "assistant", "content":content})
         return llm_response
 
     def show_chat_history(self, chat_history, container):
