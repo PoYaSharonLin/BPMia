@@ -159,20 +159,9 @@ class ChatManager:
                 max_turns=1
             )
 
-        # Clean history
-        filtered_history = []
-        for msg in response.chat_history:
-            content = msg.get("content", "").strip()
-            if not content:
-                continue
-            if any(keyword in content.lower() for keyword in [
-                "```mermaid", "# personal", "based on the following",
-                "use the following"
-            ]):
-                continue
-            role = msg.get("role", "assistant") 
-            filtered_history.append({"role": role, "content": content})
-        return filtered_history
+        llm_response = []
+        llm_response.append({"role": "assistant", "content":response})
+        return llm_response
 
     def show_chat_history(self, chat_history, container):
         for entry in chat_history:
@@ -180,11 +169,6 @@ class ChatManager:
             content = entry.get("content", "").strip()
             if not content:
                 continue
-            
-            # new_message = {"role": role, "content": content}
-            # if new_message not in existing_messages:
-            #     st.session_state.rag_messages.append(new_message)
-
             
             if role == "user":
                 container.chat_message(
