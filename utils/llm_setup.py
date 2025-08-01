@@ -16,7 +16,7 @@ class LLMSetup:
     @staticmethod
     def create_llm_config(
         api_key: str,
-        model: str = "gemini-2.0-flash-lite"
+        model: str = "gemini-2.0-flash-lite",
         temperature: 0.3
     ) -> LLMConfig:
         """Return a basic LLMConfig for the given API key."""
