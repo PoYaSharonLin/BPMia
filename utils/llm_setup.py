@@ -17,10 +17,9 @@ class LLMSetup:
     def create_llm_config(
         api_key: str,
         model: str = "gemini-2.0-flash-lite",
-        temperature: 0.3
     ) -> LLMConfig:
         """Return a basic LLMConfig for the given API key."""
-        return LLMConfig(api_type="google", model=model, api_key=api_key, temperature=temperature)
+        return LLMConfig(api_type="google", model=model, api_key=api_key, temperature=0.3)
 
     @staticmethod
     def create_assistant(system_message: str, api_key: str) -> AssistantAgent:
