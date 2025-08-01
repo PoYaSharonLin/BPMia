@@ -6,6 +6,7 @@ from autogen.code_utils import content_str  # type: ignore
 
 class LLMSetup:
     @staticmethod
+    @st.cache_resource
     def load_api_keys():
         """Load API keys from environment and Streamlit secrets."""
         load_dotenv(override=True)
@@ -14,6 +15,7 @@ class LLMSetup:
         return gemini1, gemini2
 
     @staticmethod
+    @st.cache_resource
     def create_llm_config(
         api_key: str,
         model: str = "gemini-2.0-flash-lite"
