@@ -6,7 +6,7 @@ from datetime import datetime
 
 class SQLiteHelper:
     DB_PATH = "data/prompt_cache.db"
-    os.makedirs(os.path.dirname(SQLiteHelper.DB_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 
     @staticmethod
