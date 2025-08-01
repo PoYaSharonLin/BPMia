@@ -6,7 +6,9 @@ from autogen import ConversableAgent, UserProxyAgent  # type: ignore
 from autogen.code_utils import content_str  # type: ignore
 from typing import Dict, List  # type: ignore
 from utils.ui_helper import UIHelper
-from utils.llm_setup import LLMSetup   # type: ignore
+from utils.llm_setup import LLMSetup
+from utils.sqlite_helper import SQLiteHelper
+
 
 
 class Config:
@@ -212,6 +214,7 @@ class ChatManager:
         st.write("If you are the new employee, we also have some useful :blue-background[system URL] for you.")
         UIHelper.config_page()
         UIHelper.setup_sidebar()
+        SQLiteHelper.initialize_db()
         chat_container = st.container()
         chat_manager = ChatManager()
         
@@ -231,9 +234,17 @@ class ChatManager:
                     if st.button(prompt, key=f"dialog_{prompt}"):
                         st.session_state.first_conversation = False
                         st.session_state.rag_messages.append({"role": "user", "content": prompt})
-                        response = self.generate_response(prompt)
+
+                        # check if prompted existed 
+                        existed_response = SQLiteHelper.get_response(prompt)
+                        if existed_response: 
+                            response = [{"role": "assistant", "content": existed_response}]
+                        else: 
+                            response = self.generate_response(prompt)
+                            if response:
+                                SQLiteHelper.save_prompt_response(prompt, response[0]["content"])
+        
                         st.session_state.rag_messages.extend(response)
-                        
                         
             if st.button("Confirm"):
                 self.show_chat_history(st.session_state.rag_messages, chat_container)
