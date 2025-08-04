@@ -36,7 +36,6 @@ def main():
                 df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
                 st.success(f"Showing data from {start_cell} to {end_cell}")
                 st.dataframe(df_range)
-                st.dataframe(df)
 
                 # Define the range for plotting
                 x_row = 2  # Excel row 4 (0-based index)
@@ -47,8 +46,6 @@ def main():
                 x_labels = df.iloc[x_row, start_col:end_col + 1]
                 y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
                 group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
-                st.write(x_labels)
-                st.write(y_values)
 
                 # Prepare data for plotting
                 plot_data = pd.DataFrame(y_values.values, columns=x_labels)
