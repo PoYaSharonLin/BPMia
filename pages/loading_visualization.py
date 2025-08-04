@@ -46,6 +46,8 @@ def main():
                 x_labels = df.iloc[x_row, start_col:end_col + 1]
                 y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
                 group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
+                st.write(x_labels)
+                st.write(y_values)
 
                 # Prepare data for plotting
                 plot_data = pd.DataFrame(y_values.values, columns=x_labels)
