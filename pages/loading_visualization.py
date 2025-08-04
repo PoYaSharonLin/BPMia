@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
 
 
@@ -37,3 +38,14 @@ if uploaded_file:
     except Exception as e:
         st.error(f"Error reading range: {e}")
 
+def main(): 
+  try: 
+    UIHelper.config_page()
+    UIHelper.setup_sidebar()
+
+  except Exception as e: 
+    st.error(f"Error in main application: {str(e)}")
+
+if __name__ == "__main__":
+    main()
+    
