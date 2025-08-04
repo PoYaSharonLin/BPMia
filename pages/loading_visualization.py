@@ -53,10 +53,10 @@ def main():
                 plot_data['Group'] = group_labels
 
                 # Melt the DataFrame to long format
-                plot_data_melted = plot_data.melt(id_vars='Group', var_name='X', value_name='Y')
+                plot_data_melted = plot_data.melt(id_vars='Group', var_name='Time Period', value_name='Y')
 
                 # Create the plot
-                fig = px.line(plot_data_melted, x='X', y='Y', color='Group', markers=True,
+                fig = px.line(plot_data_melted, x='Time Period', y='Y', color='Group', markers=True,
                               title='Line Plot Grouped by Column D')
 
                 # Display the plot in Streamlit
