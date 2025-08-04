@@ -56,7 +56,7 @@ def main():
                 plot_data_melted = plot_data.melt(id_vars='Group', var_name='X', value_name='Y')
 
                 # Create the plot
-                fig = px.line(plot_data_melted, x='X', y='Y', color='Group', markers=True,
+                fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
                               title='Line Plot Grouped by Column D')
 
                 # Display the plot in Streamlit
