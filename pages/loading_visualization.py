@@ -39,32 +39,32 @@ if uploaded_file:
         st.error(f"Error reading range: {e}")
 
 
-  # Define the range
-  start_col = column_index_from_string('CR') - 1
-  end_col = column_index_from_string('JE') - 1
-  x_row = 3  # Excel row 4 (0-based index)
-  y_start_row = 4  # Excel row 5
-  y_end_row = 16  # Excel row 17
-  group_col_index = column_index_from_string('D') - 1
+# Define the range
+start_col = column_index_from_string('CR') - 1
+end_col = column_index_from_string('JE') - 1
+x_row = 3  # Excel row 4 (0-based index)
+y_start_row = 4  # Excel row 5
+y_end_row = 16  # Excel row 17
+group_col_index = column_index_from_string('D') - 1
 
- 
-  x_labels = df.iloc[x_row, start_col:end_col + 1].values
-  y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
-  group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
-  # Prepare data for plotting
-  plot_data = pd.DataFrame(y_values.values, columns=x_labels)
-  plot_data['Group'] = group_labels
+x_labels = df.iloc[x_row, start_col:end_col + 1].values
+y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
+group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
-  # Melt the DataFrame to long format
-  plot_data_melted = plot_data.melt(id_vars='Group', var_name='X', value_name='Y')
+# Prepare data for plotting
+plot_data = pd.DataFrame(y_values.values, columns=x_labels)
+plot_data['Group'] = group_labels
 
-  # Create the plot
-  fig = px.line(plot_data_melted, x='X', y='Y', color='Group', markers=True,
-                title='Line Plot Grouped by Column D')
+# Melt the DataFrame to long format
+plot_data_melted = plot_data.melt(id_vars='Group', var_name='X', value_name='Y')
 
-  # Display the plot in Streamlit
-  st.plotly_chart(fig)
+# Create the plot
+fig = px.line(plot_data_melted, x='X', y='Y', color='Group', markers=True,
+              title='Line Plot Grouped by Column D')
+
+# Display the plot in Streamlit
+st.plotly_chart(fig)
 
 
 def main(): 
