@@ -43,8 +43,7 @@ def main():
                 y_end_row = 16  # Excel row 17
                 group_col_index = column_index_from_string('D') - 1
 
-                x_raw = df.iloc[x_row, start_col:end_col + 1].values
-                x_labels = pd.to_datetime(x_raw, unit='D', origin='1899-12-30').strftime('%b %d-%Y')
+                x_labels = df.iloc[x_row, start_col:end_col + 1]
                 y_values = df.iloc[y_start_row:y_end_row + 1, start_col_plot:end_col_plot + 1]
                 group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
