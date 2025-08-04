@@ -10,6 +10,10 @@ uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
 start_cell = st.text_input("Enter start cell (e.g., D3):", value="D3")
 end_cell = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
 
+# Read the Excel file
+sheet_name = "F16 DRAM BC"
+df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
+
 if start_cell and end_cell:
   try:
     # Parse cell references
@@ -26,10 +30,6 @@ if start_cell and end_cell:
 
 if uploaded_file:
     try:
-        # Read the Excel file
-        sheet_name = "F16 DRAM BC"
-        df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
-
         # Slice the DataFrame
         df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
 
