@@ -36,11 +36,12 @@ def main():
                 df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
                 st.success(f"Showing data from {start_cell} to {end_cell}")
                 st.dataframe(df_range)
+                st.dataframe(df)
 
                 # Define the range for plotting
                 x_row = 3  # Excel row 4 (0-based index)
-                y_start_row = 4  # Excel row 5
-                y_end_row = 16  # Excel row 17
+                y_start_row = 3  # Excel row 5
+                y_end_row = 15  # Excel row 17
                 group_col_index = column_index_from_string('D') - 1
 
                 x_labels = df.iloc[x_row, start_col:end_col + 1]
