@@ -45,8 +45,24 @@ def main():
 
                 x_labels = df.iloc[x_row, start_col:end_col + 1]
                 y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
-                group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
+                
+                
+                group_options = ["HBM/non-HBM", "Product Series"]
+                selected_group = st.selectbox("Select Group Type", group_options)
 
+                
+                if selected_group == "HBM/non-HBM":
+                    group_labels = df.iloc[3:15+1, group_col_index].values
+                
+                elif selected_group == "Product Series":
+                    # D10:D14, D15:D16, D17:D19 → rows 9:14, 14:16, 16:19
+                    group_labels = pd.concat([
+                        df.iloc[8:14, group_col_index],
+                        df.iloc[13:16, group_col_index],
+                        df.iloc[15:19, group_col_index]
+                    ], axis=0).values
+
+                
                 # Prepare data for plotting
                 plot_data = pd.DataFrame(y_values.values, columns=x_labels)
                 plot_data['Group'] = group_labels
