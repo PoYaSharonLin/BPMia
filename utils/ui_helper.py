@@ -24,10 +24,10 @@ class UIHelper:
 
             # Group related pages under an expander
             with st.expander("Notes & Actions", expanded=True):
-                # st.page_link("pages/rag_agents.py",
-                #              label="Chat with Notes", icon="📄")
                 st.page_link("pages/documents_upload.py",
                              label="Upload Notes", icon="📁")
+                st.page_link("pages/loading_visualization.py",
+                             label="Visualize BC", icon="📈")
 
     @staticmethod
     def save_lang():
