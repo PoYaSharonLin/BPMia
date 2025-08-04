@@ -57,7 +57,7 @@ def main():
 
                 # Create the plot
                 fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
-                              title='Line Plot Grouped by Column D')
+                              title='BC Projection')
 
                 # Display the plot in Streamlit
                 st.plotly_chart(fig)
