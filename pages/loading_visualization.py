@@ -46,6 +46,7 @@ def main():
                 group_col_index = column_index_from_string('D') - 1
 
                 x_labels = df.iloc[x_row, start_col_plot:end_col_plot + 1].values
+                x_labels = [x.strftime('%b %d-%Y') for x in x_labels]
                 y_values = df.iloc[y_start_row:y_end_row + 1, start_col_plot:end_col_plot + 1]
                 group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
