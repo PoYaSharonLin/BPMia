@@ -38,14 +38,12 @@ def main():
                 st.dataframe(df_range)
 
                 # Define the range for plotting
-                start_col_plot = column_index_from_string('CR') - 1
-                end_col_plot = column_index_from_string('JE') - 1
                 x_row = 3  # Excel row 4 (0-based index)
                 y_start_row = 4  # Excel row 5
                 y_end_row = 16  # Excel row 17
                 group_col_index = column_index_from_string('D') - 1
 
-                x_raw = df.iloc[x_row, start_col_plot:end_col_plot + 1].values
+                x_raw = df.iloc[x_row, start_col:end_col + 1].values
                 x_labels = pd.to_datetime(x_raw, unit='D', origin='1899-12-30').strftime('%b %d-%Y')
                 y_values = df.iloc[y_start_row:y_end_row + 1, start_col_plot:end_col_plot + 1]
                 group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
