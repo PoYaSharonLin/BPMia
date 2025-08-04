@@ -16,7 +16,7 @@ def main():
 
         st.title("📊 Loading Visualization")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
-        start_cell = st.text_input("Enter start cell (e.g., D3):", value="D3")
+        start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
         end_cell = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
 
         if uploaded_file:
@@ -39,7 +39,7 @@ def main():
                 st.dataframe(df)
 
                 # Define the range for plotting
-                x_row = 3  # Excel row 4 (0-based index)
+                x_row = 2  # Excel row 4 (0-based index)
                 y_start_row = 3  # Excel row 5
                 y_end_row = 15  # Excel row 17
                 group_col_index = column_index_from_string('D') - 1
