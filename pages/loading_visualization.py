@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
 
