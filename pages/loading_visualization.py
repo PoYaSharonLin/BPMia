@@ -14,10 +14,13 @@ def main():
         UIHelper.config_page()
         UIHelper.setup_sidebar()
 
-        st.title("📊 Loading Visualization")
+        st.title("📊 BC Visualization")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
-        start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
-        end_cell = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
+        col1, col2 = st.columns(2)
+        with col1:
+            start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
+        with col2:
+            end_cell = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
 
         if uploaded_file:
             try:
