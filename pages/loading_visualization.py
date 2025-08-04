@@ -40,7 +40,7 @@ def main():
                 # Define the range for plotting
                 x_row = 2  # Excel row 4 (0-based index)
                 y_start_row = 3  # Excel row 5
-                y_end_row = 15  # Excel row 17
+                y_end_row = 17  # Excel row 17
                 group_col_index = column_index_from_string('D') - 1
 
                 x_labels = df.iloc[x_row, start_col:end_col + 1]
