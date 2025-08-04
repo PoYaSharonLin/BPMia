@@ -17,13 +17,13 @@ df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
 if start_cell and end_cell:
   try:
     # Parse cell references
-        def parse_cell(cell):
-            col = ''.join(filter(str.isalpha, cell))
-            row = int(''.join(filter(str.isdigit, cell)))
-            return column_index_from_string(col) - 1, row - 1  # Convert to 0-based index
+      def parse_cell(cell):
+          col = ''.join(filter(str.isalpha, cell))
+          row = int(''.join(filter(str.isdigit, cell)))
+          return column_index_from_string(col) - 1, row - 1  # Convert to 0-based index
 
-        start_col, start_row = parse_cell(start_cell)
-        end_col, end_row = parse_cell(end_cell)
+      start_col, start_row = parse_cell(start_cell)
+      end_col, end_row = parse_cell(end_cell)
     
   except Expection as e: 
     st.error(f"Missing Start or End Range: {e}")
