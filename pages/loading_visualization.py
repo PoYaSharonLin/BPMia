@@ -30,11 +30,13 @@ if start_cell and end_cell:
 
 if uploaded_file:
     try:
-        # Slice the DataFrame
-        df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
+      sheet_name = "F16 DRAM BC"
+      df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
+      # Slice the DataFrame
+      df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
 
-        st.success(f"Showing data from {start_cell} to {end_cell}")
-        st.dataframe(df_range)
+      st.success(f"Showing data from {start_cell} to {end_cell}")
+      st.dataframe(df_range)
 
     except Exception as e:
         st.error(f"Error reading range: {e}")
