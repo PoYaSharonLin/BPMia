@@ -72,17 +72,17 @@ def main():
                     selected_points = plotly_events(fig, click_event=True, hover_event=False)
 
                 with col4:
-                # Show selected point info
-                if selected_points:
-                    clicked = selected_points[0]
-                    time_period = clicked['x']
-                    filtered_data = plot_data_melted[plot_data_melted['Time Period'] == time_period]
-                
-                    # Pie chart for that time period
-                    pie_fig = px.pie(filtered_data, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period}')
-                    st.plotly_chart(pie_fig)
-                else:
-                    st.write("No point clicked yet.")
+                    # Show selected point info
+                    if selected_points:
+                        clicked = selected_points[0]
+                        time_period = clicked['x']
+                        filtered_data = plot_data_melted[plot_data_melted['Time Period'] == time_period]
+                    
+                        # Pie chart for that time period
+                        pie_fig = px.pie(filtered_data, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period}')
+                        st.plotly_chart(pie_fig)
+                    else:
+                        st.write("No point clicked yet.")
 
 
             except Exception as e:
