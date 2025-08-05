@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
+from streamlit_plotly_events import plotly_events
+
 
 def parse_cell(cell):
     col = ''.join(filter(str.isalpha, cell))
