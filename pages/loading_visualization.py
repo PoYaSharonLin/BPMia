@@ -63,6 +63,7 @@ def main():
                 # Create the plot
                 fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
                               title='BC Projection')
+                st.plotly_chart(fig, use_container_width=True)
 
                 
                 # Display chart and capture click events
