@@ -63,7 +63,7 @@ def main():
                 # Create the plot
                 fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
                               title='BC Projection')
-                
+                click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', markers=True)
                 st.plotly_chart(fig, use_container_width=True)
 
                 st.markdown("**Click on a data point to update the pie chart**")
