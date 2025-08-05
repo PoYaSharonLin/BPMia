@@ -65,18 +65,16 @@ def main():
                               title='BC Projection')
                 st.plotly_chart(fig, use_container_width=True)
 
-                
+                col3, col4 = st.columns(2)
                 # Display chart and capture click events
                 st.write("Click on a data point to update the pie chart:")
-                selected_points = plotly_events(fig, click_event=True, hover_event=False)
+                with col3: 
+                    selected_points = plotly_events(fig, click_event=True, hover_event=False)
 
-                
+                with col4:
                 # Show selected point info
                 if selected_points:
                     clicked = selected_points[0]
-                    st.write("You clicked:", clicked)
-                
-                    # Filter based on clicked time period
                     time_period = clicked['x']
                     filtered_data = plot_data_melted[plot_data_melted['Time Period'] == time_period]
                 
