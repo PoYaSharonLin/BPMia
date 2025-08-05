@@ -65,6 +65,27 @@ def main():
                 # Display the plot in Streamlit
                 st.plotly_chart(fig)
 
+                
+                # Display chart and capture click events
+                st.write("Click on a data point to update the pie chart:")
+                selected_points = plotly_events(fig, click_event=True, hover_event=False)
+                
+                # Show selected point info
+                if selected_points:
+                    clicked = selected_points[0]
+                    st.write("You clicked:", clicked)
+                
+                    # Filter based on clicked time period
+                    time_period = clicked['x']
+                    filtered_data = plot_data_melted[plot_data_melted['Time Period'] == time_period]
+                
+                    # Pie chart for that time period
+                    pie_fig = px.pie(filtered_data, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period}')
+                    st.plotly_chart(pie_fig)
+                else:
+                    st.write("No point clicked yet.")
+
+
             except Exception as e:
                 st.error(f"Error processing file: {e}")
 
