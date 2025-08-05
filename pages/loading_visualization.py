@@ -69,7 +69,6 @@ def main():
                 # Display chart and capture click events
                 st.write("Click on a data point to update the pie chart:")
                 selected_points = plotly_events(fig, click_event=True, hover_event=False)
-                st.plotly_chart(fig, use_container_width=True)
 
                 
                 # Show selected point info
