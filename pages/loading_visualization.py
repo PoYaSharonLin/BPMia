@@ -79,6 +79,8 @@ def main():
                         clicked = selected_points[0]
                         time_period = clicked['x']
                         filtered_data = plot_data_melted[plot_data_melted['Time Period'] == time_period]
+                        filtered_data = filtered_data[filtered_data['Group'] != "Total DRAM"]
+
                     
                         # Pie chart for that time period
                         pie_fig = px.pie(filtered_data, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period}')
