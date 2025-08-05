@@ -63,13 +63,13 @@ def main():
                 # Create the plot
                 fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
                               title='BC Projection')
-                click_fig = px.line(plot_data_melted, markers=True)
+                
                 st.plotly_chart(fig, use_container_width=True)
 
                 st.write("Click on a data point to update the pie chart:")
                 col3, col4 = st.columns(2)
                 with col3: 
-                    selected_points = plotly_events(click_fig, click_event=True, hover_event=False)
+                    selected_points = plotly_events(fig, click_event=True, hover_event=False)
                     
 
                 with col4:
