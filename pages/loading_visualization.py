@@ -70,7 +70,7 @@ def main():
                 st.markdown("**Click on a data point to update the pie chart**")
                 col3, col4 = st.columns([2, 1])  
                 with col3: 
-                    selected_points = plotly_events(click_fig, click_event=True, hover_event=False)
+                    selected_points = plotly_events(click_fig, click_event=True, hover_event=False, override_width=800)
                     
 
                 with col4:
