@@ -22,7 +22,7 @@ def main():
         with col1:
             start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
         with col2:
-            end_cell = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
+            end_cell = st.text_input("Enter end cell (e.g., JE16):", value="JE16")
 
         if uploaded_file:
             try:
