@@ -109,22 +109,12 @@ def main():
                     st.markdown("**Select a date range to view wafer output flow**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
+                    
+                except Exception as e:
+                    st.error(f"Date Range Slection Error: {e}")
 
                     
-
                 with col4:
-                    # Show selected point info
-                    if selected_points_delta:
-                        clicked_delta = selected_points_delta[0]
-                        time_period_delta = clicked_delta['x']
-                        filtered_data_delta = plot_data_melted_delta[plot_data_melted_delta['Time Period'] == time_period_delta]
-                        filtered_data_delta = filtered_data_delta[filtered_data_delta['Group'] != "Total DRAM"]
-
-                    
-                        # Pie chart for that time period
-                        pie_fig_delta = px.pie(filtered_data_delta, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period_delta}')
-                        st.plotly_chart(pie_fig_delta)
-                    else:
                         st.write("No point clicked yet.")
 
 
