@@ -62,32 +62,58 @@ def main():
                 st.dataframe(df_range)
 
                 # Plot 
-                plot_data, plot_data_melted = prepare_plot_data(
+                plot_data_all, plot_data_melted_all = prepare_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )
+                fig_all, click_fig_all = create_plots(plot_data_melted_all, title="OMT DRAM BC")
                 
-                fig, click_fig = create_plots(plot_data_melted, title="OMT DRAM BC")
 
-                st.plotly_chart(fig, use_container_width=True)
-
+                st.plotly_chart(fig_all, use_container_width=True)
                 st.markdown("**Click on a data point to update the pie chart**")
                 col3, col4 = st.columns([2,1])
                 with col3: 
-                    selected_points = plotly_events(click_fig, click_event=True, hover_event=False, override_width=1150)
+                    selected_points_all = plotly_events(click_fig_all, click_event=True, hover_event=False, override_width=1150)
                     
 
                 with col4:
                     # Show selected point info
-                    if selected_points:
-                        clicked = selected_points[0]
-                        time_period = clicked['x']
-                        filtered_data = plot_data_melted[plot_data_melted['Time Period'] == time_period]
-                        filtered_data = filtered_data[filtered_data['Group'] != "Total DRAM"]
+                    if selected_points_all:
+                        clicked_all = selected_points_all[0]
+                        time_period_all = clicked_all['x']
+                        filtered_data_all = plot_data_melted_all[plot_data_melted_all['Time Period'] == time_period_all]
+                        filtered_data_all = filtered_data_all[filtered_data_all['Group'] != "Total DRAM"]
 
                     
                         # Pie chart for that time period
-                        pie_fig = px.pie(filtered_data, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period}')
-                        st.plotly_chart(pie_fig)
+                        pie_fig_all = px.pie(filtered_data_all, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period_all}')
+                        st.plotly_chart(pie_fig_all)
+                    else:
+                        st.write("No point clicked yet.")
+                        
+                plot_data_delta, plot_data_melted_delta = prepare_plot_data(
+                    df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
+                )
+                fig_delta, click_fig_delta = create_plots(plot_data_melted_delta, title="OMT DRAM BC Delta")
+                
+                st.plotly_chart(fig_delta, use_container_width=True)
+                st.markdown("**Click on a data point to update the pie chart**")
+                col3, col4 = st.columns([2,1])
+                with col3: 
+                    selected_points_delta = plotly_events(click_fig_delta, click_event=True, hover_event=False, override_width=1150)
+                    
+
+                with col4:
+                    # Show selected point info
+                    if selected_points_delta:
+                        clicked_delta = selected_points_delta[0]
+                        time_period_delta = clicked_delta['x']
+                        filtered_data_delta = plot_data_melted_delta[plot_data_melted_delta['Time Period'] == time_period_delta]
+                        filtered_data_delta = filtered_data_delta[filtered_data_delta['Group'] != "Total DRAM"]
+
+                    
+                        # Pie chart for that time period
+                        pie_fig_delta = px.pie(filtered_data_delta, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period_delta}')
+                        st.plotly_chart(pie_fig_delta)
                     else:
                         st.write("No point clicked yet.")
 
