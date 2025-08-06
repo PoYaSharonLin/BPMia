@@ -11,6 +11,25 @@ def parse_cell(cell):
     row = int(''.join(filter(str.isdigit, cell)))
     return column_index_from_string(col) - 1, row - 1  # Convert to 0-based index
 
+def prepare_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row, group_col_index):
+    x_labels = df.iloc[x_row, start_col:end_col + 1]
+    y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
+    group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
+
+    plot_data = pd.DataFrame(y_values.values, columns=x_labels)
+    plot_data['Group'] = group_labels
+    plot_data_melted = plot_data.melt(id_vars='Group', var_name='Time Period', value_name='Wafer Output')
+
+    return plot_data, plot_data_melted
+
+def create_plots(plot_data_melted):
+    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
+                  title='BC Projection')
+    click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True)
+    click_fig.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
+    return fig, click_fig
+
+
 def main():
     try:
         UIHelper.config_page()
@@ -42,29 +61,13 @@ def main():
                 st.success(f"Showing data from {start_cell} to {end_cell}")
                 st.dataframe(df_range)
 
-                # Define the range for plotting
-                x_row = 2  # Excel row 4 (0-based index)
-                y_start_row = 3  # Excel row 5
-                y_end_row = 17  # Excel row 17
-                group_col_index = column_index_from_string('D') - 1
-
-                x_labels = df.iloc[x_row, start_col:end_col + 1]
-                y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
-                group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
+                # Plot 
+                plot_data, plot_data_melted = prepare_plot_data(
+                    df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=17, group_col_index=column_index_from_string('D') - 1
+                )
                 
-                
-                # Prepare data for plotting
-                plot_data = pd.DataFrame(y_values.values, columns=x_labels)
-                plot_data['Group'] = group_labels
+                fig, click_fig = create_plots(plot_data_melted)
 
-                # Melt the DataFrame to long format
-                plot_data_melted = plot_data.melt(id_vars='Group', var_name='Time Period', value_name='Wafer Output')
-
-                # Create the plot
-                fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
-                              title='BC Projection')
-                click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True)
-                click_fig.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
                 st.plotly_chart(fig, use_container_width=True)
 
                 st.markdown("**Click on a data point to update the pie chart**")
