@@ -110,8 +110,8 @@ def main():
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
                     
-                except Exception as e:
-                    st.error(f"Date Range Slection Error: {e}")
+                    except Exception as e:
+                        st.error(f"Date Range Slection Error: {e}")
 
                     
                 with col4:
