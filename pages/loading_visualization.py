@@ -30,13 +30,6 @@ def create_plots(plot_data_melted, title):
     return fig, click_fig
 
 
-def create_plots(plot_data_melted, title):
-    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
-                  title=title)
-    click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True)
-    click_fig.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
-    return fig, click_fig
-
 
 def main():
     try:
@@ -110,6 +103,11 @@ def main():
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     try:
                         start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
+                        filtered_data = plot_data_melted_delta[
+                                    (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
+                                    (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
+                                ]
+
                     except Exception as e:
                         st.error(f"Date Range Selection Error: {e}")
 
