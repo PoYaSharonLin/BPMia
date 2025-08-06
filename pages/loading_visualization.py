@@ -104,7 +104,7 @@ def main():
                 fig_delta, click_fig_delta = create_plots(plot_data_melted_delta, title="OMT DRAM BC Delta")
                 
                 st.plotly_chart(fig_delta, use_container_width=True)
-                col3, col4 = st.columns([2,1])
+                col3, col4 = st.columns([1,3])
                 with col3: 
                     st.markdown("**Select a date range to view wafer output flow**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
