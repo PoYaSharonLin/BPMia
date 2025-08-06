@@ -22,9 +22,9 @@ def prepare_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row, gro
 
     return plot_data, plot_data_melted
 
-def create_plots(plot_data_melted):
+def create_plots(plot_data_melted, title):
     fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
-                  title='BC Projection')
+                  title=title)
     click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True)
     click_fig.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
     return fig, click_fig
@@ -66,7 +66,7 @@ def main():
                     df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )
                 
-                fig, click_fig = create_plots(plot_data_melted)
+                fig, click_fig = create_plots(plot_data_melted, title="OMT DRAM BC")
 
                 st.plotly_chart(fig, use_container_width=True)
 
