@@ -77,9 +77,9 @@ def main():
                 
 
                 st.plotly_chart(fig_all, use_container_width=True)
-                st.markdown("**Click on a data point to update the pie chart**")
                 col3, col4 = st.columns([2,1])
                 with col3: 
+                    st.markdown("**Click on a data point to update the pie chart**")
                     selected_points_all = plotly_events(click_fig_all, click_event=True, hover_event=False, override_width=1150)
                     
 
@@ -104,10 +104,10 @@ def main():
                 fig_delta, click_fig_delta = create_plots(plot_data_melted_delta, title="OMT DRAM BC Delta")
                 
                 st.plotly_chart(fig_delta, use_container_width=True)
-                st.markdown("**Click on a data point to update the pie chart**")
                 col3, col4 = st.columns([2,1])
                 with col3: 
                     st.markdown("**Select a date range to view wafer output flow**")
+                    plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
 
                     
