@@ -108,10 +108,11 @@ def main():
                 with col3: 
                     st.markdown("**Select a date range to view wafer output flow**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
-                    start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
-                    
+                    try:
+                        start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
                     except Exception as e:
-                        st.error(f"Date Range Slection Error: {e}")
+                        st.error(f"Date Range Selection Error: {e}")
+
 
                     
                 with col4:
