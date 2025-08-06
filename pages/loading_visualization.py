@@ -30,6 +30,14 @@ def create_plots(plot_data_melted, title):
     return fig, click_fig
 
 
+def create_plots(plot_data_melted, title):
+    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
+                  title=title)
+    click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True)
+    click_fig.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
+    return fig, click_fig
+
+
 def main():
     try:
         UIHelper.config_page()
@@ -99,7 +107,9 @@ def main():
                 st.markdown("**Click on a data point to update the pie chart**")
                 col3, col4 = st.columns([2,1])
                 with col3: 
-                    selected_points_delta = plotly_events(click_fig_delta, click_event=True, hover_event=False, override_width=1150)
+                    st.markdown("**Select a date range to view wafer output flow**")
+                    start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
+
                     
 
                 with col4:
