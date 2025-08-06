@@ -26,7 +26,7 @@ def main():
 
         if uploaded_file:
             try:
-                sheet_name = "F16 DRAM BC"
+                sheet_name = "OMT DRAM BC"
                 df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
 
                 # Parse cell references
