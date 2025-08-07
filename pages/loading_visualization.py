@@ -14,8 +14,8 @@ color_mapping = {
     "150S_HBM3E": "#00AEEF",      # Dark Blue
     "150S_HBM4": "#7FDBFF",       # Light Blue
     "150S_non-HBM": "#00008B",    # Dark Blue
-    "160S_HBM4E": "#FF8C00",      # Vibrant Yellow
-    "160S_non-HBM": "#FFC107",    # Dark Orange
+    "160S_HBM4E": "#FFC107",      # Vibrant Yellow
+    "160S_non-HBM": "#FF8C00",    # Dark Orange
     "Total_DRAM": "#51A687"       # Green
 }
 
