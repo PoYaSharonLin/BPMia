@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
 from streamlit_plotly_events import plotly_events
+
 
 
 def parse_cell(cell):
@@ -12,10 +14,8 @@ def parse_cell(cell):
     return column_index_from_string(col) - 1, row - 1  # Convert to 0-based index
 
 def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row, group_col_index):
-    x_labels = df.iloc[x_row, start_col:end_col + 1]
-    x_quarter_labels = df.iloc[x_row - 1, start_col:end_col + 1]
-    combined_labels = [f"{q}<br>{x}" for q, x in zip(x_quarter_labels, x_labels)]
-
+    primary_labels = df.iloc[x_row, start_col:end_col + 1]
+    secondary_labels = df.iloc[x_row-2, start_col:end_col + 1]
     y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
     group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
@@ -30,10 +30,37 @@ def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row
 
     return plot_data, plot_data_melted
 
-def create_line_plot(plot_data_melted, title):
-    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=False,
-                  title=title)
+def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
+    fig = go.Figure()
+
+    for group in plot_data_melted['Group'].unique():
+        group_data = plot_data_melted[plot_data_melted['Group'] == group]
+        fig.add_trace(go.Scatter(
+            x=group_data['Time Period'],
+            y=group_data['Wafer Output'],
+            mode='lines+markers',
+            name=group
+        ))
+
+    fig.update_layout(
+        title=title,
+        xaxis=dict(
+            tickvals=primary_labels,
+            ticktext=primary_labels,
+            side='bottom'
+        ),
+        xaxis2=dict(
+            overlaying='x',
+            side='bottom',
+            tickvals=secondary_labels,
+            ticktext=secondary_labels,
+            anchor='y'
+        ),
+        yaxis=dict(title='Wafer Output')
+    )
+
     return fig
+
 
 
 
