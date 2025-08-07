@@ -72,7 +72,9 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
             y=group_data['Wafer Output'],
             mode='lines',
             name=group,
-            line=dict(color=color_mapping.get(group, None)),  
+            line=dict(color=color_mapping.get(group, None),
+                      width=3  
+            ),  
             xaxis='x'  
         ))
 
