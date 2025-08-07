@@ -16,8 +16,12 @@ def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row
     y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
     group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
-    plot_data = pd.DataFrame(y_values.values, columns=x_labels)
-    plot_data['Group'] = group_labels
+    non_zero_mask = ~(y_values == 0).all(axis=1)
+    y_values_filtered = y_values[non_zero_mask]
+    group_labels_filtered = group_labels[non_zero_mask]
+
+    plot_data = pd.DataFrame(y_values_filtered.values, columns=x_labels)
+    plot_data['Group'] = group_labels_filtered
     plot_data_melted = plot_data.melt(id_vars='Group', var_name='Time Period', value_name='Wafer Output')
 
     return plot_data, plot_data_melted
