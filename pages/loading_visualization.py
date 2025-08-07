@@ -62,6 +62,25 @@ def main():
                 st.success(f"Showing data from {start_cell} to {end_cell}")
                 st.dataframe(df_range)
 
+                col3, col4 = st.columns([1,3])
+                with col3: 
+                    st.markdown("**Select a date range to view wafer output flow**")
+                    plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
+                    try:
+                        start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
+                        filtered_data = plot_data_melted_delta[
+                                    (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
+                                    (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
+                                ]
+
+                    except Exception as e:
+                        st.error(f"Date Range Selection Error: {e}")
+
+
+                    
+                with col4:
+                        st.write("No point clicked yet.")
+
                 # Plot 
                 plot_data_all, plot_data_melted_all = prepare_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=17, group_col_index=column_index_from_string('D') - 1
@@ -70,13 +89,13 @@ def main():
                 
 
                 st.plotly_chart(fig_all, use_container_width=True)
-                col3, col4 = st.columns([2,1])
-                with col3: 
+                col5, col6 = st.columns([2,1])
+                with col5: 
                     st.markdown("**Click on a data point to update the pie chart**")
                     selected_points_all = plotly_events(click_fig_all, click_event=True, hover_event=False, override_width=1150)
                     
 
-                with col4:
+                with col6:
                     # Show selected point info
                     if selected_points_all:
                         clicked_all = selected_points_all[0]
@@ -97,24 +116,6 @@ def main():
                 fig_delta, click_fig_delta = create_plots(plot_data_melted_delta, title="OMT DRAM BC Delta")
                 
                 st.plotly_chart(fig_delta, use_container_width=True)
-                col3, col4 = st.columns([1,3])
-                with col3: 
-                    st.markdown("**Select a date range to view wafer output flow**")
-                    plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
-                    try:
-                        start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
-                        filtered_data = plot_data_melted_delta[
-                                    (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
-                                    (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
-                                ]
-
-                    except Exception as e:
-                        st.error(f"Date Range Selection Error: {e}")
-
-
-                    
-                with col4:
-                        st.write("No point clicked yet.")
 
 
             except Exception as e:
