@@ -4,7 +4,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
-from streamlit_plotly_events import plotly_events
 
 
 
