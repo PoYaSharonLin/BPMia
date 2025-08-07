@@ -38,7 +38,8 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
             x=group_data['Time Period'],
             y=group_data['Wafer Output'],
             mode='lines',
-            name=group
+            name=group,
+            xaxis='x'  
         ))
 
     fig.update_layout(
