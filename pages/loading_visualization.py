@@ -23,7 +23,7 @@ def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row
     return plot_data, plot_data_melted
 
 def create_line_plot(plot_data_melted, title):
-    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
+    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=False,
                   title=title)
     return fig
 
