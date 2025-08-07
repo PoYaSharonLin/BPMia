@@ -37,7 +37,7 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
         fig.add_trace(go.Scatter(
             x=group_data['Time Period'],
             y=group_data['Wafer Output'],
-            mode='lines+markers',
+            mode='lines',
             name=group
         ))
 
