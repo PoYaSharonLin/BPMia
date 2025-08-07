@@ -58,11 +58,13 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
         xaxis=dict(
             tickvals=primary_labels,
             ticktext=primary_labels,
+            tickfont=dict(size=10),  
             side='bottom'
         ),
         xaxis2=dict(
             tickvals=primary_labels,  
             ticktext=secondary_labels,
+            tickfont=dict(size=10), 
             overlaying='x',
             side='top',
             showline=True,
