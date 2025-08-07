@@ -6,6 +6,19 @@ from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
 
 
+color_mapping = {
+    "140S_DRAM": "#F4CBA3",       # Light Peach
+    "150S_DRAM": "#A3B8CC",       # Light Blue-Gray
+    "160S_DRAM": "#FFEB99",       # Light Yellow
+    "170S_DRAM": "#999999",       # Medium Gray
+    "150S_HBM3E": "#7FDBFF",      # Light Blue
+    "150S_HBM4": "#7FDBFF",       # Light Blue
+    "150S_non-HBM": "#FF8C00",    # Dark Orange
+    "160S_HBM4E": "#FFC107",      # Vibrant Yellow
+    "160S_non-HBM": "#00008B",    # Dark Blue
+    "Total_DRAM": "#006400"       # Dark Green
+}
+
 
 def parse_cell(cell):
     col = ''.join(filter(str.isalpha, cell))
@@ -59,6 +72,7 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
             y=group_data['Wafer Output'],
             mode='lines',
             name=group,
+            line=dict(color=color_mapping.get(group, None)),  
             xaxis='x'  
         ))
 
