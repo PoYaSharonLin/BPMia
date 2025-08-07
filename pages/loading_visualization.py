@@ -11,11 +11,11 @@ color_mapping = {
     "150S_DRAM": "#A3B8CC",       # Light Blue-Gray
     "160S_DRAM": "#FFEB99",       # Light Yellow
     "170S_DRAM": "#999999",       # Medium Gray
-    "150S_HBM3E": "#7FDBFF",      # Light Blue
+    "150S_HBM3E": "#00AEEF",      # Dark Blue
     "150S_HBM4": "#7FDBFF",       # Light Blue
-    "150S_non-HBM": "#FF8C00",    # Dark Orange
-    "160S_HBM4E": "#FFC107",      # Vibrant Yellow
-    "160S_non-HBM": "#00008B",    # Dark Blue
+    "150S_non-HBM": "#FFC107",    # Dark Blue
+    "160S_HBM4E": "#FF8C00",      # Vibrant Yellow
+    "160S_non-HBM": "#00008B",    # Dark Orange
     "Total_DRAM": "#06402B"       # Dark Green
 }
 
