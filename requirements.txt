@@ -23,4 +23,5 @@ pymongo
 # Loading visualization
 openpyxl
 plotly.express
+plotly.graph_objects
 streamlit-plotly-events
