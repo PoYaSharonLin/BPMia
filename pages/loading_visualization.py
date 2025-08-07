@@ -13,9 +13,13 @@ def parse_cell(cell):
 
 def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row, group_col_index):
     x_labels = df.iloc[x_row, start_col:end_col + 1]
+    x_quarter_labels = df.iloc[x_row - 1, start_col:end_col + 1]
+    combined_labels = [f"{q}<br>{x}" for q, x in zip(x_quarter_labels, x_labels)]
+
     y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
     group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
+    # Mask rows with 0s
     non_zero_mask = ~(y_values == 0).all(axis=1)
     y_values_filtered = y_values[non_zero_mask]
     group_labels_filtered = group_labels[non_zero_mask]
