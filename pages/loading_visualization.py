@@ -1,9 +1,23 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
-from streamlit_plotly_events import plotly_events
+
+
+color_mapping = {
+    "140S_DRAM": "#F4CBA3",       # Light Peach
+    "150S_DRAM": "#A3B8CC",       # Light Blue-Gray
+    "160S_DRAM": "#FFEB99",       # Light Yellow
+    "170S_DRAM": "#999999",       # Medium Gray
+    "150S_HBM3E": "#00AEEF",      # Dark Blue
+    "150S_HBM4": "#7FDBFF",       # Light Blue
+    "150S_non-HBM": "#00008B",    # Dark Blue
+    "160S_HBM4E": "#FF8C00",      # Vibrant Yellow
+    "160S_non-HBM": "#FFC107",    # Dark Orange
+    "Total_DRAM": "#51A687"       # Green
+}
 
 
 def parse_cell(cell):
@@ -11,23 +25,83 @@ def parse_cell(cell):
     row = int(''.join(filter(str.isdigit, cell)))
     return column_index_from_string(col) - 1, row - 1  # Convert to 0-based index
 
-def prepare_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row, group_col_index):
-    x_labels = df.iloc[x_row, start_col:end_col + 1]
+def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row, group_col_index):
+    primary_labels = df.iloc[x_row, start_col:end_col + 1]
+    secondary_labels = df.iloc[x_row-2, start_col:end_col + 1]
     y_values = df.iloc[y_start_row:y_end_row + 1, start_col:end_col + 1]
     group_labels = df.iloc[y_start_row:y_end_row + 1, group_col_index].values
 
-    plot_data = pd.DataFrame(y_values.values, columns=x_labels)
-    plot_data['Group'] = group_labels
+    # Mask rows with 0s
+    non_zero_mask = ~(y_values == 0).all(axis=1)
+    y_values_filtered = y_values[non_zero_mask]
+    group_labels_filtered = group_labels[non_zero_mask]
+
+    plot_data = pd.DataFrame(y_values_filtered.values, columns=primary_labels)
+    plot_data['Group'] = group_labels_filtered
     plot_data_melted = plot_data.melt(id_vars='Group', var_name='Time Period', value_name='Wafer Output')
 
-    return plot_data, plot_data_melted
+    return plot_data, plot_data_melted, primary_labels, secondary_labels
 
-def create_plots(plot_data_melted, title):
-    fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True,
-                  title=title)
-    click_fig = px.line(plot_data_melted, x='Time Period', y='Wafer Output', color='Group', markers=True)
-    click_fig.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
-    return fig, click_fig
+def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
+    fig = go.Figure()
+
+    
+    # Create grouped secondary labels (e.g., FY21 shown only once)
+    grouped_secondary_labels = []
+    last_label = None
+    for label in secondary_labels:
+        if label != last_label:
+            grouped_secondary_labels.append(label)
+            last_label = label
+        else:
+            grouped_secondary_labels.append('')  # Empty to avoid repetition
+
+    fig.add_trace(go.Scatter(
+        x=primary_labels,               
+        y=[None] * len(primary_labels), 
+        mode='lines',                  
+        showlegend=False,               
+        hoverinfo='skip',               
+        xaxis='x2'                      
+    ))
+
+    for group in plot_data_melted['Group'].unique():
+        group_data = plot_data_melted[plot_data_melted['Group'] == group]
+        fig.add_trace(go.Scatter(
+            x=group_data['Time Period'],
+            y=group_data['Wafer Output'],
+            mode='lines',
+            name=group,
+            line=dict(color=color_mapping.get(group, None),
+                      width=4  
+            ),  
+            xaxis='x'  
+        ))
+
+    fig.update_layout(
+        title=title,
+        xaxis=dict(
+            tickvals=primary_labels,
+            ticktext=primary_labels,
+            tickfont=dict(size=8),  
+            side='bottom'
+        ),
+        xaxis2=dict(
+            tickvals=primary_labels,  
+            ticktext=grouped_secondary_labels,
+            tickfont=dict(size=12), 
+            overlaying='x',
+            side='top',
+            showline=True,
+            showgrid=False,
+            zeroline=False
+
+        ),
+        yaxis=dict(title='Wafer Output')
+    )
+
+    return fig
+
 
 
 
@@ -36,7 +110,7 @@ def main():
         UIHelper.config_page()
         UIHelper.setup_sidebar()
 
-        st.title("📊 BC Visualization")
+        st.title("📊Loading Mia")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
         col1, col2 = st.columns(2)
         with col1:
@@ -59,47 +133,20 @@ def main():
 
                 # Slice the DataFrame
                 df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
-                st.success(f"Showing data from {start_cell} to {end_cell}")
+                st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
                 st.dataframe(df_range)
 
-                # Plot 
-                plot_data_all, plot_data_melted_all = prepare_plot_data(
-                    df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=17, group_col_index=column_index_from_string('D') - 1
-                )
-                fig_all, click_fig_all = create_plots(plot_data_melted_all, title="OMT DRAM BC")
-                
 
-                st.plotly_chart(fig_all, use_container_width=True)
-                col3, col4 = st.columns([2,1])
-                with col3: 
-                    st.markdown("**Click on a data point to update the pie chart**")
-                    selected_points_all = plotly_events(click_fig_all, click_event=True, hover_event=False, override_width=1150)
-                    
-
-                with col4:
-                    # Show selected point info
-                    if selected_points_all:
-                        clicked_all = selected_points_all[0]
-                        time_period_all = clicked_all['x']
-                        filtered_data_all = plot_data_melted_all[plot_data_melted_all['Time Period'] == time_period_all]
-                        filtered_data_all = filtered_data_all[filtered_data_all['Group'] != "Total DRAM"]
-
-                    
-                        # Pie chart for that time period
-                        pie_fig_all = px.pie(filtered_data_all, names='Group', values='Wafer Output', title=f'Wafer Output for {time_period_all}')
-                        st.plotly_chart(pie_fig_all)
-                    else:
-                        st.write("No point clicked yet.")
-                        
-                plot_data_delta, plot_data_melted_delta = prepare_plot_data(
+                # Delta Line plot 
+                plot_data_delta, plot_data_melted_delta, primary_labels, secondary_labels= prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
                 )
-                fig_delta, click_fig_delta = create_plots(plot_data_melted_delta, title="OMT DRAM BC Delta")
-                
+                fig_delta = create_line_plot(plot_data_melted_delta, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
-                col3, col4 = st.columns([1,3])
+                
+                col3, col4 = st.columns([1,2])
                 with col3: 
-                    st.markdown("**Select a date range to view wafer output flow**")
+                    st.markdown("**Select a date range to view YoY & QoQ data**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     try:
                         start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
@@ -107,15 +154,12 @@ def main():
                                     (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
                                     (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
                                 ]
-
                     except Exception as e:
                         st.error(f"Date Range Selection Error: {e}")
-
-
-                    
-                with col4:
-                        st.write("No point clicked yet.")
-
+                        
+                with col4: 
+                    st.write(start_date)
+                    st.write(end_date)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")

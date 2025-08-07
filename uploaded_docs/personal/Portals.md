@@ -1,6 +1,11 @@
 # Portals
 ---
 
+## Labour (Labor) Efficiency
+For organization structure of LE team, OMT LE progress please visit to: OMTLE/
+
+---
+
 ## Frontend 
 
 ### Frontend Dashboard (FE Dashboard)
@@ -28,6 +33,7 @@ https://o2-instance.fs-ose-mfgt1-vip.imfs.micron.com/xWeb-mili/#/?c.Category=App
 
 
 ---
+
 ## WBR 
 
 ### WBR Meeting Slides 
@@ -84,4 +90,19 @@ https://microncorp.sharepoint.com/sites/OMTBP/Shared%20Documents/Forms/AllItems.
 ### Gb to wafer (Gb 快速試算表)
 https://microncorp.sharepoint.com/:x:/r/sites/OMTBP/Shared%20Documents/FY26/A1%2726%20Draft/Gb%20walk%20and%20Wafer%20walk/Gb%20%E5%BF%AB%E9%80%9F%E8%A9%A6%E7%AE%97%E8%A1%A8.xlsx?d=wba856948ca4b4f5a9abd3a7d3ab7e102&csf=1&web=1&e=Op2XqT
 
+--- 
+
+## ESG 
+
+## Direct Emission 
+The dashboard might not be ready yet, please ask the contact window: https://tableau-apac/#/site/OCT/views/ENV_SUS_DATA_PLATFORM/Launchpad?:iid=1
+
+## Indirect Emission 
+Please refer to the dashboard: https://tawa3facwis02:9487/Home/Display?TId=242
+
+## Water 
+The dashboard might not be ready yet, please ask the contact window: https://tableau-apac/#/site/OCT/views/ENV_SUS_DATA_PLATFORM/Launchpad?:iid=1
+
+## Waste 
+The dashboard might not be ready yet, please ask the contact window: https://tableau-apac/#/site/OCT/views/ENV_SUS_DATA_PLATFORM/Launchpad?:iid=1
 
