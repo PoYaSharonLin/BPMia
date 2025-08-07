@@ -68,7 +68,7 @@ def main():
                 fig_delta = create_line_plot(plot_data_melted_delta, title="OMT DRAM BC Delta")
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                col3, col4 = st.columns([1,3])
+                col3, col4 = st.columns([1,2])
                 with col3: 
                     st.markdown("**Select a date range to view YoY & QoQ data**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
