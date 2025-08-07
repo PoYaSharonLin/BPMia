@@ -24,11 +24,11 @@ def prepare_line_plot_data(df, start_col, end_col, x_row, y_start_row, y_end_row
     y_values_filtered = y_values[non_zero_mask]
     group_labels_filtered = group_labels[non_zero_mask]
 
-    plot_data = pd.DataFrame(y_values_filtered.values, columns=x_labels)
+    plot_data = pd.DataFrame(y_values_filtered.values, columns=primary_labels)
     plot_data['Group'] = group_labels_filtered
     plot_data_melted = plot_data.melt(id_vars='Group', var_name='Time Period', value_name='Wafer Output')
 
-    return plot_data, plot_data_melted
+    return plot_data, plot_data_melted, primary_labels, secondary_labels
 
 def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
     fig = go.Figure()
@@ -97,10 +97,10 @@ def main():
 
 
                 # Delta Line plot 
-                plot_data_delta, plot_data_melted_delta = prepare_line_plot_data(
+                plot_data_delta, plot_data_melted_delta, primary_labels, secondary_labels= prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
                 )
-                fig_delta = create_line_plot(plot_data_melted_delta, title="OMT DRAM BC Delta")
+                fig_delta = create_line_plot(plot_data_melted_delta, title="OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
                 col3, col4 = st.columns([1,2])
