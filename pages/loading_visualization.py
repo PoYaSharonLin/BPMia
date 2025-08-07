@@ -35,7 +35,7 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
     
     fig.add_trace(go.Scatter(
         x=secondary_labels,               # Same x-values as your main trace
-        y=[None] * len(primary_labels), # No actual data
+        y=[None] * len(secondary_labels), # No actual data
         mode='lines',                   # Line mode (can be anything)
         showlegend=False,               # Don't show in legend
         hoverinfo='skip',               # No hover info
