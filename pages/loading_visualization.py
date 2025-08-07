@@ -144,9 +144,9 @@ def main():
                 fig_delta = create_line_plot(plot_data_melted_delta, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
+                st.markdown("### Select a date range to view YoY & QoQ data")
                 col3, col4 = st.columns([1,2])
                 with col3: 
-                    st.markdown("**Select a date range to view YoY & QoQ data**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     try:
                         start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
@@ -158,8 +158,8 @@ def main():
                         st.error(f"Date Range Selection Error: {e}")
                         
                 with col4: 
-                    st.write(start_date)
-                    st.write(end_date)
+                    st.markdown("#### YoY)
+                    st.markdown("#### QoQ)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
