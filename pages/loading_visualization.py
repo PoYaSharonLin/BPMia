@@ -78,16 +78,12 @@ def main():
                                     (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
                                     (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
                                 ]
-                with col4: 
-                    st.write(start_date)
-                    st.write(end_date)
-
-    
                     except Exception as e:
                         st.error(f"Date Range Selection Error: {e}")
                         
-                
-
+                with col4: 
+                    st.write(start_date)
+                    st.write(end_date)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
