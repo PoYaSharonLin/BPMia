@@ -50,7 +50,7 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
         ),
         xaxis2=dict(
             overlaying='x',
-            side='bottom',
+            side='top',
             tickvals=secondary_labels,
             ticktext=secondary_labels,
             anchor='y'
