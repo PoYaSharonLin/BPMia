@@ -33,6 +33,16 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
     fig = go.Figure()
 
     
+    # Create grouped secondary labels (e.g., FY21 shown only once)
+    grouped_secondary_labels = []
+    last_label = None
+    for label in secondary_labels:
+        if label != last_label:
+            grouped_secondary_labels.append(label)
+            last_label = label
+        else:
+            grouped_secondary_labels.append('')  # Empty to avoid repetition
+
     fig.add_trace(go.Scatter(
         x=primary_labels,               
         y=[None] * len(primary_labels), 
@@ -41,7 +51,6 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
         hoverinfo='skip',               
         xaxis='x2'                      
     ))
-
 
     for group in plot_data_melted['Group'].unique():
         group_data = plot_data_melted[plot_data_melted['Group'] == group]
@@ -63,7 +72,7 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
         ),
         xaxis2=dict(
             tickvals=primary_labels,  
-            ticktext=secondary_labels,
+            ticktext=grouped_secondary_labels,
             tickfont=dict(size=10), 
             overlaying='x',
             side='top',
