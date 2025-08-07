@@ -49,11 +49,14 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
             side='bottom'
         ),
         xaxis2=dict(
+            tickvals=primary_labels,  
+            ticktext=secondary_labels,
             overlaying='x',
             side='top',
-            tickvals=secondary_labels,
-            ticktext=secondary_labels,
-            anchor='y'
+            showline=True,
+            showgrid=False,
+            zeroline=False
+
         ),
         yaxis=dict(title='Wafer Output')
     )
