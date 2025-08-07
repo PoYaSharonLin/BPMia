@@ -101,7 +101,7 @@ def main():
                 )
                 fig_delta = create_line_plot(plot_data_melted_delta, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
-                st.write("Secondary labl)
+                st.write(secondary_labels)
                 
                 col3, col4 = st.columns([1,2])
                 with col3: 
