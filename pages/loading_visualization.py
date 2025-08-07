@@ -158,8 +158,8 @@ def main():
                         st.error(f"Date Range Selection Error: {e}")
                         
                 with col4: 
-                    st.markdown("#### YoY)
-                    st.markdown("#### QoQ)
+                    st.markdown("#### YoY")
+                    st.markdown("#### QoQ")
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
