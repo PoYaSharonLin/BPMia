@@ -58,7 +58,7 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
         xaxis=dict(
             tickvals=primary_labels,
             ticktext=primary_labels,
-            tickfont=dict(size=10),  
+            tickfont=dict(size=9),  
             side='bottom'
         ),
         xaxis2=dict(
