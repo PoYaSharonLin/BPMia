@@ -161,7 +161,7 @@ def main():
                     
                     # Step 3: Create datetime object for each week (Monday of the week)
                     plot_data_melted_delta['Week Start Date'] = plot_data_melted_delta.apply(
-                        lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']:02d}-1", "%G-W%V-%u"), axis=1
+                        lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']:02d}-5", "%G-W%V-%u"), axis=1
                     )
                     
                     # Step 4: Create label-to-date mapping
