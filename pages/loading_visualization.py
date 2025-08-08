@@ -171,24 +171,23 @@ def main():
                     label_to_period = dict(zip(labels, unique_periods))
 
 
+                    
                     if labels:
                         default_value = (labels[0], labels[-1])
                         start_label, end_label = st.select_slider("Week Range", options=labels, value=default_value)
                     
                         start_week = label_to_period[start_label]
                         end_week = label_to_period[end_label]
-
-                        
-                        
-                        df['Time Period Date'] = df.apply(
-                            lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']}-5", "%Y-W%W-%w"),
-                            axis=1
-                        )
-
-                        filtered_data = df[(df['Time Period Date'] >= start_week) & (df['Time Period Date'] <= end_week)]
                     
-                        st.write(f"Selected week range: {start_week.date()} → {end_week.date()}")
+                        # Step 6: Filter data
+                        filtered_data = df[
+                            (df['Week Start Date'] >= start_week) & (df['Week Start Date'] <= end_week)
+                        ]
+                    
+                        # Step 7: Display filtered data
+                        st.write("Filtered Data:")
                         st.dataframe(filtered_data)
+
                     else:
                         st.info("No valid dates to build week options.")
 
