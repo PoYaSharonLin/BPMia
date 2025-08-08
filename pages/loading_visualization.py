@@ -151,25 +151,20 @@ def main():
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     df = plot_data_melted_delta.dropna(subset=['Time Period']).copy()
                     df['Time Period'] = df['Time Period'].dt.normalize()
-
+                    df['Fiscal Year Week'] = df['Time Period'].str.extract(r'(\d{2})-(\d{4})').apply(lambda x: f"W{x[0]}-{x[1]}", axis=1)
                     
-                    week_periods = df['Time Period'].dt.to_period('W-THU')  # Fri→Thu weeks
+                    week_periods = df['Fiscal Year Week']
                     unique_periods = pd.PeriodIndex(week_periods).sort_values().unique()
 
-                                        
-                                        
-                    labels = [
-                        f"WW {i+1}: {p.start_time.date()} → {p.end_time.date()}"
-                        for i, p in enumerate(unique_periods)
-                    ]
+                    labels = week_periods
                     label_to_period = dict(zip(labels, unique_periods))
 
                     if labels:
                         default_value = (labels[0], labels[-1])
                         start_label, end_label = st.select_slider("Week Range", options=labels, value=default_value)
                     
-                        start_week = label_to_period[start_label].start_time
-                        end_week = label_to_period[end_label].end_time
+                        start_week = label_to_period[start_label]
+                        end_week = label_to_period[end_label]
                     
 
                         filtered_data = df[(df['Time Period'] >= start_week) & (df['Time Period'] <= end_week)]
