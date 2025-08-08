@@ -193,8 +193,9 @@ def main():
 
                         
                 with col4: 
-                    st.write(start_week)
-                    st.write(end_week)
+                    st.write("Start Week:", start_week)
+                    st.write("End Week:", end_week)
+
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
