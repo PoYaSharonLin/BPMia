@@ -27,7 +27,7 @@ class UIHelper:
                 st.page_link("pages/documents_upload.py",
                              label="Upload Notes", icon="📁")
                 st.page_link("pages/loading_visualization.py",
-                             label="Visualize BC", icon="📈")
+                             label="Loading Mia", icon="📈")
 
     @staticmethod
     def save_lang():
