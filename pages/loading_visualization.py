@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
 from utils.ui_helper import UIHelper
@@ -144,22 +145,63 @@ def main():
                 fig_delta = create_line_plot(plot_data_melted_delta, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
+                st.markdown("### Select a date range to view YoY & QoQ data")
                 col3, col4 = st.columns([1,2])
                 with col3: 
-                    st.markdown("**Select a date range to view YoY & QoQ data**")
-                    plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
-                    try:
-                        start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
-                        filtered_data = plot_data_melted_delta[
-                                    (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
-                                    (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
-                                ]
-                    except Exception as e:
-                        st.error(f"Date Range Selection Error: {e}")
-                        
+                    st.markdown("**Select a week range**")
+                    
+                    # Step 1: Extract week and year from 'Time Period' string
+                    plot_data_melted_delta[['Month', 'WeekYear']] = plot_data_melted_delta['Time Period'].str.split(' ', expand=True)
+                    plot_data_melted_delta[['Week', 'Year']] = plot_data_melted_delta['WeekYear'].str.split('-', expand=True).astype(int)
+                    
+                    # Step 2: Create 'Fiscal Year Week' label
+                    plot_data_melted_delta['Fiscal Year Week'] = plot_data_melted_delta.apply(
+                        lambda x: f"W{x['Week']:02d}-{x['Year']}", axis=1
+                    )
+                    
+                    # Step 3: Create datetime object for each week (Monday of the week)
+                    plot_data_melted_delta['Week Start Date'] = plot_data_melted_delta.apply(
+                        lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']:02d}-5", "%G-W%V-%u"), axis=1
+                    )
+                    
+                    # Step 4: Create label-to-date mapping
+                    df_filtered = plot_data_melted_delta.copy()
+                    labels = df_filtered['Fiscal Year Week'].drop_duplicates().tolist()
+                    unique_periods = df_filtered['Week Start Date'].sort_values().unique()
+                    label_to_period = dict(zip(labels, unique_periods))
+
+
+                    
+                    
+                    if labels:
+                        # Sort labels chronologically based on their corresponding dates
+                        sorted_labels = sorted(labels, key=lambda x: label_to_period[x])
+                    
+                        # Select start and end week using selectbox
+                        start_label = st.selectbox("Start Week", options=sorted_labels, index=0)
+                        end_label = st.selectbox("End Week", options=sorted_labels, index=len(sorted_labels) - 1)
+                    
+                        start_week = label_to_period[start_label]
+                        end_week = label_to_period[end_label]
+                    
+                        # Ensure start_week is before or equal to end_week
+                        if start_week <= end_week:
+                            # Step 6: Filter data
+                            filtered_data = df_filtered[
+                                (df_filtered['Week Start Date'] >= start_week) & (df_filtered['Week Start Date'] <= end_week)
+                            ]
+                    
+                            # Step 7: Display filtered data
+                            st.write("Start Date:", start_week)
+                            st.write("End Date:", end_week)
+                        else:
+                            st.warning("Start week must be before or equal to end week.")
+                    
+                    else:
+                        st.info("No valid dates to build week options.")
+            
                 with col4: 
-                    st.write(start_date)
-                    st.write(end_date)
+                    st.dataframe(filtered_data)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
