@@ -157,7 +157,11 @@ def main():
                     unique_periods = pd.PeriodIndex(week_periods).sort_values().unique()
 
                                         
-                    labels = [f"{p.start_time.date()} → {p.end_time.date()} (Fri–Thu)" for p in unique_periods]
+                                        
+                    labels = [
+                        f"WW {i+1}: {p.start_time.date()} → {p.end_time.date()}"
+                        for i, p in enumerate(unique_periods)
+                    ]
                     label_to_period = dict(zip(labels, unique_periods))
 
                     if labels:
@@ -167,10 +171,10 @@ def main():
                         start_week = label_to_period[start_label].start_time
                         end_week = label_to_period[end_label].end_time
                     
-                        # 4) Filter (inclusive)
+
                         filtered_data = df[(df['Time Period'] >= start_week) & (df['Time Period'] <= end_week)]
                     
-                        st.write(f"Selected week range: {start_week.date()} → {end_week.date()} (Fri–Thu)")
+                        st.write(f"Selected week range: {start_week.date()} → {end_week.date()}")
                         st.dataframe(filtered_data)
                     else:
                         st.info("No valid dates to build week options.")
