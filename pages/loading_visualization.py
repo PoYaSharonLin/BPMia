@@ -172,29 +172,34 @@ def main():
 
 
                     
+                    
                     if labels:
-                        default_value = (labels[0], labels[-1])
-                        start_label, end_label = st.select_slider(" ", options=labels, value=default_value)
+                        # Sort labels chronologically based on their corresponding dates
+                        sorted_labels = sorted(labels, key=lambda x: label_to_period[x])
+                    
+                        # Select start and end week using selectbox
+                        start_label = st.selectbox("Start Week", options=sorted_labels, index=0)
+                        end_label = st.selectbox("End Week", options=sorted_labels, index=len(sorted_labels) - 1)
                     
                         start_week = label_to_period[start_label]
                         end_week = label_to_period[end_label]
                     
-                        # Step 6: Filter data
-                        filtered_data = df_filtered[
-                            (df_filtered['Week Start Date'] >= start_week) & (df_filtered['Week Start Date'] <= end_week)
-                        ]
+                        # Ensure start_week is before or equal to end_week
+                        if start_week <= end_week:
+                            # Step 6: Filter data
+                            filtered_data = df_filtered[
+                                (df_filtered['Week Start Date'] >= start_week) & (df_filtered['Week Start Date'] <= end_week)
+                            ]
                     
-                        # Step 7: Display filtered data
-                        st.write("Start Date:", start_week)
-                        st.write("End Date:", end_week)
-                        
-
+                            # Step 7: Display filtered data
+                            st.write("Start Date:", start_week)
+                            st.write("End Date:", end_week)
+                        else:
+                            st.warning("Start week must be before or equal to end week.")
+                    
                     else:
                         st.info("No valid dates to build week options.")
 
-                        
-                with col4: 
-                    st.dataframe(filtered_data)
                     
 
 
