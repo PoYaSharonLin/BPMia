@@ -185,8 +185,8 @@ def main():
                         ]
                     
                         # Step 7: Display filtered data
-                        st.write("Start Week:", start_week)
-                        st.write("End Week:", end_week)
+                        st.write("Start Date:", start_week)
+                        st.write("End Date:", end_week)
                         
 
                     else:
