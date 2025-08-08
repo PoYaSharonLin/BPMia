@@ -148,7 +148,7 @@ def main():
                 st.markdown("### Select a date range to view YoY & QoQ data")
                 col3, col4 = st.columns([1,2])
                 with col3: 
-                    st.markdown("**Select a date range to view YoY & QoQ data**")
+                    st.markdown("**Select a week range**")
                     
                     # Step 1: Extract week and year from 'Time Period' string
                     plot_data_melted_delta[['Month', 'WeekYear']] = plot_data_melted_delta['Time Period'].str.split(' ', expand=True)
@@ -174,7 +174,7 @@ def main():
                     
                     if labels:
                         default_value = (labels[0], labels[-1])
-                        start_label, end_label = st.select_slider("Week Range", options=labels, value=default_value)
+                        start_label, end_label = st.select_slider(" ", options=labels, value=default_value)
                     
                         start_week = label_to_period[start_label]
                         end_week = label_to_period[end_label]
@@ -185,16 +185,17 @@ def main():
                         ]
                     
                         # Step 7: Display filtered data
-                        st.write("Filtered Data:")
-                        st.dataframe(filtered_data)
+                        st.write("Start Week:", start_week)
+                        st.write("End Week:", end_week)
+                        
 
                     else:
                         st.info("No valid dates to build week options.")
 
                         
                 with col4: 
-                    st.write("Start Week:", start_week)
-                    st.write("End Week:", end_week)
+                    st.dataframe(filtered_data)
+                    
 
 
             except Exception as e:
