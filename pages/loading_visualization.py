@@ -147,19 +147,38 @@ def main():
                 st.markdown("### Select a date range to view YoY & QoQ data")
                 col3, col4 = st.columns([1,2])
                 with col3: 
+                    st.markdown("**Select a date range to view YoY & QoQ data**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
-                    try:
-                        start_date, end_date = st.date_input("Date Range", [plot_data_melted_delta['Time Period'].min(), plot_data_melted_delta['Time Period'].max()])
-                        filtered_data = plot_data_melted_delta[
-                                    (plot_data_melted_delta['Time Period'] >= pd.to_datetime(start_date)) &
-                                    (plot_data_melted_delta['Time Period'] <= pd.to_datetime(end_date))
-                                ]
-                    except Exception as e:
-                        st.error(f"Date Range Selection Error: {e}")
+                    df = plot_data_melted_delta.dropna(subset=['Time Period']).copy()
+                    df['Time Period'] = df['Time Period'].dt.normalize()
+
+                    
+                    week_periods = df['Time Period'].dt.to_period('W-THU')  # Fri→Thu weeks
+                    unique_periods = pd.PeriodIndex(week_periods).sort_values().unique()
+
+                                        
+                    labels = [f"{p.start_time.date()} → {p.end_time.date()} (Fri–Thu)" for p in unique_periods]
+                    label_to_period = dict(zip(labels, unique_periods))
+
+                    if labels:
+                        default_value = (labels[0], labels[-1])
+                        start_label, end_label = st.select_slider("Week Range", options=labels, value=default_value)
+                    
+                        start_week = label_to_period[start_label].start_time
+                        end_week = label_to_period[end_label].end_time
+                    
+                        # 4) Filter (inclusive)
+                        filtered_data = df[(df['Time Period'] >= start_week) & (df['Time Period'] <= end_week)]
+                    
+                        st.write(f"Selected week range: {start_week.date()} → {end_week.date()} (Fri–Thu)")
+                        st.dataframe(filtered_data)
+                    else:
+                        st.info("No valid dates to build week options.")
+
                         
                 with col4: 
-                    st.markdown("#### YoY")
-                    st.markdown("#### QoQ")
+                    st.write(start_week)
+                    st.write(end_week)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
