@@ -165,9 +165,9 @@ def main():
                     )
                     
                     # Step 4: Create label-to-date mapping
-                    df = plot_data_melted_delta.copy()
-                    labels = df['Fiscal Year Week'].tolist()
-                    unique_periods = df['Week Start Date'].sort_values().unique()
+                    df_filtered = plot_data_melted_delta.copy()
+                    labels = df_filtered['Fiscal Year Week'].drop_duplicates().tolist()
+                    unique_periods = df_filtered['Week Start Date'].sort_values().unique()
                     label_to_period = dict(zip(labels, unique_periods))
 
 
@@ -180,8 +180,8 @@ def main():
                         end_week = label_to_period[end_label]
                     
                         # Step 6: Filter data
-                        filtered_data = df[
-                            (df['Week Start Date'] >= start_week) & (df['Week Start Date'] <= end_week)
+                        filtered_data = df_filtered[
+                            (df_filtered['Week Start Date'] >= start_week) & (df_filtered['Week Start Date'] <= end_week)
                         ]
                     
                         # Step 7: Display filtered data
