@@ -150,13 +150,13 @@ def main():
                     st.markdown("**Select a date range to view YoY & QoQ data**")
                     plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
                     df = plot_data_melted_delta.dropna(subset=['Time Period']).copy()
-                    df['Time Period'] = df['Time Period'].dt.normalize()
                     df['Fiscal Year Week'] = df['Time Period'].str.extract(r'(\d{2})-(\d{4})').apply(lambda x: f"W{x[0]}-{x[1]}", axis=1)
                     
                     week_periods = df['Fiscal Year Week']
-                    unique_periods = pd.PeriodIndex(week_periods).sort_values().unique()
+                    period_index = pd.to_datetime(week_periods.str.extract(r'W(\d{2})-(\d{4})').apply(lambda x: f"{x[1]}-W{x[0]}", axis=1), format="%Y-W%W")
+                    unique_periods = pd.Series(period_index).sort_values().unique()
 
-                    labels = week_periods
+                    labels = week_periods.tolist()
                     label_to_period = dict(zip(labels, unique_periods))
 
                     if labels:
