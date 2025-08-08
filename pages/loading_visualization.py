@@ -148,16 +148,27 @@ def main():
                 col3, col4 = st.columns([1,2])
                 with col3: 
                     st.markdown("**Select a date range to view YoY & QoQ data**")
-                    plot_data_melted_delta['Time Period'] = pd.to_datetime(plot_data_melted_delta['Time Period'], errors='coerce')
-                    df = plot_data_melted_delta.dropna(subset=['Time Period']).copy()
-                    df['Fiscal Year Week'] = df['Time Period'].str.extract(r'(\d{2})-(\d{4})').apply(lambda x: f"W{x[0]}-{x[1]}", axis=1)
                     
-                    week_periods = df['Fiscal Year Week']
-                    period_index = pd.to_datetime(week_periods.str.extract(r'W(\d{2})-(\d{4})').apply(lambda x: f"{x[1]}-W{x[0]}", axis=1), format="%Y-W%W")
-                    unique_periods = pd.Series(period_index).sort_values().unique()
-
-                    labels = week_periods.tolist()
+                    # Step 1: Extract week and year from 'Time Period' string
+                    plot_data_melted_delta[['Month', 'WeekYear']] = plot_data_melted_delta['Time Period'].str.split(' ', expand=True)
+                    plot_data_melted_delta[['Week', 'Year']] = plot_data_melted_delta['WeekYear'].str.split('-', expand=True).astype(int)
+                    
+                    # Step 2: Create 'Fiscal Year Week' label
+                    plot_data_melted_delta['Fiscal Year Week'] = plot_data_melted_delta.apply(
+                        lambda x: f"W{x['Week']:02d}-{x['Year']}", axis=1
+                    )
+                    
+                    # Step 3: Create datetime object for each week (Monday of the week)
+                    plot_data_melted_delta['Week Start Date'] = plot_data_melted_delta.apply(
+                        lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']:02d}-1", "%G-W%V-%u"), axis=1
+                    )
+                    
+                    # Step 4: Create label-to-date mapping
+                    df = plot_data_melted_delta.copy()
+                    labels = df['Fiscal Year Week'].tolist()
+                    unique_periods = df['Week Start Date'].sort_values().unique()
                     label_to_period = dict(zip(labels, unique_periods))
+
 
                     if labels:
                         default_value = (labels[0], labels[-1])
