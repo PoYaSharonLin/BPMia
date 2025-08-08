@@ -167,10 +167,11 @@ def main():
                         end_week = label_to_period[end_label]
 
                         
-                        # Convert 'Time Period' to datetime for filtering
-                        df['Time Period Date'] = pd.to_datetime(df['Fiscal Year Week'].str.extract(r'W(\d{2})-(\d{4})').apply(lambda x: f"{x[1]}-W{x[0]}", axis=1), format="%Y-W%W")
-
-                    
+                        
+                        df['Time Period Date'] = df.apply(
+                            lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']}-5", "%Y-W%W-%w"),
+                            axis=1
+                        )
 
                         filtered_data = df[(df['Time Period Date'] >= start_week) & (df['Time Period Date'] <= end_week)]
                     
