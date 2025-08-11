@@ -208,6 +208,7 @@ def main():
                         st.info("No valid dates to build week options.")
             
                 with col4: 
+                    st.markdown("**QoQ**")
                     plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )   
@@ -224,9 +225,9 @@ def main():
                     collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
                     df_sorted = collapsed.sort_values('Group')
                     percentage_df = df_sorted.copy()
-                    percentage_df.columns = ['Group', 'Value']
-                    percentage_df['Value'] = pd.to_numeric(percentage_df['Value'], errors='coerce')
-                    percentage_df['% Change'] = round(percentage_df['Value'].pct_change() * 100, 2)
+                    percentage_df.columns = ['Quarter', 'Total Wafer Out']
+                    percentage_df['Total Wafer Out'] = pd.to_numeric(percentage_df['Total Wafer Out'], errors='coerce')
+                    percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
 
                     
 
