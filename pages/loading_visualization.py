@@ -173,6 +173,7 @@ def main():
                 percentage_df.columns = ['Quarter', 'Total Wafer Out']
                 percentage_df['Total Wafer Out'] = pd.to_numeric(percentage_df['Total Wafer Out'], errors='coerce')
                 percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
+                st.dataframe(percentage_df.T)
                 
                 col3, col4 = st.columns([1,2])
                 with col3: 
@@ -234,7 +235,7 @@ def main():
                     
 
 
-                    st.dataframe(percentage_df.T)
+                    
 
 
             except Exception as e:
