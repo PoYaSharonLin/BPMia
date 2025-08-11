@@ -212,9 +212,9 @@ def main():
                     new_columns = [*quater_headers, df.columns[-1]]
                     plot_data_all.columns = new_columns
 
-                    group_col = plot_data_all.columns[-1]
-                    data_cols = [c for c in plot_data_all.columns if c != group_col]
-                    collapsed_by_quarter = plot_data_all.groupby(plot_data_all[data_cols].columns, axis=1).sum()
+                    # group_col = plot_data_all.columns[-1]
+                    # data_cols = [c for c in plot_data_all.columns if c != group_col]
+                    # collapsed_by_quarter = plot_data_all.groupby(plot_data_all[data_cols].columns, axis=1).sum()
                     
                     # collapsed_by_quarter[group_col] = plot_data_all[group_col]
                     # grouped = (
@@ -235,7 +235,7 @@ def main():
                     #         name="Total_DRAM_qoq"
                     #     )
                     
-                    st.dataframe(collapsed_by_quarter)                  # Product (rows) x Quarter (cols)
+                    st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     # st.dataframe(wafer_output_by_product)  # Quarter (rows) x Product (cols)
                     # st.dataframe(percentage_by_product)    # Percentages per quarter
                     # st.dataframe(total_dram_qoq.to_frame("QoQ_Total_DRAM"))
