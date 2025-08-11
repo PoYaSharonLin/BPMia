@@ -213,6 +213,7 @@ def main():
                     plot_data_all.columns = new_columns
 
                     group_col = plot_data_all.columns[-1]
+                    data_cols = [c for c in plot_data_all.columns if c != group_col]
                     collapsed_by_quarter = plot_data_all.groupby(plot_data_all[data_cols].columns, axis=1).sum()
                     
                     collapsed_by_quarter[group_col] = plot_data_all[group_col]
