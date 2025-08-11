@@ -103,24 +103,6 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
 
     return fig
 
-def create_total_QoQ(df):
-    # Extract quarter labels and Total DRAM values
-    quarter_labels = df.iloc[0, 2:].values
-    total_dram_values = df[df.iloc[:, 0] == 'Total_DRAM'].iloc[0, 2:].astype(float).values
-    
-    # # Create a DataFrame with quarter labels and corresponding Total DRAM values
-    # data = pd.DataFrame({
-    #     'Quarter': quarter_labels,
-    #     'Total_DRAM': total_dram_values
-    # })
-    
-    # # Group by quarter and calculate percentage change: ((last - first) / first) * 100
-    # quarter_changes = data.groupby('Quarter')['Total_DRAM'].agg(['first', 'last'])
-    # quarter_changes['Percentage_Change'] = ((quarter_changes['last'] - quarter_changes['first']) / quarter_changes['first']) * 100
-
-    return quarter_labels
-
-    
 
 
 def main():
@@ -223,16 +205,11 @@ def main():
                 )   
 
                     st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
-                    total_QoQ = create_total_QoQ(plot_data_all)
-                    st.write(total_QoQ)
-                    # st.write("Wafer Output by Product:")
-                    # st.dataframe(wafer_output_by_product)
-                    
-                    # st.write("Percentage by Product (% of quarter total):")
-                    # st.dataframe(percentage_by_product.round(2))
-                    
-                    # st.write("QoQ Change for Total_DRAM (fraction):")
-                    # st.dataframe(total_dram_qoq.round(4))
+                    total_QoQ = plot_data_all.loc["Group", "Total_DRAM"]
+                    quarter = plot_data_all.loc["Group"].iloc[1]
+                    total_QoQ = pd.concat([total_QoQ, quarter])
+                    st.dataframe(total_QoQ)
+
 
 
             except Exception as e:
