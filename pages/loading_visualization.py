@@ -108,17 +108,17 @@ def create_total_QoQ(df):
     quarter_labels = df.iloc[1, 1:].values
     total_dram_values = df[df.iloc[:, 0] == 'Total_DRAM'].iloc[0, 1:].astype(float).values
     
-    # Create a DataFrame with quarter labels and corresponding Total DRAM values
-    data = pd.DataFrame({
-        'Quarter': quarter_labels,
-        'Total_DRAM': total_dram_values
-    })
+    # # Create a DataFrame with quarter labels and corresponding Total DRAM values
+    # data = pd.DataFrame({
+    #     'Quarter': quarter_labels,
+    #     'Total_DRAM': total_dram_values
+    # })
     
-    # Group by quarter and calculate percentage change: ((last - first) / first) * 100
-    quarter_changes = data.groupby('Quarter')['Total_DRAM'].agg(['first', 'last'])
-    quarter_changes['Percentage_Change'] = ((quarter_changes['last'] - quarter_changes['first']) / quarter_changes['first']) * 100
+    # # Group by quarter and calculate percentage change: ((last - first) / first) * 100
+    # quarter_changes = data.groupby('Quarter')['Total_DRAM'].agg(['first', 'last'])
+    # quarter_changes['Percentage_Change'] = ((quarter_changes['last'] - quarter_changes['first']) / quarter_changes['first']) * 100
 
-    return quarter_changes
+    return quarter_labels
 
     
 
@@ -241,7 +241,7 @@ def main():
 
                     st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     total_QoQ = create_total_QoQ(plot_data_all)
-                    st.dataframe(total_QoQ)
+                    st.write(total_QoQ)
                     # st.write("Wafer Output by Product:")
                     # st.dataframe(wafer_output_by_product)
                     
