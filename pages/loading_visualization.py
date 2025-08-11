@@ -204,42 +204,9 @@ def main():
                     plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=16, group_col_index=column_index_from_string('D') - 1
                 )
-                    quater_headers = secondary_labels_all
-                    n_middle = plot_data_all.shape[1] - 1  
-                    assert len(quater_headers) == n_middle, \
-                        f"Need {n_middle} names in quater_headers, but got {len(quater_headers)}."
                     
-                    new_columns = [*quater_headers, df.columns[-1]]
-                    plot_data_all.columns = new_columns
-
-                    group_col = plot_data_all.columns[-1]
-                    if isinstance(group_col, str) and group_col.startswith("Unnamed"):
-                        plot_data_all = plot_data_all.rename(columns={group_col: "Group"})
-                        group_col = "Group"
-
-                    data_cols = [c for c in plot_data_all.columns if c != group_col]
-                    collapsed_by_quarter = plot_data_all.groupby(plot_data_all[data_cols].columns, axis=1).sum()
                     
-                    collapsed_by_quarter[group_col] = plot_data_all[group_col]
-                    # grouped = (
-                    #     collapsed_by_quarter
-                    #     .groupby(group_col, dropna=False)   # group on Product
-                    #     .sum(numeric_only=True)             # one row per Product; columns are unique quarters
-                    # )
-                    # wafer_output_by_product = grouped.T
-                    # total_per_quarter = wafer_output_by_product.sum(axis=1)   
-                    # percentage_by_product = wafer_output_by_product.divide(total_per_quarter, axis=0) * 100
-                    
-                    # if "Total_DRAM" in wafer_output_by_product.columns:
-                    #     total_dram_qoq = wafer_output_by_product["Total_DRAM"].pct_change()
-                    # else:
-                    #     total_dram_qoq = pd.Series(
-                    #         data=["N/A"] * len(wafer_output_by_product.index),
-                    #         index=wafer_output_by_product.index,
-                    #         name="Total_DRAM_qoq"
-                    #     )
-                    
-                    st.dataframe(collapsed_by_quarter)                  # Product (rows) x Quarter (cols)
+                    st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     # st.dataframe(wafer_output_by_product)  # Quarter (rows) x Product (cols)
                     # st.dataframe(percentage_by_product)    # Percentages per quarter
                     # st.dataframe(total_dram_qoq.to_frame("QoQ_Total_DRAM"))
