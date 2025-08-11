@@ -208,8 +208,8 @@ def main():
                     quarter = plot_data_all.iloc[0]
                     dram_value = plot_data_all.iloc[10]
                     total_dram = pd.DataFrame([quarter,dram_value])
-                    group_labels = df.iloc[1, 1:-1]  
-                    values = df.iloc[2, 1:-1].astype(float)
+                    group_labels = total_dram.iloc[1, 1:-1]  
+                    values = total_dram.iloc[2, 1:-1].astype(float)
                     total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
                     collapsed = grouped_df.groupby('Group').sum().reset_index()
 
