@@ -205,7 +205,19 @@ def main():
                 )   
 
                     # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
+                    
+                    def convert_fq(code):
+                        def replacer(match):
+                            quarter = match.group(1)
+                            year = match.group(2)
+                            if quarter == '3':
+                                return match.group(0)  # Leave FQ3XX unchanged
+                            return f"20{year}Q{quarter}"
+                    
+                        return re.sub(r'FQ([1-3])(\d{2})', replacer, code)
+
                     quarter = plot_data_all.iloc[0]
+                    quarter = convert_fq(fq) for fq in quarter
                     dram_value = plot_data_all.iloc[10]
                     total_dram = pd.DataFrame([quarter,dram_value])
                     group_labels = total_dram.iloc[0, 1:-1]  
