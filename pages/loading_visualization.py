@@ -154,25 +154,25 @@ def main():
                 
                 st.markdown("### Select a date range to view YoY & QoQ data")
                 st.markdown("**Overall QoQ**")
-                    plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
-                    df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
-                )   
+                plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
+                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
+            )   
 
-                    # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
-                    quarter = plot_data_all.iloc[0]
-                    dram_value = plot_data_all.iloc[10]
-                    total_dram = pd.DataFrame([quarter,dram_value])
-                    group_labels = total_dram.iloc[0, 1:-1]  
-                    values = total_dram.iloc[1, 1:-1].astype(float)
-                    total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
-                    collapsed = total_df.groupby('Group').sum().reset_index()
-                    
-                    collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
-                    df_sorted = collapsed.sort_values('Group')
-                    percentage_df = df_sorted.copy()
-                    percentage_df.columns = ['Quarter', 'Total Wafer Out']
-                    percentage_df['Total Wafer Out'] = pd.to_numeric(percentage_df['Total Wafer Out'], errors='coerce')
-                    percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
+                # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
+                quarter = plot_data_all.iloc[0]
+                dram_value = plot_data_all.iloc[10]
+                total_dram = pd.DataFrame([quarter,dram_value])
+                group_labels = total_dram.iloc[0, 1:-1]  
+                values = total_dram.iloc[1, 1:-1].astype(float)
+                total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
+                collapsed = total_df.groupby('Group').sum().reset_index()
+                
+                collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
+                df_sorted = collapsed.sort_values('Group')
+                percentage_df = df_sorted.copy()
+                percentage_df.columns = ['Quarter', 'Total Wafer Out']
+                percentage_df['Total Wafer Out'] = pd.to_numeric(percentage_df['Total Wafer Out'], errors='coerce')
+                percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
                 
                 col3, col4 = st.columns([1,2])
                 with col3: 
