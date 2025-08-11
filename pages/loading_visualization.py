@@ -219,7 +219,7 @@ def main():
                     group_labels = total_dram.iloc[0, 1:-1]  
                     values = total_dram.iloc[1, 1:-1].astype(float)
                     total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
-                    collapsed = total_df.groupby('Group').sum()
+                    collapsed = total_df.groupby('Group').sum().reset_index()
                     
                     collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
                     df_sorted = collapsed.sort_values('Group')
