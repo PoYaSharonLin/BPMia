@@ -205,11 +205,11 @@ def main():
                     df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=16, group_col_index=column_index_from_string('D') - 1
                 )
                     quater_headers = secondary_labels_all
-                    n_middle = plot_data_all.shape[1] - 2  
+                    n_middle = plot_data_all.shape[1] - 1  
                     assert len(quater_headers) == n_middle, \
                         f"Need {n_middle} names in quater_headers, but got {len(quater_headers)}."
                     
-                    new_columns = [plot_data_all.columns[0], *quater_headers, df.columns[-1]]
+                    new_columns = [*quater_headers, df.columns[-1]]
                     plot_data_all.columns = new_columns
                     st.dataframe(plot_data_all)
 
