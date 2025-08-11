@@ -201,7 +201,18 @@ def main():
                         st.info("No valid dates to build week options.")
             
                 with col4: 
-                    st.dataframe(plot_data_delta)
+                    plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
+                    df, start_col, end_col, x_row=2, y_start_row=3, y_end_row=16, group_col_index=column_index_from_string('D') - 1
+                )
+                    # quater_headers = secondary_labels
+                    # plot_dat = 
+                    # n_middle = plot_data_delta.shape[1] - 2  # exclude first and last columns
+                    # assert len(quater_headers) == n_middle, \
+                    #     f"Need {n_middle} names in quater_headers, but got {len(quater_headers)}."
+                    
+                    # new_columns = [plot_data_delta.columns[0], *quater_headers, df.columns[-1]]
+                    # plot_data_delta.columns = new_columns
+                    st.dataframe(plot_data_all)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
