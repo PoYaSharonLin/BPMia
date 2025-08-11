@@ -222,23 +222,23 @@ def main():
                         .groupby(group_col, dropna=False)   # group on Product
                         .sum(numeric_only=True)             # one row per Product; columns are unique quarters
                     )
-                    wafer_output_by_product = grouped.T
-                    total_per_quarter = wafer_output_by_product.sum(axis=1)   
-                    percentage_by_product = wafer_output_by_product.divide(total_per_quarter, axis=0) * 100
+                    # wafer_output_by_product = grouped.T
+                    # total_per_quarter = wafer_output_by_product.sum(axis=1)   
+                    # percentage_by_product = wafer_output_by_product.divide(total_per_quarter, axis=0) * 100
                     
-                    if "Total_DRAM" in wafer_output_by_product.columns:
-                        total_dram_qoq = wafer_output_by_product["Total_DRAM"].pct_change()
-                    else:
-                        total_dram_qoq = pd.Series(
-                            data=["N/A"] * len(wafer_output_by_product.index),
-                            index=wafer_output_by_product.index,
-                            name="Total_DRAM_qoq"
-                        )
+                    # if "Total_DRAM" in wafer_output_by_product.columns:
+                    #     total_dram_qoq = wafer_output_by_product["Total_DRAM"].pct_change()
+                    # else:
+                    #     total_dram_qoq = pd.Series(
+                    #         data=["N/A"] * len(wafer_output_by_product.index),
+                    #         index=wafer_output_by_product.index,
+                    #         name="Total_DRAM_qoq"
+                    #     )
                     
                     st.dataframe(grouped)                  # Product (rows) x Quarter (cols)
-                    st.dataframe(wafer_output_by_product)  # Quarter (rows) x Product (cols)
-                    st.dataframe(percentage_by_product)    # Percentages per quarter
-                    st.dataframe(total_dram_qoq.to_frame("QoQ_Total_DRAM"))
+                    # st.dataframe(wafer_output_by_product)  # Quarter (rows) x Product (cols)
+                    # st.dataframe(percentage_by_product)    # Percentages per quarter
+                    # st.dataframe(total_dram_qoq.to_frame("QoQ_Total_DRAM"))
 
 
 
