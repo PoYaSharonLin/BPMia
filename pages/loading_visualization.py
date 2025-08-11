@@ -105,8 +105,8 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
 
 def create_total_QoQ(df):
     # Extract quarter labels and Total DRAM values
-    quarter_labels = df.iloc[0, 2:].values
-    total_dram_values = df[df.iloc[:, 0] == 'Total DRAM'].iloc[0, 2:].astype(float).values
+    quarter_labels = df.iloc[1, 1:].values
+    total_dram_values = df[df.iloc[:, 0] == 'Total_DRAM'].iloc[0, 1:].astype(float).values
     
     # Create a DataFrame with quarter labels and corresponding Total DRAM values
     data = pd.DataFrame({
