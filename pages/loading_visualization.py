@@ -226,7 +226,7 @@ def main():
                     percentage_df = df_sorted.copy()
                     percentage_df.columns = ['Group', 'Value']
                     percentage_df['Value'] = pd.to_numeric(percentage_df['Value'], errors='coerce')
-                    percentage_df['% Change'] = percentage_df['Value'].pct_change() * 100
+                    percentage_df['% Change'] = round(percentage_df['Value'].pct_change() * 100, 2)
 
                     
 
