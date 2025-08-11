@@ -211,7 +211,35 @@ def main():
                     
                     new_columns = [*quater_headers, df.columns[-1]]
                     plot_data_all.columns = new_columns
-                    st.dataframe(plot_data_all)
+
+                    group_col = plot_data_all.columns[-1]
+                    collapsed_by_quarter = plot_data_all.groupby(plot_data_all[data_cols].columns, axis=1).sum()
+                    
+                    collapsed_by_quarter[group_col] = plot_data_all[group_col]
+                    grouped = (
+                        collapsed_by_quarter
+                        .groupby(group_col, dropna=False)   # group on Product
+                        .sum(numeric_only=True)             # one row per Product; columns are unique quarters
+                    )
+                    wafer_output_by_product = grouped.T
+                    total_per_quarter = wafer_output_by_product.sum(axis=1)   
+                    percentage_by_product = wafer_output_by_product.divide(total_per_quarter, axis=0) * 100
+                    
+                    if "Total_DRAM" in wafer_output_by_product.columns:
+                        total_dram_qoq = wafer_output_by_product["Total_DRAM"].pct_change()
+                    else:
+                        total_dram_qoq = pd.Series(
+                            data=["N/A"] * len(wafer_output_by_product.index),
+                            index=wafer_output_by_product.index,
+                            name="Total_DRAM_qoq"
+                        )
+                    
+                    st.dataframe(grouped)                  # Product (rows) x Quarter (cols)
+                    st.dataframe(wafer_output_by_product)  # Quarter (rows) x Product (cols)
+                    st.dataframe(percentage_by_product)    # Percentages per quarter
+                    st.dataframe(total_dram_qoq.to_frame("QoQ_Total_DRAM"))
+
+
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
