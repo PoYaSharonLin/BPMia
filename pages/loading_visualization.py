@@ -230,6 +230,7 @@ def main():
                         st.info("No valid dates to build week options.")
             
                 with col4: 
+                    st.markdown("**Selected Range Product Portion**")
                     st.dataframe(plot_data_melted_all)
 
             except Exception as e:
