@@ -220,24 +220,7 @@ def main():
                 with col4: 
                     plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
-                )
-                    
-                    
-                    group_col = df.columns[-1]
-                    if isinstance(group_col, str) and group_col.startswith("Unnamed"):
-                        group_col = "Group"
-                    
-                    plot_data_all = plot_data_all.rename(columns={df.columns[-1]: group_col}).set_index(group_col)
-                    
-                    n_middle = plot_data_all.shape[1]
-                    assert len(secondary_labels_all) == n_middle, (
-                        f"secondary_labels_all length {len(secondary_labels_all)} != data columns {n_middle}"
-                    )
-                    assert len(primary_labels_all) == n_middle, (
-                        f"primary_labels_all length {len(primary_labels_all)} != data columns {n_middle}"
-                    )
-                    
-                    
+                )   
 
                     st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     total_QoQ = create_total_QoQ(plot_data_all)
