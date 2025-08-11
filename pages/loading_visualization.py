@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+import re
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
 
