@@ -226,12 +226,12 @@ def main():
                     percentage_df = df_sorted.copy()
                     percentage_df.columns = ['Group', 'Value']
                     percentage_df['Value'] = pd.to_numeric(percentage_df['Value'], errors='coerce')
-                    percentage_df['Pct_Change'] = percentage_df['Value'].pct_change() * 100
+                    percentage_df['% Change'] = percentage_df['Value'].pct_change() * 100
 
                     
 
 
-                    st.dataframe(percentage_df)
+                    st.dataframe(percentage_df.T)
 
 
             except Exception as e:
