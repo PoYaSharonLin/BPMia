@@ -220,79 +220,17 @@ def main():
                         f"primary_labels_all length {len(primary_labels_all)} != data columns {n_middle}"
                     )
                     
-                    cols = pd.MultiIndex.from_arrays(
-                        [secondary_labels_all, primary_labels_all],
-                        names=["Quarter", "Series"]
-                    )
-                    plot_data_all.columns = cols
-
-                    
-                    plot_data_all.columns = [c.strip() for c in df.columns]  # clean accidental spaces
-                    
-                    # 2) Melt to long/tidy: one row per (Group, WeekLabel)
-                    long = plot_data_all.melt(id_vars='Group', var_name='WeekLabel', value_name='Wafer Output')
-                    long['Wafer Output'] = pd.to_numeric(long['Wafer Output'], errors='coerce').fillna(0)
-                    
-                    # Normalize group names so 'Total DRAM' -> 'Total_DRAM' (your later code checks this)
-                    long['Group'] = long['Group'].astype(str).str.strip().str.replace(' ', '_', regex=False)
-                    
-                    # 3) Parse month & year from headers like 'JUN 22-2025' (handles 'JLY' for July)
-                    month_map = {'JAN':1,'FEB':2,'MAR':3,'APR':4,'MAY':5,'JUN':6,'JUL':7,'JLY':7,
-                                 'AUG':8,'SEP':9,'OCT':10,'NOV':11,'DEC':12}
-                    
-                    def parse_month_year(lbl: str):
-                        lbl = str(lbl).strip()
-                        parts = lbl.split()
-                        mon = month_map.get((parts[0][:3] if parts else '').upper())
-                        # Year appears after the last '-' in the second token (e.g., '22-2025')
-                        yr = None
-                        if len(parts) > 1 and '-' in parts[1]:
-                            yr = parts[1].split('-')[-1]
-                        else:
-                            m = re.search(r'(20\\d{2})', lbl)  # fallback: find any 4-digit year
-                            yr = m.group(1) if m else None
-                        return mon, (int(yr) if yr else None)
-                    
-                    long[['Month','Year']] = long['WeekLabel'].apply(lambda s: pd.Series(parse_month_year(s)))
-                    long = long.dropna(subset=['Month','Year']).astype({'Month': int, 'Year': int})
-                    
-                    # 4) Build calendar quarter labels (e.g., '2025Q2'); sort chronologically
-                    q = pd.PeriodIndex(pd.to_datetime({'year': long['Year'], 'month': long['Month'], 'day': 1}), freq='Q')
-                    long['Quarter'] = q.astype(str)
-                    
-                    # 5) Group by Quarter & Group and pivot to get products as rows, quarters as columns
-                    grouped = long.groupby(['Quarter', 'Group'])['Wafer Output'].sum().unstack(fill_value=0)
-                    grouped = grouped.sort_index(key=lambda idx: pd.PeriodIndex(idx, freq='Q'))  # chronological sorting
-                    wafer_output_by_product = grouped.T  # products as rows, quarters as columns
-                    
-                    # 6) Total wafer output per quarter and percentage share
-                    total_per_quarter = wafer_output_by_product.sum(axis=0)
-                    percentage_by_product = wafer_output_by_product.divide(
-                        total_per_quarter.where(total_per_quarter != 0, 1), axis=1
-                    ) * 100
-                    
-                    # 7) QoQ change for Total_DRAM (robust to 'Total DRAM' vs 'Total_DRAM')
-                    row_name = 'Total_DRAM' if 'Total_DRAM' in wafer_output_by_product.index else None
-                    if row_name is None:
-                        for cand in wafer_output_by_product.index:
-                            if cand.replace(' ', '_').lower() == 'total_dram':
-                                row_name = cand
-                                break
-                    if row_name:
-                        total_dram_qoq = wafer_output_by_product.loc[row_name].pct_change()
-                    else:
-                        total_dram_qoq = pd.Series(index=wafer_output_by_product.columns, data=float('nan'))
                     
 
                     st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
-                    st.write("Wafer Output by Product:")
-                    st.dataframe(wafer_output_by_product)
+                    # st.write("Wafer Output by Product:")
+                    # st.dataframe(wafer_output_by_product)
                     
-                    st.write("Percentage by Product (% of quarter total):")
-                    st.dataframe(percentage_by_product.round(2))
+                    # st.write("Percentage by Product (% of quarter total):")
+                    # st.dataframe(percentage_by_product.round(2))
                     
-                    st.write("QoQ Change for Total_DRAM (fraction):")
-                    st.dataframe(total_dram_qoq.round(4))
+                    # st.write("QoQ Change for Total_DRAM (fraction):")
+                    # st.dataframe(total_dram_qoq.round(4))
 
 
             except Exception as e:
