@@ -206,7 +206,7 @@ def main():
                 )
                     quater_headers = secondary_labels_all
                     n_middle = plot_data_all.shape[1] - 2  
-                    assert len(quater_headers) == n_middle, 
+                    assert len(quater_headers) == n_middle, \
                         f"Need {n_middle} names in quater_headers, but got {len(quater_headers)}."
                     
                     new_columns = [plot_data_all.columns[0], *quater_headers, df.columns[-1]]
