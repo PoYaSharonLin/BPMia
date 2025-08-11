@@ -206,6 +206,26 @@ def main():
                 )
                     
                     
+                    group_col = df.columns[-1]
+                    if isinstance(group_col, str) and group_col.startswith("Unnamed"):
+                        group_col = "Group"
+                    
+                    plot_data_all = plot_data_all.rename(columns={df.columns[-1]: group_col}).set_index(group_col)
+                    
+                    n_middle = plot_data_all.shape[1]
+                    assert len(secondary_labels_all) == n_middle, (
+                        f"secondary_labels_all length {len(secondary_labels_all)} != data columns {n_middle}"
+                    )
+                    assert len(primary_labels_all) == n_middle, (
+                        f"primary_labels_all length {len(primary_labels_all)} != data columns {n_middle}"
+                    )
+                    
+                    cols = pd.MultiIndex.from_arrays(
+                        [secondary_labels_all, primary_labels_all],
+                        names=["Quarter", "Series"]
+                    )
+                    plot_data_all.columns = cols
+
                     st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     # st.dataframe(wafer_output_by_product)  # Quarter (rows) x Product (cols)
                     # st.dataframe(percentage_by_product)    # Percentages per quarter
