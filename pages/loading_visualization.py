@@ -206,7 +206,7 @@ def main():
 
                     # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     quarter = plot_data_all.iloc[0]
-                    total_dram = plot_data_all.loc["Group", "Total_DRAM"]
+                    total_dram = plot_data_all.loc["Group"]["Total_DRAM"]
                     st.dataframe(total_dram)
 
 
