@@ -205,11 +205,7 @@ def main():
                 )   
 
                     st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
-                    total_QoQ = plot_data_all.loc["Total_DRAM"]
-                    quarter = plot_data_all.iloc[1]
-                    total_QoQ = pd.concat([total_QoQ, quarter])
-                    st.dataframe(total_QoQ)
-
+    
 
 
             except Exception as e:
