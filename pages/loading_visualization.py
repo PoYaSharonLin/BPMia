@@ -217,7 +217,7 @@ def main():
                         return re.sub(r'FQ([1-3])(\d{2})', replacer, code)
 
                     quarter = plot_data_all.iloc[0]
-                    quarter = convert_fq(fq) for fq in quarter
+                    quarter = [convert_fq(fq) for fq in quarter]
                     dram_value = plot_data_all.iloc[10]
                     total_dram = pd.DataFrame([quarter,dram_value])
                     group_labels = total_dram.iloc[0, 1:-1]  
