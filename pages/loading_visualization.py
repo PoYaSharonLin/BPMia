@@ -201,7 +201,7 @@ def main():
                         st.info("No valid dates to build week options.")
             
                 with col4: 
-                    st.dataframe(filtered_data)
+                    st.dataframe(plot_data_melted_delta)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
