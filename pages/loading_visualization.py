@@ -224,7 +224,7 @@ def main():
                     collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
                     df_sorted = collapsed.sort_values('Group')
                     percentage_df = df_sorted.copy()
-                    percentage_df = percentage_df.columns = ['Index', 'Group', 'Value']
+                    percentage_df.columns = ['Index', 'Group', 'Value']
                     percentage_df['Value'] = pd.to_numeric(percentage_df['Value'], errors='coerce')
                     percentage_df['Pct_Change'] = percentage_df['Value'].pct_change() * 100
 
