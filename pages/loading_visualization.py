@@ -230,7 +230,7 @@ def main():
                         st.info("No valid dates to build week options.")
             
                 with col4: 
-                    st.info("No valid dates to build week options.")
+                    st.dataframe(filtered_data)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
