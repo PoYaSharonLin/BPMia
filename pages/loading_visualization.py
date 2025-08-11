@@ -146,10 +146,10 @@ def main():
 
 
                 # Delta Line plot 
-                plot_data_delta, plot_data_melted_delta, primary_labels, secondary_labels= prepare_line_plot_data(
+                plot_data_delta, plot_data_melted_all, primary_labels, secondary_labels= prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
                 )
-                fig_delta = create_line_plot(plot_data_melted_delta, "OMT DRAM BC Delta", primary_labels, secondary_labels)
+                fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
                 st.markdown("### Select a date range to view YoY & QoQ data")
@@ -180,21 +180,21 @@ def main():
                     st.markdown("**Select a week range**")
                     
                     # Step 1: Extract week and year from 'Time Period' string
-                    plot_data_melted_delta[['Month', 'WeekYear']] = plot_data_melted_delta['Time Period'].str.split(' ', expand=True)
-                    plot_data_melted_delta[['Week', 'Year']] = plot_data_melted_delta['WeekYear'].str.split('-', expand=True).astype(int)
+                    plot_data_melted_all[['Month', 'WeekYear']] = plot_data_melted_all['Time Period'].str.split(' ', expand=True)
+                    plot_data_melted_all[['Week', 'Year']] = plot_data_melted_all['WeekYear'].str.split('-', expand=True).astype(int)
                     
                     # Step 2: Create 'Fiscal Year Week' label
-                    plot_data_melted_delta['Fiscal Year Week'] = plot_data_melted_delta.apply(
+                    plot_data_melted_all['Fiscal Year Week'] = plot_data_melted_all.apply(
                         lambda x: f"W{x['Week']:02d}-{x['Year']}", axis=1
                     )
                     
                     # Step 3: Create datetime object for each week (Monday of the week)
-                    plot_data_melted_delta['Week Start Date'] = plot_data_melted_delta.apply(
+                    plot_data_melted_all['Week Start Date'] = plot_data_melted_all.apply(
                         lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']:02d}-5", "%G-W%V-%u"), axis=1
                     )
                     
                     # Step 4: Create label-to-date mapping
-                    df_filtered = plot_data_melted_delta.copy()
+                    df_filtered = plot_data_melted_all.copy()
                     labels = df_filtered['Fiscal Year Week'].drop_duplicates().tolist()
                     unique_periods = df_filtered['Week Start Date'].sort_values().unique()
                     label_to_period = dict(zip(labels, unique_periods))
