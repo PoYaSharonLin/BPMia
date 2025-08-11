@@ -22,6 +22,13 @@ color_mapping = {
 }
 
 
+custom_order = [
+    "FQ425", "FQ126", "FQ226", "FQ326", "FQ426",
+    "FQ127", "FQ227", "FQ327", "FQ427",
+    "FQ128", "FQ228", "FQ328", "FQ428"
+]
+
+
 def parse_cell(cell):
     col = ''.join(filter(str.isalpha, cell))
     row = int(''.join(filter(str.isdigit, cell)))
@@ -213,8 +220,12 @@ def main():
                     values = total_dram.iloc[1, 1:-1].astype(float)
                     total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
                     collapsed = total_df.groupby('Group').sum()
+                    
+                    collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
+                    df_sorted = collapsed.sort_values('Group')
 
-                    st.dataframe(collapsed)
+
+                    st.dataframe(df_sorted)
 
 
             except Exception as e:
