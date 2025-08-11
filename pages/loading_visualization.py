@@ -204,8 +204,10 @@ def main():
                     df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )   
 
-                    st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
-    
+                    # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
+                    quarter = plot_data_all.iloc[0]
+                    total_dram = plot_data_all.iloc[10]
+                    st.dataframe(quarter)
 
 
             except Exception as e:
