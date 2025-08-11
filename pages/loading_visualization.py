@@ -207,7 +207,7 @@ def main():
                     # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
                     quarter = plot_data_all.iloc[0]
                     total_dram = plot_data_all.iloc[10]
-                    st.dataframe(quarter)
+                    st.dataframe(total_dram)
 
 
             except Exception as e:
