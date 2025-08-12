@@ -212,15 +212,20 @@ def main():
                         [date_table_with_week[non_week_cols], date_table_with_week[selected_week_cols]],
                         axis=1
                     )
-                    
-                    
-
-
-                        
             
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
-                    st.dataframe(filtered, use_container_width=True)
+                    if start_week and end_week: 
+                        quarter_map = filtered.iloc[2, 3:].tolist()
+                        process_series = filtered.iloc[5:, 2].reset_index(drop=True)
+                        values = filtered.iloc[5:, 3:24].reset_index(drop=True)
+                        values.columns = quarter_map
+                        values.insert(0, 'process_series', process_series)
+                        
+                        st.write(quarter_map)
+                        st.write(process_series)
+                        st.write(values)
+                        st.dataframe(filtered, use_container_width=True)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
