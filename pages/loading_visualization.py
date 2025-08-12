@@ -222,9 +222,6 @@ def main():
                         values.columns = quarter_map
                         values.insert(0, 'process_series', process_series)
                         
-                        st.write(quarter_map)
-                        st.write(process_series)
-                        
                         hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
                         non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
                         
