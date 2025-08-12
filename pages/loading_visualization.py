@@ -213,15 +213,14 @@ def main():
                         axis=1
                     )
                     
-                    st.dataframe(filtered, use_container_width=True)
+                    
 
 
                         
             
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
-                    bar_data = date_table_with_week.copy()
-                    st.dataframe(bar_data)
+                    st.dataframe(filtered, use_container_width=True)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
