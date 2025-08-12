@@ -178,7 +178,7 @@ def main():
                 col3, col4 = st.columns([1,2])
                 with col3: 
                     st.markdown("**Select a week range**")
-                    date_table = plot_data_all.iloc[:, :3]
+                    date_table = plot_data_all.iloc[:3, :]
                     st.dataframe(date_table)
                 
             
