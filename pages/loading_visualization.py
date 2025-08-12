@@ -195,9 +195,14 @@ def main():
                     mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
                     ordered_week_cols = week_row.index[mask].tolist()     
                     week_labels = week_row[mask].tolist()          
-                    st.write(week_labels)
                     
-                
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        start_week = st.selectbox("Start week", week_labels, index=0)
+                    with c2:
+                        end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
+
+                        
             
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
