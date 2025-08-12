@@ -112,6 +112,20 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
     return fig
 
 
+def convert_to_week_format(date_str):
+    match = re.match(r'([A-Z]+) (\d+)-(\d{4})', date_str)
+    if match:
+        day = int(match.group(2))
+        year = int(match.group(3))
+        try:
+            # Attempt to parse the date using month abbreviation and day
+            date_obj = datetime.strptime(f"{match.group(1)} {day} {year}", "%b %d %Y")
+            week_number = date_obj.isocalendar()[1]
+            return f"W{week_number:02d}-{year}"
+        except ValueError:
+            return ""
+    return ""
+
 
 def main():
     try:
@@ -179,7 +193,12 @@ def main():
                 with col3: 
                     st.markdown("**Select a week range**")
                     date_table = plot_data_all.iloc[:3, :-1]
+                    raw_date_row = date_table[3, :]
+                    week_row = raw_date_row.apply(convert_to_week_format)
+                    new_row = pd.Series(["3", "WeekFormat"] + week_row.tolist())
+                    date_table.loc[len(date_table)] = new_row
                     st.dataframe(date_table)
+                    
                 
             
                 with col4: 
