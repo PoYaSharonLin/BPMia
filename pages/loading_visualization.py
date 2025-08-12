@@ -224,7 +224,7 @@ def main():
                         
                         st.write(quarter_map)
                         st.write(process_series)
-                        st.dataframe(values)
+                        st.dataframe(filtered)
                         
 
             except Exception as e:
