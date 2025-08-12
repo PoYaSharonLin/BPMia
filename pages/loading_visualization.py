@@ -217,7 +217,7 @@ def main():
                     st.markdown("**Selected Range Product Portion**")
                     if start_week and end_week: 
                         st.dataframe(filtered, use_container_width=True)
-                        quarter_map = filtered.iloc[2, 3:].tolist()
+                        quarter_map = filtered.iloc[0, 1:].tolist()
                         # process_series = filtered.iloc[5:, 2].reset_index(drop=True)
                         # values = filtered.iloc[5:, 3:24].reset_index(drop=True)
                         # values.columns = quarter_map
