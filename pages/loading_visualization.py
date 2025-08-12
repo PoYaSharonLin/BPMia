@@ -216,12 +216,11 @@ def main():
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
                     if start_week and end_week: 
-                        st.dataframe(filtered, use_container_width=True)
                         quarter_map = filtered.iloc[1, 1:].tolist()
                         process_series = filtered.iloc[4:, 0].reset_index(drop=True)
                         values = filtered.iloc[4:, 1:].reset_index(drop=True)
-                        # values.columns = quarter_map
-                        # values.insert(0, 'process_series', process_series)
+                        values.columns = quarter_map
+                        values.insert(0, 'process_series', process_series)
                         
                         st.write(quarter_map)
                         st.write(process_series)
