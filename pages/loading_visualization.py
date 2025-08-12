@@ -232,7 +232,7 @@ def main():
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
                     bar_data = plot_data_melted_all.copy()
-                    bar_data["Quarter"] = secondary_labels_all
+                    bar_data["Quarter"] = secondary_labels
                     st.dataframe(bar_data)
 
             except Exception as e:
