@@ -188,8 +188,6 @@ def main():
                     w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                     date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
 
-                    st.dataframe(date_table_with_week)
-
                     # create select table
                     week_row = date_table_with_week.loc['Week'].astype(str)
                     mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
@@ -201,6 +199,26 @@ def main():
                         start_week = st.selectbox("Start week", week_labels, index=0)
                     with c2:
                         end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
+                    
+                    i0, i1 = week_labels.index(start_week), week_labels.index(end_week)
+                    if i0 > i1:
+                        i0, i1 = i1, i0
+                    
+                    selected_week_cols = ordered_week_cols[i0 : i1 + 1]
+                    
+                    # Keep non-week columns (IDs, descriptors) pinned on the left
+                    non_week_cols = [c for c in date_table_with_week.columns if c not in ordered_week_cols]
+                    filtered = pd.concat(
+                        [date_table_with_week[non_week_cols], date_table_with_week[selected_week_cols]],
+                        axis=1
+                    )
+                    
+                    # Optional: hide the helper 'Week' row
+                    if st.toggle("Hide the 'Week' row", value=True):
+                        filtered = filtered.drop(index='Week', errors='ignore')
+                    
+                    st.dataframe(filtered, use_container_width=True)
+
 
                         
             
