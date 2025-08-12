@@ -194,11 +194,11 @@ def main():
                     st.markdown("**Select a week range**")
                     date_table = plot_data_all.copy()
                     sub_date_table = date_table.iloc[:3, :]
-                    raw_date_row = sub_date_table.iloc[:1, :]
+                    raw_date_row = sub_date_table.iloc[-1]
                     # week_row = raw_date_row.apply(convert_to_week_format)
                     # new_row = pd.Series(["3", "WeekFormat"] + week_row.tolist())
                     # date_table.loc[len(date_table)] = new_row
-                    st.dataframe(sub_date_table)
+                    st.dataframe(raw_date_row)
                     
                 
             
