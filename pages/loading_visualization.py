@@ -197,7 +197,7 @@ def main():
                     # week_row = raw_date_row.apply(convert_to_week_format)
                     # new_row = pd.Series(["3", "WeekFormat"] + week_row.tolist())
                     # date_table.loc[len(date_table)] = new_row
-                    st.dataframe(date_table)
+                    st.dataframe(plot_data_all)
                     
                 
             
