@@ -213,10 +213,6 @@ def main():
                         axis=1
                     )
                     
-                    # Optional: hide the helper 'Week' row
-                    if st.toggle("Hide the 'Week' row", value=True):
-                        filtered = filtered.drop(index='Week', errors='ignore')
-                    
                     st.dataframe(filtered, use_container_width=True)
 
 
