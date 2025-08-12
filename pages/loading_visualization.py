@@ -220,12 +220,35 @@ def main():
                         process_series = filtered.iloc[4:, 0].reset_index(drop=True)
                         values = filtered.iloc[4:, 1:].reset_index(drop=True)
                         values.columns = quarter_map
-                        # values.insert(0, 'process_series', process_series)
+                        values.insert(0, 'process_series', process_series)
                         
                         st.write(quarter_map)
                         st.write(process_series)
-                        st.dataframe(filtered)
                         
+                        hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
+                        non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
+                        
+                        hbm_df = values[values['process_series'].isin(hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
+                        non_hbm_df = values[values['process_series'].isin(non_hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
+
+                        
+                        hbm_by_quarter = hbm_df.groupby(hbm_df.columns, axis=1).sum()
+                        non_hbm_by_quarter = non_hbm_df.groupby(non_hbm_df.columns, axis=1).sum()
+
+                        
+                        hbm_total = hbm_by_quarter.sum()
+                        non_hbm_total = non_hbm_by_quarter.sum()
+
+                                                
+                        fig = go.Figure()
+                            fig.add_trace(go.Bar(name='HBM', x=hbm_total.index, y=hbm_total.values))
+                            fig.add_trace(go.Bar(name='nonHBM', x=non_hbm_total.index, y=non_hbm_total.values))
+                            fig.update_layout(barmode='stack', title='HBM vs non-HBM by Quarter', xaxis_title='Quarter', yaxis_title='Value')
+                        
+                            st.plotly_chart(fig)
+
+
+
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
