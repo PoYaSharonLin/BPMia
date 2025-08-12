@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+import re
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
 
@@ -19,6 +20,13 @@ color_mapping = {
     "160S_non-HBM": "#FF8C00",    # Dark Orange
     "Total_DRAM": "#51A687"       # Green
 }
+
+
+custom_order = [
+    "FQ425", "FQ126", "FQ226", "FQ326", "FQ426",
+    "FQ127", "FQ227", "FQ327", "FQ427",
+    "FQ128", "FQ228", "FQ328", "FQ428"
+]
 
 
 def parse_cell(cell):
@@ -105,6 +113,11 @@ def create_line_plot(plot_data_melted, title, primary_labels, secondary_labels):
 
 
 
+def to_wlabel(s: str) -> str:
+    # Convert "JUN 22-2025" -> "W22-2025"; leave anything else unchanged (e.g., "Group")
+    m = re.fullmatch(r'[A-Z]{3}\s(\d{2})-(\d{4})', str(s).strip())
+    return f'W{m.group(1)}-{m.group(2)}' if m else str(s)
+
 
 def main():
     try:
@@ -139,69 +152,100 @@ def main():
 
 
                 # Delta Line plot 
-                plot_data_delta, plot_data_melted_delta, primary_labels, secondary_labels= prepare_line_plot_data(
+                plot_data_delta, plot_data_melted_all, primary_labels, secondary_labels= prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
                 )
-                fig_delta = create_line_plot(plot_data_melted_delta, "OMT DRAM BC Delta", primary_labels, secondary_labels)
+                fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
                 st.markdown("### Select a date range to view YoY & QoQ data")
+                st.markdown("**Overall QoQ**")
+                plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
+                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
+            )   
+
+                # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
+                quarter = plot_data_all.iloc[0]
+                dram_value = plot_data_all.iloc[10]
+                total_dram = pd.DataFrame([quarter,dram_value])
+                group_labels = total_dram.iloc[0, 1:-1]  
+                values = total_dram.iloc[1, 1:-1].astype(float)
+                total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
+                collapsed = total_df.groupby('Group').sum().reset_index()
+                
+                collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
+                df_sorted = collapsed.sort_values('Group')
+                percentage_df = df_sorted.copy()
+                percentage_df.columns = ['Quarter', 'Total Wafer Out']
+                percentage_df['Total Wafer Out'] = pd.to_numeric(percentage_df['Total Wafer Out'], errors='coerce')
+                percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
+                st.dataframe(percentage_df.T)
+                
                 col3, col4 = st.columns([1,2])
                 with col3: 
                     st.markdown("**Select a week range**")
-                    
-                    # Step 1: Extract week and year from 'Time Period' string
-                    plot_data_melted_delta[['Month', 'WeekYear']] = plot_data_melted_delta['Time Period'].str.split(' ', expand=True)
-                    plot_data_melted_delta[['Week', 'Year']] = plot_data_melted_delta['WeekYear'].str.split('-', expand=True).astype(int)
-                    
-                    # Step 2: Create 'Fiscal Year Week' label
-                    plot_data_melted_delta['Fiscal Year Week'] = plot_data_melted_delta.apply(
-                        lambda x: f"W{x['Week']:02d}-{x['Year']}", axis=1
-                    )
-                    
-                    # Step 3: Create datetime object for each week (Monday of the week)
-                    plot_data_melted_delta['Week Start Date'] = plot_data_melted_delta.apply(
-                        lambda x: datetime.strptime(f"{x['Year']}-W{x['Week']:02d}-5", "%G-W%V-%u"), axis=1
-                    )
-                    
-                    # Step 4: Create label-to-date mapping
-                    df_filtered = plot_data_melted_delta.copy()
-                    labels = df_filtered['Fiscal Year Week'].drop_duplicates().tolist()
-                    unique_periods = df_filtered['Week Start Date'].sort_values().unique()
-                    label_to_period = dict(zip(labels, unique_periods))
+                    date_table = plot_data_all.copy()
+                    w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
+                    date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
 
-
+                    # create select table
+                    week_row = date_table_with_week.loc['Week'].astype(str)
+                    mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
+                    ordered_week_cols = week_row.index[mask].tolist()     
+                    week_labels = week_row[mask].tolist()          
                     
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        start_week = st.selectbox("Start week", week_labels, index=0)
+                    with c2:
+                        end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
                     
-                    if labels:
-                        # Sort labels chronologically based on their corresponding dates
-                        sorted_labels = sorted(labels, key=lambda x: label_to_period[x])
+                    i0, i1 = week_labels.index(start_week), week_labels.index(end_week)
+                    if i0 > i1:
+                        i0, i1 = i1, i0
                     
-                        # Select start and end week using selectbox
-                        start_label = st.selectbox("Start Week", options=sorted_labels, index=0)
-                        end_label = st.selectbox("End Week", options=sorted_labels, index=len(sorted_labels) - 1)
+                    selected_week_cols = ordered_week_cols[i0 : i1 + 1]
                     
-                        start_week = label_to_period[start_label]
-                        end_week = label_to_period[end_label]
-                    
-                        # Ensure start_week is before or equal to end_week
-                        if start_week <= end_week:
-                            # Step 6: Filter data
-                            filtered_data = df_filtered[
-                                (df_filtered['Week Start Date'] >= start_week) & (df_filtered['Week Start Date'] <= end_week)
-                            ]
-                    
-                            # Step 7: Display filtered data
-                            st.write("Start Date:", start_week)
-                            st.write("End Date:", end_week)
-                        else:
-                            st.warning("Start week must be before or equal to end week.")
-                    
-                    else:
-                        st.info("No valid dates to build week options.")
+                    # Keep non-week columns (IDs, descriptors) pinned on the left
+                    non_week_cols = [c for c in date_table_with_week.columns if c not in ordered_week_cols]
+                    filtered = pd.concat(
+                        [date_table_with_week[non_week_cols], date_table_with_week[selected_week_cols]],
+                        axis=1
+                    )
             
                 with col4: 
-                    st.dataframe(filtered_data)
+                    st.markdown("**Selected Range Product Portion**")
+                    if start_week and end_week: 
+                        quarter_map = filtered.iloc[1, 1:].tolist()
+                        process_series = filtered.iloc[4:, 0].reset_index(drop=True)
+                        values = filtered.iloc[4:, 1:].reset_index(drop=True)
+                        values.columns = quarter_map
+                        values.insert(0, 'process_series', process_series)
+                        
+                        hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
+                        non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
+                        
+                        hbm_df = values[values['process_series'].isin(hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
+                        non_hbm_df = values[values['process_series'].isin(non_hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
+
+                        
+                        hbm_by_quarter = hbm_df.groupby(hbm_df.columns, axis=1).sum()
+                        non_hbm_by_quarter = non_hbm_df.groupby(non_hbm_df.columns, axis=1).sum()
+
+                        
+                        hbm_total = hbm_by_quarter.sum()
+                        non_hbm_total = non_hbm_by_quarter.sum()
+
+                                                
+                        fig = go.Figure()
+                        fig.add_trace(go.Bar(name='HBM', x=hbm_total.index, y=hbm_total.values))
+                        fig.add_trace(go.Bar(name='nonHBM', x=non_hbm_total.index, y=non_hbm_total.values))
+                        fig.update_layout(barmode='stack', title='HBM vs non-HBM by Quarter', xaxis_title='Quarter', yaxis_title='Value')
+                    
+                        st.plotly_chart(fig)
+
+
+
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
