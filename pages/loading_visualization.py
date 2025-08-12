@@ -189,12 +189,19 @@ def main():
                     date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
 
                     st.dataframe(date_table_with_week)
+
+                    # create select table
+                    week_row = date_table_with_week.loc['Week'].astype(str)
+                    mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
+                    ordered_week_cols = week_row.index[mask].tolist()     
+                    week_labels = week_row[mask].tolist()          
+                    st.write(week_labels)
                     
                 
             
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
-                    bar_data = plot_data_all.copy()
+                    bar_data = date_table_with_week.copy()
                     st.dataframe(bar_data)
 
             except Exception as e:
