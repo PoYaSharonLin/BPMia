@@ -180,12 +180,7 @@ def main():
                     st.markdown("**Select a week range**")
                     date_table = plot_data_all.iloc[:, :3]
                     st.dataframe(date_table)
-                  
-                        else:
-                            st.warning("Start week must be before or equal to end week.")
-                    
-                    else:
-                        st.info("No valid dates to build week options.")
+                
             
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
