@@ -241,11 +241,11 @@ def main():
 
                                                 
                         fig = go.Figure()
-                            fig.add_trace(go.Bar(name='HBM', x=hbm_total.index, y=hbm_total.values))
-                            fig.add_trace(go.Bar(name='nonHBM', x=non_hbm_total.index, y=non_hbm_total.values))
-                            fig.update_layout(barmode='stack', title='HBM vs non-HBM by Quarter', xaxis_title='Quarter', yaxis_title='Value')
-                        
-                            st.plotly_chart(fig)
+                        fig.add_trace(go.Bar(name='HBM', x=hbm_total.index, y=hbm_total.values))
+                        fig.add_trace(go.Bar(name='nonHBM', x=non_hbm_total.index, y=non_hbm_total.values))
+                        fig.update_layout(barmode='stack', title='HBM vs non-HBM by Quarter', xaxis_title='Quarter', yaxis_title='Value')
+                    
+                        st.plotly_chart(fig)
 
 
 
