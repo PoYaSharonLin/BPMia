@@ -231,7 +231,9 @@ def main():
             
                 with col4: 
                     st.markdown("**Selected Range Product Portion**")
-                    st.dataframe(plot_data_melted_all)
+                    bar_data = plot_data_melted_all.copy()
+                    bar_data["Quarter"] = secondary_labels_all
+                    st.dataframe(bar_data)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
