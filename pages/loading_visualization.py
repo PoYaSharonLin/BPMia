@@ -220,7 +220,7 @@ def main():
                         process_series = filtered.iloc[4:, 0].reset_index(drop=True)
                         values = filtered.iloc[4:, 1:].reset_index(drop=True)
                         values.columns = quarter_map
-                        values.insert(0, 'process_series', process_series)
+                        # values.insert(0, 'process_series', process_series)
                         
                         st.write(quarter_map)
                         st.write(process_series)
