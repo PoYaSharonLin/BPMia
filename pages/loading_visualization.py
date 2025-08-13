@@ -265,8 +265,8 @@ def main():
                     summary = totals.copy()
                     summary["Total"] = summary["HBM"] + summary["nonHBM"]
                     summary = summary.reindex(quarters).fillna(0)
-                    summary["HBM %"] = (summary["HBM"] / summary["Total"] * 100) if summary["Total"] != 0 else 0
-                    summary["nonHBM"] = (summary["nonHBM"] / summary["Total"] * 100) if summary["Total"] != 0 else 0
+                    summary["HBM %"] = (summary["HBM"] / summary["Total"] * 100) 
+                    summary["nonHBM"] = (summary["nonHBM"] / summary["Total"] * 100) 
                     
                     overall = pd.Series({
                         "HBM": summary["HBM"].sum(),
