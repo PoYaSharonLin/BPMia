@@ -364,7 +364,6 @@ def main():
                     
                     fig.update_layout(
                         barmode='stack',
-                        title='HBM vs non-HBM by Quarter',
                         xaxis_title='Quarter',
                         yaxis_title='Value',
                         legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
