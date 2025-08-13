@@ -120,6 +120,12 @@ def to_wlabel(s: str) -> str:
     m = re.fullmatch(r'[A-Z]{3}\s(\d{2})-(\d{4})', str(s).strip())
     return f'W{m.group(1)}-{m.group(2)}' if m else str(s)
 
+def fmt_num(s): 
+    return s.round(0).astype(int).map(lambda x: f"{x:,}")
+
+def fmt_pct(s):
+    return s.fillna(0).map(lambda x: f"{x:.1f}%")
+
 
 def main():
     try:
@@ -255,7 +261,31 @@ def main():
                         .fillna(0)
                     )
 
-
+                    
+                    summary = totals.copy()
+                    summary["Total"] = summary["HBM"] + summary["nonHBM"]
+                    summary = summary.reindex(quarters).fillna(0)
+                    
+                    
+                    overall = pd.Series({
+                        "HBM": summary["HBM"].sum(),
+                        "nonHBM": summary["nonHBM"].sum(),
+                        "Total": summary["Total"].sum()
+                    }, name="Overall")
+                    overall["HBM %"] = (overall["HBM"] / overall["Total"] * 100) if overall["Total"] != 0 else 0
+                    overall["nonHBM %"] = (overall["nonHBM"] / overall["Total"] * 100) if overall["Total"] != 0 else 0
+                    
+                    summary_with_overall = pd.concat([summary, overall.to_frame().T], axis=0
+                    
+                    
+                    disp = pd.DataFrame({
+                        "Quarter": summary_with_overall.index.tolist(),
+                        "HBM": fmt_num(summary_with_overall["HBM"]),
+                        "nonHBM": fmt_num(summary_with_overall["nonHBM"]),
+                        "Total": fmt_num(summary_with_overall["Total"]),
+                        "HBM %": fmt_pct(summary_with_overall["HBM %"]),
+                        "nonHBM %": fmt_pct(summary_with_overall["nonHBM %"]),
+                    })
 
                     # Build hbm_by_quarter / hbm_total percentage table 
                     # Build non_hbm_by_quarter / non_hbm_total percentage table 
@@ -297,9 +327,9 @@ def main():
                         shared_xaxes=False,
                         specs=[
                                 [{"type": "xy"}, {"type": "domain"}],  # Left: bar chart, Right: nested tables
-                                [{}, {"type": "domain"}]
+                                [{"type": "domain"}, {"type": "domain"}]
                             ],
-                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM Process Series Tables", "", "HBM Process Series Tables"]
+                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM Process Series Tables", "HBM/non-HBM Totals & %", "HBM Process Series Tables"]
 
                     )
 
@@ -313,6 +343,35 @@ def main():
                         go.Bar(name='nonHBM', x=totals.index, y=totals['nonHBM']),
                         row=1, col=1
                     )
+
+                    # total table                 
+                    fig.add_trace(
+                        go.Table(
+                            header=dict(
+                                values=["Quarter", "HBM", "nonHBM", "Total", "HBM %", "nonHBM %"],
+                                fill_color="#505A5F",
+                                font=dict(color="white", size=12),
+                                align="center"
+                            ),
+                            cells=dict(
+                                values=[
+                                    disp["Quarter"],
+                                    disp["HBM"],
+                                    disp["nonHBM"],
+                                    disp["Total"],
+                                    disp["HBM %"],
+                                    disp["nonHBM %"],
+                                ],
+                                fill_color=[["#F5F7FA" if (i % 2 == 0) else "#FFFFFF" for i in range(len(disp))]] * 6,
+                                align="center",
+                                height=26
+                            ),
+                            columnwidth=[90, 90, 90, 90, 90, 100]
+                        ),
+                        row=2, col=1
+                    )
+
+                    
 
                     # non HBM Percentage Table trace
                     
@@ -365,7 +424,7 @@ def main():
                     fig.update_layout(
                         barmode='stack',
                         xaxis_title='Quarter',
-                        yaxis_title='Value',
+                        yaxis_title='Wafer Output',
                         legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
                         height=600,
                         margin=dict(t=60, b=40, l=40, r=20)
