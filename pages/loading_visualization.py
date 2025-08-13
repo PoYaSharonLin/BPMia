@@ -293,7 +293,7 @@ def main():
                     
                     fig = make_subplots(
                         rows=1, cols=2,
-                        column_widths=[0.6, 0.4],
+                        column_widths=[0.5, 0.5],
                         shared_xaxes=False,
                         specs=[
                                 [{"type": "xy"}, {"type": "domain"}]  # Left: bar chart, Right: nested tables
@@ -312,6 +312,28 @@ def main():
                         go.Bar(name='nonHBM', x=totals.index, y=totals['nonHBM']),
                         row=1, col=1
                     )
+
+                    # non HBM Percentage Table trace
+                    
+                    fig.add_trace(
+                        go.Table(
+                            header=dict(
+                                values=['Process'] + quarters,
+                                fill_color='#87CEFA',
+                                font=dict(color='white', size=12),
+                                align='center'
+                            ),
+                            cells=dict(
+                                values=table_cells(non_hbm_pct_disp),
+                                fill_color=[['#cbe5f5'] * len(non_hbm_pct_disp.index)] + [['#FFFFFF'] * len(quarters)],
+                                align=['left'] + ['center'] * len(quarters),
+                                height=26
+                            ),
+                            columnwidth=[120] + [60] * len(quarters)
+                        ),
+                        row=1, col=2
+                    )
+
                     
                     # HBM Percentage Table trace: hbm_by_quarter / hbm_total
                     
@@ -335,26 +357,7 @@ def main():
                     )
 
 
-                    # non HBM Percentage Table trace: non_hbm_by_quarter / non_hbm_total
                     
-                    fig.add_trace(
-                        go.Table(
-                            header=dict(
-                                values=['Process'] + quarters,
-                                fill_color='#87CEFA',
-                                font=dict(color='white', size=12),
-                                align='center'
-                            ),
-                            cells=dict(
-                                values=table_cells(non_hbm_pct_disp),
-                                fill_color=[['#cbe5f5'] * len(non_hbm_pct_disp.index)] + [['#FFFFFF'] * len(quarters)],
-                                align=['left'] + ['center'] * len(quarters),
-                                height=26
-                            ),
-                            columnwidth=[120] + [60] * len(quarters)
-                        ),
-                        row=1, col=2
-                    )
 
                     
                     
@@ -364,7 +367,7 @@ def main():
                         xaxis_title='Quarter',
                         yaxis_title='Value',
                         legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
-                        height=900,
+                        height=600,
                         margin=dict(t=60, b=40, l=40, r=20)
                     )
 
