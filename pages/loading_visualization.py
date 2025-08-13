@@ -237,12 +237,80 @@ def main():
                         non_hbm_total = non_hbm_by_quarter.sum()
 
                                                 
-                        fig = go.Figure()
-                        fig.add_trace(go.Bar(name='HBM', x=hbm_total.index, y=hbm_total.values))
-                        fig.add_trace(go.Bar(name='nonHBM', x=non_hbm_total.index, y=non_hbm_total.values))
-                        fig.update_layout(barmode='stack', title='HBM vs non-HBM by Quarter', xaxis_title='Quarter', yaxis_title='Value')
-                    
-                        st.plotly_chart(fig)
+                        
+                        totals = (
+                            pd.DataFrame({'HBM': hbm_total, 'nonHBM': non_hbm_total})
+                              .fillna(0.0)
+                              .sort_index()
+                        )
+                        
+                        totals['Total'] = totals['HBM'] + totals['nonHBM']
+                        
+                        # 2) Compute % shares (handle divide-by-zero safely)
+                        den = totals['Total'].replace(0, np.nan)
+                        shares = totals[['HBM', 'nonHBM']].div(den, axis=0).fillna(0.0)
+                        
+                        # Pretty percent strings for the table
+                        hbm_pct_str = (shares['HBM'] * 100).round(1).astype(str) + '%'
+                        nonhbm_pct_str = (shares['nonHBM'] * 100).round(1).astype(str) + '%'
+                        
+                        # 3) Build subplot: bar on top, table below
+                        fig = make_subplots(
+                            rows=2, cols=1,
+                            shared_xaxes=True,
+                            vertical_spacing=0.10,
+                            row_heights=[0.70, 0.30],
+                            specs=[[{"type": "xy"}], [{"type": "table"}]]
+                        )
+                        
+                        # Bar traces (stacked)
+                        fig.add_trace(
+                            go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
+                            row=1, col=1
+                        )
+                        fig.add_trace(
+                            go.Bar(name='nonHBM', x=totals.index, y=totals['nonHBM']),
+                            row=1, col=1
+                        )
+                        
+                        # Table trace
+                        fig.add_trace(
+                            go.Table(
+                                header=dict(
+                                    values=['Quarter', 'HBM share', 'nonHBM share', 'HBM total', 'nonHBM total', 'Total'],
+                                    fill_color='#F2F2F2',
+                                    align='center',
+                                    font=dict(size=12, color='black')
+                                ),
+                                cells=dict(
+                                    values=[
+                                        totals.index.astype(str),
+                                        hbm_pct_str,
+                                        nonhbm_pct_str,
+                                        totals['HBM'].round(0),
+                                        totals['nonHBM'].round(0),
+                                        totals['Total'].round(0),
+                                    ],
+                                    align='center',
+                                    height=26
+                                )
+                            ),
+                            row=2, col=1
+                        )
+                        
+                        fig.update_layout(
+                            barmode='stack',
+                            title='HBM vs non-HBM by Quarter',
+                            xaxis_title='Quarter',
+                            yaxis_title='Value',
+                            legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+                            height=700,
+                            margin=dict(t=60, b=40, l=40, r=20)
+                        )
+                        
+                        # Streamlit
+                        st.plotly_chart(fig, use_container_width=True)
+                        
 
 
 
