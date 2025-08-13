@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import re
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
@@ -118,6 +120,12 @@ def to_wlabel(s: str) -> str:
     m = re.fullmatch(r'[A-Z]{3}\s(\d{2})-(\d{4})', str(s).strip())
     return f'W{m.group(1)}-{m.group(2)}' if m else str(s)
 
+def fmt_num(s): 
+    return s.round(0).astype(int).map(lambda x: f"{x:,}")
+
+def fmt_pct(s):
+    return s.fillna(0).map(lambda x: f"{x:.1f}%")
+
 
 def main():
     try:
@@ -181,71 +189,250 @@ def main():
                 percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
                 st.dataframe(percentage_df.T)
                 
-                col3, col4 = st.columns([1,2])
-                with col3: 
-                    st.markdown("**Select a week range**")
-                    date_table = plot_data_all.copy()
-                    w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
-                    date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
 
-                    # create select table
-                    week_row = date_table_with_week.loc['Week'].astype(str)
-                    mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
-                    ordered_week_cols = week_row.index[mask].tolist()     
-                    week_labels = week_row[mask].tolist()          
-                    
-                    c1, c2 = st.columns(2)
-                    with c1:
-                        start_week = st.selectbox("Start week", week_labels, index=0)
-                    with c2:
-                        end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
-                    
-                    i0, i1 = week_labels.index(start_week), week_labels.index(end_week)
-                    if i0 > i1:
-                        i0, i1 = i1, i0
-                    
-                    selected_week_cols = ordered_week_cols[i0 : i1 + 1]
-                    
-                    # Keep non-week columns (IDs, descriptors) pinned on the left
-                    non_week_cols = [c for c in date_table_with_week.columns if c not in ordered_week_cols]
-                    filtered = pd.concat(
-                        [date_table_with_week[non_week_cols], date_table_with_week[selected_week_cols]],
-                        axis=1
-                    )
+
+                st.markdown("**Select a week range**")
+                date_table = plot_data_all.copy()
+                w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
+                date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
+
+                # create select table
+                week_row = date_table_with_week.loc['Week'].astype(str)
+                mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
+                ordered_week_cols = week_row.index[mask].tolist()     
+                week_labels = week_row[mask].tolist()          
+                
+                c1, c2 = st.columns(2)
+                with c1:
+                    start_week = st.selectbox("Start week", week_labels, index=0)
+                with c2:
+                    end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
+                
+                i0, i1 = week_labels.index(start_week), week_labels.index(end_week)
+                if i0 > i1:
+                    i0, i1 = i1, i0
+                
+                selected_week_cols = ordered_week_cols[i0 : i1 + 1]
+                
+                # Keep non-week columns (IDs, descriptors) pinned on the left
+                non_week_cols = [c for c in date_table_with_week.columns if c not in ordered_week_cols]
+                filtered = pd.concat(
+                    [date_table_with_week[non_week_cols], date_table_with_week[selected_week_cols]],
+                    axis=1
+                )
             
-                with col4: 
-                    st.markdown("**Selected Range Product Portion**")
-                    if start_week and end_week: 
-                        quarter_map = filtered.iloc[1, 1:].tolist()
-                        process_series = filtered.iloc[4:, 0].reset_index(drop=True)
-                        values = filtered.iloc[4:, 1:].reset_index(drop=True)
-                        values.columns = quarter_map
-                        values.insert(0, 'process_series', process_series)
-                        
-                        hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
-                        non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
-                        
-                        hbm_df = values[values['process_series'].isin(hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
-                        non_hbm_df = values[values['process_series'].isin(non_hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
 
-                        
-                        hbm_by_quarter = hbm_df.groupby(hbm_df.columns, axis=1).sum()
-                        non_hbm_by_quarter = non_hbm_df.groupby(non_hbm_df.columns, axis=1).sum()
-
-                        
-                        hbm_total = hbm_by_quarter.sum()
-                        non_hbm_total = non_hbm_by_quarter.sum()
-
-                                                
-                        fig = go.Figure()
-                        fig.add_trace(go.Bar(name='HBM', x=hbm_total.index, y=hbm_total.values))
-                        fig.add_trace(go.Bar(name='nonHBM', x=non_hbm_total.index, y=non_hbm_total.values))
-                        fig.update_layout(barmode='stack', title='HBM vs non-HBM by Quarter', xaxis_title='Quarter', yaxis_title='Value')
+                st.markdown("**Selected Range Product Portion**")
+                if start_week and end_week: 
+                    quarter_map = filtered.iloc[1, 1:].tolist()
+                    process_series = filtered.iloc[4:, 0].reset_index(drop=True)
+                    values = filtered.iloc[4:, 1:].reset_index(drop=True)
+                    values.columns = quarter_map
+                    values.insert(0, 'process_series', process_series)
                     
-                        st.plotly_chart(fig)
+                    hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
+                    non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
+                    
+                    hbm_df = values[values['process_series'].isin(hbm_series)].set_index('process_series').apply(pd.to_numeric, errors='coerce')
+                    non_hbm_df = values[values['process_series'].isin(non_hbm_series)].set_index('process_series').apply(pd.to_numeric, errors='coerce')
+
+                    
+                    hbm_by_quarter = hbm_df.groupby(hbm_df.columns, axis=1).sum()
+                    non_hbm_by_quarter = non_hbm_df.groupby(non_hbm_df.columns, axis=1).sum()
+
+                    
+                    hbm_total = hbm_by_quarter.sum()
+                    non_hbm_total = non_hbm_by_quarter.sum()
+
+                    # customized quarter orders               
+                    quarters_in_order = []
+                    seen = set()
+                    for q in quarter_map:
+                        if q not in seen:
+                            quarters_in_order.append(q)
+                            seen.add(q)
+                    
+                    all_quarters = hbm_total.index.union(non_hbm_total.index)
+                    quarters = [q for q in quarters_in_order if q in all_quarters]
+                    
+                    totals = (
+                        pd.DataFrame({'HBM': hbm_total, 'nonHBM': non_hbm_total})
+                        .reindex(quarters)
+                        .fillna(0)
+                    )
+
+                    
+                    summary = totals.copy()
+                    summary["Total"] = summary["HBM"] + summary["nonHBM"]
+                    summary = summary.reindex(quarters).fillna(0)
+                    summary["HBM %"] = (summary["HBM"] / summary["Total"] * 100) 
+                    summary["nonHBM %"] = (summary["nonHBM"] / summary["Total"] * 100) 
+                    
+                    overall = pd.Series({
+                        "HBM": summary["HBM"].sum(),
+                        "nonHBM": summary["nonHBM"].sum(),
+                        "Total": summary["Total"].sum()
+                    }, name="Overall")
+                    overall["HBM %"] = (overall["HBM"] / overall["Total"] * 100) if overall["Total"] != 0 else 0
+                    overall["nonHBM %"] = (overall["nonHBM"] / overall["Total"] * 100) if overall["Total"] != 0 else 0
+                    summary_with_overall = pd.concat([summary, overall.to_frame().T], axis=0)
+                    
+                    
+                    disp = pd.DataFrame({
+                        "Quarter": summary_with_overall.index.tolist(),
+                        "HBM": fmt_num(summary_with_overall["HBM"]),
+                        "nonHBM": fmt_num(summary_with_overall["nonHBM"]),
+                        "Total": fmt_num(summary_with_overall["Total"]),
+                        "HBM %": fmt_pct(summary_with_overall["HBM %"]),
+                        "nonHBM %": fmt_pct(summary_with_overall["nonHBM %"]),
+                    })
+
+                    # Build hbm_by_quarter / hbm_total percentage table 
+                    # Build non_hbm_by_quarter / non_hbm_total percentage table 
+
+                    hbm_den = hbm_total.copy()
+                    hbm_den = hbm_den.where(hbm_den != 0)  # NaN where zero
+                    non_hbm_den = non_hbm_total.copy()
+                    non_hbm_den = non_hbm_den.where(non_hbm_den != 0)
+                    
+                    hbm_pct = (hbm_by_quarter.div(hbm_den, axis=1) * 100)
+                    non_hbm_pct = (non_hbm_by_quarter.div(non_hbm_den, axis=1) * 100)
 
 
+                    # Reindex columns to the selected quarter order and format for display
+                    hbm_pct_disp = (
+                        hbm_pct.reindex(columns=quarters)
+                        .fillna(0)
+                        .round(1)
+                        .astype(str) + '%'
+                    )
+                    
+                    non_hbm_pct_disp = (
+                        non_hbm_pct.reindex(columns=quarters)
+                        .fillna(0)
+                        .round(1)
+                        .astype(str) + '%'
+                    )
+                    
+                    # Helper to build table cell lists (first column = process_series name)
+                    def table_cells(df_pct_str):
+                        return [df_pct_str.index.tolist()] + [df_pct_str[q].tolist() for q in df_pct_str.columns]
 
+                    
+                    # Build subplot
+                    
+                    fig = make_subplots(
+                        rows=2, cols=2,
+                        column_widths=[0.5, 0.5],
+                        shared_xaxes=False,
+                        specs=[
+                                [{"type": "xy"}, {"type": "domain"}],  # Left: bar chart, Right: nested tables
+                                [{"type": "domain"}, {"type": "domain"}]
+                            ],
+                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM Process Series Tables", "HBM/non-HBM Totals & %", "HBM Process Series Tables"]
+
+                    )
+
+                    
+                    # Bar traces (stacked)
+                    fig.add_trace(
+                        go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
+                        row=1, col=1
+                    )
+                    fig.add_trace(
+                        go.Bar(name='nonHBM', x=totals.index, y=totals['nonHBM']),
+                        row=1, col=1
+                    )
+
+                    # total table                 
+                    fig.add_trace(
+                        go.Table(
+                            header=dict(
+                                values=["Quarter", "HBM", "nonHBM", "Total", "HBM %", "nonHBM %"],
+                                fill_color="#505A5F",
+                                font=dict(color="white", size=12),
+                                align="center"
+                            ),
+                            cells=dict(
+                                values=[
+                                    disp["Quarter"],
+                                    disp["HBM"],
+                                    disp["nonHBM"],
+                                    disp["Total"],
+                                    disp["HBM %"],
+                                    disp["nonHBM %"],
+                                ],
+                                fill_color=[["#F5F7FA" if (i % 2 == 0) else "#FFFFFF" for i in range(len(disp))]] * 6,
+                                align="center",
+                                height=26
+                            ),
+                            columnwidth=[90, 90, 90, 90, 90, 100]
+                        ),
+                        row=2, col=1
+                    )
+
+                    
+
+                    # non HBM Percentage Table trace
+                    
+                    fig.add_trace(
+                        go.Table(
+                            header=dict(
+                                values=['Process Series'] + quarters,
+                                fill_color='#87CEFA',
+                                font=dict(color='white', size=12),
+                                align='center'
+                            ),
+                            cells=dict(
+                                values=table_cells(non_hbm_pct_disp),
+                                fill_color=[['#cbe5f5'] * len(non_hbm_pct_disp.index)] + [['#FFFFFF'] * len(quarters)],
+                                align=['left'] + ['center'] * len(quarters),
+                                height=26
+                            ),
+                            columnwidth=[120] + [60] * len(quarters)
+                        ),
+                        row=1, col=2
+                    )
+
+                    
+                    # HBM Percentage Table trace: hbm_by_quarter / hbm_total
+                    
+                    fig.add_trace(
+                        go.Table(
+                            header=dict(
+                                values=['Process'] + quarters,
+                                fill_color='#0078D7',
+                                font=dict(color='white', size=12),
+                                align='center'
+                            ),
+                            cells=dict(
+                                values=table_cells(hbm_pct_disp),
+                                fill_color=[['#cad8e3'] * len(hbm_pct_disp.index)] + [['#FFFFFF'] * len(hbm_pct_disp.index)] * len(quarters),
+                                align=['left'] + ['center'] * len(quarters),
+                                height=26
+                            ),
+                            columnwidth=[120] + [60] * len(quarters)
+                        ),
+                        row=2, col=2
+                    )
+
+
+                    
+
+                    
+                    
+                    fig.update_layout(
+                        barmode='stack',
+                        xaxis_title='Quarter',
+                        yaxis_title='Wafer Output',
+                        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+                        height=600,
+                        margin=dict(t=60, b=40, l=40, r=20)
+                    )
+
+                    
+                    # Streamlit
+                    st.plotly_chart(fig, use_container_width=True)
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")

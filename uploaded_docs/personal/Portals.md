@@ -6,6 +6,14 @@ For organization structure of LE team, OMT LE progress please visit to: OMTLE/
 
 ---
 
+## Network 
+### F15 & F16 Network 
+https://edc.micron.com/TWN/ADM003/BP/Forms/AllItems.aspx?RootFolder=%2FTWN%2FADM003%2FBP%2FFab15%2FFY26&View=%7B24963114-FB4A-4D10-801C-BCA5C9858615%7D
+
+
+
+---
+
 ## Frontend 
 
 ### Frontend Dashboard (FE Dashboard)

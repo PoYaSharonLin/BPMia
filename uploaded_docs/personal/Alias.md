@@ -18,3 +18,5 @@ workday/
 ## New employees
 新手上路 Micron Launch!: https://microncorp.sharepoint.com/sites/MicronLaunch
 
+## Micron Fiscal Year Calendar 
+https://analytics.micron.com/#/views/MicronStandardWorkWeekCalendar/FiscalCalendar?:iid=1
