@@ -320,13 +320,13 @@ def main():
                             go.Table(
                                 header=dict(
                                     values=['Process'] + quarters,
-                                    fill_color='#1f77b4',
+                                    fill_color='#0078D7',
                                     font=dict(color='white', size=12),
                                     align='center'
                                 ),
                                 cells=dict(
                                     values=table_cells(hbm_pct_disp),
-                                    fill_color=[['#F8FBFF'] * len(hbm_pct_disp.index)] + [['#FFFFFF'] * len(hbm_pct_disp.index)] * len(quarters),
+                                    fill_color=[['#8caac2'] * len(hbm_pct_disp.index)] + [['#FFFFFF'] * len(hbm_pct_disp.index)] * len(quarters),
                                     align=['left'] + ['center'] * len(quarters),
                                     height=26
                                 ),
@@ -342,13 +342,13 @@ def main():
                             go.Table(
                                 header=dict(
                                     values=['Process'] + quarters,
-                                    fill_color='#ff7f0e',
+                                    fill_color='#87CEFA',
                                     font=dict(color='white', size=12),
                                     align='center'
                                 ),
                                 cells=dict(
                                     values=table_cells(non_hbm_pct_disp),
-                                    fill_color=[['#FFF9F3'] * len(non_hbm_pct_disp.index)] + [['#FFFFFF'] * len(quarters)],
+                                    fill_color=[['#cbe5f5'] * len(non_hbm_pct_disp.index)] + [['#FFFFFF'] * len(quarters)],
                                     align=['left'] + ['center'] * len(quarters),
                                     height=26
                                 ),
