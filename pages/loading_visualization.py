@@ -220,10 +220,10 @@ def main():
                 if start_week and end_week: 
                     quarter_map = filtered.iloc[1, 1:].tolist()
                     process_series = filtered.iloc[4:, 0].reset_index(drop=True)
-                    st.write(process_series)
                     values = filtered.iloc[4:, 1:].reset_index(drop=True)
                     values.columns = quarter_map
                     values.insert(0, 'process_series', process_series)
+                    st.dataframe(values)
                     
                     hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
                     non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
