@@ -238,32 +238,71 @@ def main():
                         hbm_total = hbm_by_quarter.sum()
                         non_hbm_total = non_hbm_by_quarter.sum()
 
-                                                
+                        # customized quarter orders               
+                        quarters_in_order = []
+                        seen = set()
+                        for q in quarter_map:
+                            if q not in seen:
+                                quarters_in_order.append(q)
+                                seen.add(q)
+                        
+                        all_quarters = hbm_total.index.union(non_hbm_total.index)
+                        quarters = [q for q in quarters_in_order if q in all_quarters]
                         
                         totals = (
                             pd.DataFrame({'HBM': hbm_total, 'nonHBM': non_hbm_total})
-                              .fillna(0.0)
-                              .sort_index()
+                            .reindex(quarters)
+                            .fillna(0)
+                        )
+
+
+
+                        # Build hbm_by_quarter / hbm_total percentage table 
+                        # Build non_hbm_by_quarter / non_hbm_total percentage table 
+
+                        hbm_den = hbm_total.copy()
+                        hbm_den = hbm_den.where(hbm_den != 0)  # NaN where zero
+                        non_hbm_den = non_hbm_total.copy()
+                        non_hbm_den = non_hbm_den.where(non_hbm_den != 0)
+                        
+                        hbm_pct = (hbm_by_quarter.div(hbm_den, axis=1) * 100)
+                        non_hbm_pct = (non_hbm_by_quarter.div(non_hbm_den, axis=1) * 100)
+
+
+                        # Reindex columns to the selected quarter order and format for display
+                        hbm_pct_disp = (
+                            hbm_pct.reindex(columns=quarters)
+                            .fillna(0)
+                            .round(1)
+                            .astype(str) + '%'
                         )
                         
-                        totals['Total'] = totals['HBM'] + totals['nonHBM']
+                        non_hbm_pct_disp = (
+                            non_hbm_pct.reindex(columns=quarters)
+                            .fillna(0)
+                            .round(1)
+                            .astype(str) + '%'
+                        )
                         
-                        # 2) Compute % shares (handle divide-by-zero safely)
-                        den = totals['Total'].replace(0, np.nan)
-                        shares = totals[['HBM', 'nonHBM']].div(den, axis=0).fillna(0.0)
+                        # Helper to build table cell lists (first column = process_series name)
+                        def table_cells(df_pct_str):
+                            return [df_pct_str.index.tolist()] + [df_pct_str[q].tolist() for q in df_pct_str.co
+
                         
-                        # Pretty percent strings for the table
-                        hbm_pct_str = (shares['HBM'] * 100).round(1).astype(str) + '%'
-                        nonhbm_pct_str = (shares['nonHBM'] * 100).round(1).astype(str) + '%'
+                        # Build subplot
                         
-                        # 3) Build subplot: bar on top, table below
                         fig = make_subplots(
-                            rows=2, cols=1,
-                            shared_xaxes=True,
-                            vertical_spacing=0.10,
-                            row_heights=[0.70, 0.30],
-                            specs=[[{"type": "xy"}], [{"type": "table"}]]
+                            rows=3, cols=1,
+                            shared_xaxes=False,
+                            vertical_spacing=0.08,
+                            row_heights=[0.5, 0.25, 0.25],
+                            specs=[
+                                [{"type": "xy"}],       # Row 1: bar chart
+                                [{"type": "table"}],    # Row 2: HBM table
+                                [{"type": "table"}],    # Row 3: non-HBM table
+                            ],
                         )
+
                         
                         # Bar traces (stacked)
                         fig.add_trace(
@@ -275,30 +314,50 @@ def main():
                             row=1, col=1
                         )
                         
-                        # Table trace
+                        # HBM Percentage Table trace: hbm_by_quarter / hbm_total
+                        
                         fig.add_trace(
                             go.Table(
                                 header=dict(
-                                    values=['Quarter', 'HBM share', 'nonHBM share', 'HBM total', 'nonHBM total', 'Total'],
-                                    fill_color='#F2F2F2',
-                                    align='center',
-                                    font=dict(size=12, color='black')
+                                    values=['Process'] + quarters,
+                                    fill_color='#1f77b4',
+                                    font=dict(color='white', size=12),
+                                    align='center'
                                 ),
                                 cells=dict(
-                                    values=[
-                                        totals.index.astype(str),
-                                        hbm_pct_str,
-                                        nonhbm_pct_str,
-                                        totals['HBM'].round(0),
-                                        totals['nonHBM'].round(0),
-                                        totals['Total'].round(0),
-                                    ],
-                                    align='center',
+                                    values=table_cells(hbm_pct_disp),
+                                    fill_color=[['#F8FBFF'] * len(hbm_pct_disp.index)] + [['#FFFFFF'] * len(hbm_pct_disp.index)] * len(quarters),
+                                    align=['left'] + ['center'] * len(quarters),
                                     height=26
-                                )
+                                ),
+                                columnwidth=[120] + [60] * len(quarters)
                             ),
                             row=2, col=1
                         )
+
+
+                        # non HBM Percentage Table trace: non_hbm_by_quarter / non_hbm_total
+                        
+                        fig.add_trace(
+                            go.Table(
+                                header=dict(
+                                    values=['Process'] + quarters,
+                                    fill_color='#ff7f0e',
+                                    font=dict(color='white', size=12),
+                                    align='center'
+                                ),
+                                cells=dict(
+                                    values=table_cells(non_hbm_pct_disp),
+                                    fill_color=[['#FFF9F3'] * len(non_hbm_pct_disp.index)] + [['#FFFFFF'] * len(quarters)],
+                                    align=['left'] + ['center'] * len(quarters),
+                                    height=26
+                                ),
+                                columnwidth=[120] + [60] * len(quarters)
+                            ),
+                            row=3, col=1
+                        )
+
+                        
                         
                         fig.update_layout(
                             barmode='stack',
@@ -306,16 +365,13 @@ def main():
                             xaxis_title='Quarter',
                             yaxis_title='Value',
                             legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
-                            height=700,
+                            height=900,
                             margin=dict(t=60, b=40, l=40, r=20)
                         )
+
                         
                         # Streamlit
                         st.plotly_chart(fig, use_container_width=True)
-                        
-
-
-
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
