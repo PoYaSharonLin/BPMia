@@ -331,7 +331,7 @@ def main():
                             ),
                             columnwidth=[120] + [60] * len(quarters)
                         ),
-                        row=2, col=1
+                        row=1, col=2
                     )
 
 
@@ -353,7 +353,7 @@ def main():
                             ),
                             columnwidth=[120] + [60] * len(quarters)
                         ),
-                        row=3, col=1
+                        row=1, col=2
                     )
 
                     
