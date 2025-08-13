@@ -223,13 +223,12 @@ def main():
                     values = filtered.iloc[4:, 1:].reset_index(drop=True)
                     values.columns = quarter_map
                     values.insert(0, 'process_series', process_series)
-                    st.dataframe(values)
                     
                     hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
                     non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
                     
-                    hbm_df = values[values['process_series'].isin(hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
-                    non_hbm_df = values[values['process_series'].isin(non_hbm_series)].drop('process_series', axis=1).apply(pd.to_numeric, errors='coerce')
+                    hbm_df = values[values['process_series'].isin(hbm_series)].set_index('process_series').apply(pd.to_numeric, errors='coerce')
+                    non_hbm_df = values[values['process_series'].isin(non_hbm_series)].set_index('process_series').apply(pd.to_numeric, errors='coerce')
 
                     
                     hbm_by_quarter = hbm_df.groupby(hbm_df.columns, axis=1).sum()
@@ -300,7 +299,7 @@ def main():
                                 [{"type": "xy"}, {"type": "domain"}],  # Left: bar chart, Right: nested tables
                                 [{}, {"type": "domain"}]
                             ],
-                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM DID Tables", "", "HBM DID Tables"]
+                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM Process Series Tables", "", "HBM Process Series Tables"]
 
                     )
 
@@ -320,7 +319,7 @@ def main():
                     fig.add_trace(
                         go.Table(
                             header=dict(
-                                values=['Process'] + quarters,
+                                values=['Process Series'] + quarters,
                                 fill_color='#87CEFA',
                                 font=dict(color='white', size=12),
                                 align='center'
