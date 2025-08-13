@@ -295,8 +295,6 @@ def main():
                         rows=1, cols=2,
                         column_widths=[0.6, 0.4],
                         shared_xaxes=False,
-                        vertical_spacing=0.08,
-                        row_heights=[0.5, 0.25, 0.25],
                         specs=[
                                 [{"type": "xy"}, {"type": "domain"}]  # Left: bar chart, Right: nested tables
                             ],
