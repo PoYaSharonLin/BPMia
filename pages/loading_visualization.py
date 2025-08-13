@@ -286,7 +286,7 @@ def main():
                         
                         # Helper to build table cell lists (first column = process_series name)
                         def table_cells(df_pct_str):
-                            return [df_pct_str.index.tolist()] + [df_pct_str[q].tolist() for q in df_pct_str.co
+                            return [df_pct_str.index.tolist()] + [df_pct_str[q].tolist() for q in df_pct_str.columns]
 
                         
                         # Build subplot
