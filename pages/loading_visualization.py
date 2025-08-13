@@ -275,10 +275,7 @@ def main():
                     }, name="Overall")
                     overall["HBM %"] = (overall["HBM"] / overall["Total"] * 100) if overall["Total"] != 0 else 0
                     overall["nonHBM %"] = (overall["nonHBM"] / overall["Total"] * 100) if overall["Total"] != 0 else 0
-                    st.dataframe(summary)
-                    st.dataframe(overall)
                     summary_with_overall = pd.concat([summary, overall.to_frame().T], axis=0)
-                    st.dataframe(summary_with_overall)
                     
                     
                     disp = pd.DataFrame({
