@@ -4,6 +4,7 @@ import numpy as np
 from datetime import datetime
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import re
 from utils.ui_helper import UIHelper
 from openpyxl.utils import column_index_from_string
