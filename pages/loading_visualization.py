@@ -348,7 +348,7 @@ def main():
                             ),
                             cells=dict(
                                 values=table_cells(hbm_pct_disp),
-                                fill_color=[['#8caac2'] * len(hbm_pct_disp.index)] + [['#FFFFFF'] * len(hbm_pct_disp.index)] * len(quarters),
+                                fill_color=[['#7dadd4'] * len(hbm_pct_disp.index)] + [['#FFFFFF'] * len(hbm_pct_disp.index)] * len(quarters),
                                 align=['left'] + ['center'] * len(quarters),
                                 height=26
                             ),
