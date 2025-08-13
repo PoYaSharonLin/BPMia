@@ -292,15 +292,16 @@ def main():
                     # Build subplot
                     
                     fig = make_subplots(
-                        rows=3, cols=1,
+                        rows=1, cols=2,
+                        column_widths=[0.6, 0.4],
                         shared_xaxes=False,
                         vertical_spacing=0.08,
                         row_heights=[0.5, 0.25, 0.25],
                         specs=[
-                            [{"type": "xy"}],       # Row 1: bar chart
-                            [{"type": "table"}],    # Row 2: HBM table
-                            [{"type": "table"}],    # Row 3: non-HBM table
-                        ],
+                                [{"type": "xy"}, {"type": "domain"}]  # Left: bar chart, Right: nested tables
+                            ],
+                            subplot_titles=["HBM vs non-HBM by Quarter", "HBM & non-HBM Tables"]
+
                     )
 
                     
