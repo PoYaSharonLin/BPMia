@@ -296,9 +296,10 @@ def main():
                         column_widths=[0.5, 0.5],
                         shared_xaxes=False,
                         specs=[
-                                [{"type": "xy"}, {"type": "domain"}]  # Left: bar chart, Right: nested tables
+                                [{"type": "xy"}, {"type": "domain"}],  # Left: bar chart, Right: nested tables
+                                [{}, {"type": "domain"}]
                             ],
-                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM & HBM DID Tables"]
+                            subplot_titles=["HBM vs non-HBM by Quarter", "non-HBM DID Tables", "", "HBM DID Tables"]
 
                     )
 
