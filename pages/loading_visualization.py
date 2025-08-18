@@ -198,6 +198,8 @@ def main():
                 st.dataframe(date_table)
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
+                st.dataframe(date_table_with_week)
+                st.dataframe(date_table.iloc[0,:])
 
                 # create select table
                 week_row = date_table_with_week.loc['Week'].astype(str)
