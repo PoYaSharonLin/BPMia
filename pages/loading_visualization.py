@@ -429,7 +429,7 @@ def main():
                     )
 
                     # total table                   
-                    table_header = ["Product"] + pretty_quarters
+                    table_header = ["Product"] + quarters
                     table_cells = [products] + [
                         [f"{portion_share_pct.loc[prod, q]:.1f}%" for prod in products]
                         for q in quarters  # use original column keys to index the DataFrame
