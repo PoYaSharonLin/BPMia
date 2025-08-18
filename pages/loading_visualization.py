@@ -198,9 +198,14 @@ def main():
                 process_series_value = plot_data_all.iloc[3:11]
                 quarter_df = quarter.to_frame().T
                 portion_table = pd.concat([quarter_df, process_series_value], axis=0)
-                bar_portion_table = portion_table.iloc[3:10, :]
+                portion_labels = portion_table.iloc[0, 1:-1]  
+                portion_values = portion_table.iloc[1, 1:-1].astype(float)
+                # total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
+                # collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
+                # df_sorted = collapsed.sort_values('Group')
                 st.dataframe(portion_table)
-                st.dataframe(bar_portion_table)
+                st.dataframe(portion_labels)
+                st.dataframe(portion_values)
                 
     
                 
