@@ -202,7 +202,6 @@ def main():
                 portion_collapsed = portion_table.groupby("Quater").sum().reset_index()
 
                 st.dataframe(portion_table)
-                st.dataframe(portion_values)
                 st.dataframe(portion_collapsed)
                 
                 
