@@ -200,7 +200,7 @@ def main():
                 portion_table = pd.concat([quarter_df, process_series_value], axis=0)
                 quarter_labels = portion_table.iloc[0,:]
                 series_labels = portion_table.iloc[1:, -1]
-                portion_values = portion_table.set_index(series_labels)
+                portion_values = portion_table[1:,:].set_index(series_labels)
                 portion_collapsed = portion_values.groupby(quarter_labels, axis=1).sum()
                 st.dataframe(portion_collapsed)
                 
