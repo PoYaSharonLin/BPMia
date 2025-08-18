@@ -195,25 +195,28 @@ def main():
 
                 st.markdown("**Select a week range**")
                 date_table = plot_data_all.copy()
-                st.dataframe(date_table)
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
-                st.dataframe(date_table_with_week)
-                st.dataframe(date_table.iloc[0,:])
 
                 # create select table
                 week_row = date_table_with_week.loc['Week'].astype(str)
                 mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
                 ordered_week_cols = week_row.index[mask].tolist()     
-                week_labels = week_row[mask].tolist()          
+                week_labels = week_row[mask].tolist()
+                
+                first_row = date_table.iloc[0, :]
+                final_week_labels = [
+                    f"{label} ({first_row[col]})" for label, col in zip(week_labels, ordered_week_cols)
+                ]
+
                 
                 c1, c2 = st.columns(2)
                 with c1:
-                    start_week = st.selectbox("Start week", week_labels, index=0)
+                    start_week = st.selectbox("Start week", final_week_labels, index=0)
                 with c2:
-                    end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
+                    end_week = st.selectbox("End week", final_week_labels, index=len(week_labels) - 1)
                 
-                i0, i1 = week_labels.index(start_week), week_labels.index(end_week)
+                i0, i1 = final_week_labels.index(start_week), final_week_labels.index(end_week)
                 if i0 > i1:
                     i0, i1 = i1, i0
                 
