@@ -180,7 +180,7 @@ def main():
                 values = total_dram.iloc[1, 1:-1].astype(float)
                 total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
                 collapsed = total_df.groupby('Group').sum().reset_index()
-                st.dataframe(collapsed)
+                st.dataframe(total_dram)
 
                 
                 collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
@@ -239,7 +239,6 @@ def main():
                     values = filtered.iloc[4:, 1:].reset_index(drop=True)
                     values.columns = quarter_map
                     values.insert(0, 'process_series', process_series)
-                    st.dataframe(values)
                     
                     hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
                     non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
