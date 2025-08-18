@@ -197,23 +197,24 @@ def main():
                 st.markdown("**Select a week range**")
                 
                 # Detect the Group column robustly (your file has a trailing space: 'Group ')
-                group_col = next((c for c in plot_data_all.columns if c.strip() == "Group"), None)
+                portion_df = plot_data_all.copy()
+                group_col = next((c for c in portion_df.columns if c.strip() == "Group"), None)
                 if group_col is None:
                     raise ValueError("Could not find a 'Group' column in plot_data_all.")
                 
                 # Time columns are everything except 'Unnamed: 0' and Group column
-                time_cols = [c for c in plot_data_all.columns if c not in ("Unnamed: 0", group_col)]
+                time_cols = [c for c in portion_df.columns if c not in ("Unnamed: 0", group_col)]
                 
                 # Convert weekly values to numeric just once
-                plot_data_all[time_cols] = plot_data_all[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
+                portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
                 
                 # --- Select product rows by label instead of hard-coded iloc slice ---
                 is_product = (
-                    plot_data_all[group_col].notna()
-                    & plot_data_all[group_col].astype(str).str.strip().ne("")
-                    & plot_data_all[group_col].astype(str).str.strip().ne("Total_DRAM")  # exclude total row
+                    portion_df[group_col].notna()
+                    & portion_df[group_col].astype(str).str.strip().ne("")
+                    & portion_df[group_col].astype(str).str.strip().ne("Total_DRAM")  # exclude total row
                 )
-                process_series_value = plot_data_all.loc[is_product, time_cols + [group_col]].copy()
+                process_series_value = portion_df.loc[is_product, time_cols + [group_col]].copy()
                 
                 # First row: quarter labels (already provided in `quarter`, aligned to time_cols)
                 quarter_df = pd.DataFrame([quarter.loc[time_cols].astype(str)], columns=time_cols)
@@ -236,7 +237,7 @@ def main():
                 
                 # (Optional) percentages per quarter
                 portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
-                # st.dataframe(portion_share_pct)
+                st.dataframe(portion_share_pct)
 
                 
                 
