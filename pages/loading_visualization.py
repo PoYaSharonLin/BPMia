@@ -198,11 +198,7 @@ def main():
                 process_series_value = plot_data_all.iloc[3:11]
                 quarter_df = quarter.to_frame().T
                 portion_table = pd.concat([quarter_df, process_series_value], axis=0)
-                portion_table["Quater"] = portion_table.iloc[0, 1:-1]  
-                portion_collapsed = portion_table.groupby("Quater").sum().reset_index()
-
                 st.dataframe(portion_table)
-                st.dataframe(portion_collapsed)
                 
                 
     
