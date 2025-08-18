@@ -171,6 +171,7 @@ def main():
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )   
+
                 # Detect the Group column robustly (your file has a trailing space: 'Group ')
                 portion_df = plot_data_all.copy()
                 group_col = next((c for c in portion_df.columns if c.strip() == "Group"), None)
@@ -183,6 +184,9 @@ def main():
                 # Convert weekly values to numeric just once
                 portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
                 
+                quarter = plot_data_all.loc[0, time_cols].astype(str)
+                quarter.name = "quarter"
+
                 # --- Select product rows by label instead of hard-coded iloc slice ---
                 is_product = (
                     portion_df[group_col].notna()
