@@ -237,6 +237,7 @@ def main():
                     values = filtered.iloc[4:, 1:].reset_index(drop=True)
                     values.columns = quarter_map
                     values.insert(0, 'process_series', process_series)
+                    st.dataframe(values)
                     
                     hbm_series = {'150S_HBM3', '150S_HBM4', '160S_HBM4E'}
                     non_hbm_series = {'140S_DRAM', '150S_non-HBM', '160S_non-HBM', '170S_DRAM'}
@@ -328,8 +329,17 @@ def main():
 
                     
                     # Build subplot
+                    # fig_portion = make_subplots(
+                    #     rows=2, col=1, 
+                    #     shared_xaxes=False, 
+                    #     specs=[
+                    #             [{"type": "xy"}],
+                    #             [{"type": "domain"}]
+                    #     ], 
+                    #     subplot_titles=["Product Seris by Quarter", "Product Series Table"]
+                    # )
                     
-                    fig = make_subplots(
+                    fig_HBM = make_subplots(
                         rows=2, cols=2,
                         column_widths=[0.5, 0.5],
                         shared_xaxes=False,
@@ -343,17 +353,45 @@ def main():
 
                     
                     # Bar traces (stacked)
-                    fig.add_trace(
+                    # for category, color in color_mapping.items():
+                    #     fig_portion.add_trace(
+                    #         go.Bar(
+                    #             name=category,
+                    #             x=quarters,
+                    #             y=sample_data[category],
+                    #             marker_color=color
+                    #         ),
+                    #         row=1, col=1
+                    #     )
+
+                    fig_HBM.add_trace(
                         go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
                         row=1, col=1
                     )
-                    fig.add_trace(
+                    fig_HBM.add_trace(
                         go.Bar(name='nonHBM', x=totals.index, y=totals['nonHBM']),
                         row=1, col=1
                     )
 
-                    # total table                 
-                    fig.add_trace(
+                    # total table
+                    # fig_portion.add_trace(
+                    #     go.Table(
+                    #         header=dict(
+                    #             values=table_header,
+                    #             fill_color="#f2f2f2",
+                    #             align="center",
+                    #             font=dict(color="black", size=12)
+                    #         ),
+                    #         cells=dict(
+                    #             values=table_cells,
+                    #             align="center",
+                    #             height=24
+                    #         )
+                    #     ),
+                    #     row=2, col=1
+                    # )
+
+                    fig_HBM.add_trace(
                         go.Table(
                             header=dict(
                                 values=["Quarter", "HBM", "nonHBM", "Total", "HBM %", "nonHBM %"],
@@ -383,7 +421,7 @@ def main():
 
                     # non HBM Percentage Table trace
                     
-                    fig.add_trace(
+                    fig_HBM.add_trace(
                         go.Table(
                             header=dict(
                                 values=['Process Series'] + quarters,
@@ -405,7 +443,7 @@ def main():
                     
                     # HBM Percentage Table trace: hbm_by_quarter / hbm_total
                     
-                    fig.add_trace(
+                    fig_HBM.add_trace(
                         go.Table(
                             header=dict(
                                 values=['Process'] + quarters,
@@ -425,11 +463,19 @@ def main():
                     )
 
 
+                    # fig_portion.update_layout(
+                    #     barmode='stack',
+                    #     xaxis_title='Quarter',
+                    #     yaxis_title='Wafer Output Portion', 
+                    #     legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+                    #     height=500,
+                    #     margin=dict(t=60, b=40, l=40, r=20)
+                    # )
                     
 
                     
                     
-                    fig.update_layout(
+                    fig_HBM.update_layout(
                         barmode='stack',
                         xaxis_title='Quarter',
                         yaxis_title='Wafer Output',
@@ -440,7 +486,10 @@ def main():
 
                     
                     # Streamlit
-                    st.plotly_chart(fig, use_container_width=True)
+                    # st.plotly_chart(fig_portion, use_container_width=True)
+                    st.plotly_chart(fig_HBM, use_container_width=True)
+
+
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
