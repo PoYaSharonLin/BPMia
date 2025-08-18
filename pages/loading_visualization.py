@@ -199,7 +199,7 @@ def main():
                 quarter_df = quarter.to_frame().T
                 portion_table = pd.concat([quarter_df, process_series_value], axis=0)
                 st.dataframe(portion_table)
-                st.dataframe(portion_table.loc["Group"])
+                st.dataframe(portion_table.iloc[-1])
                 
     
                 
