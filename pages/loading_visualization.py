@@ -195,6 +195,7 @@ def main():
 
                 st.markdown("**Select a week range**")
                 date_table = plot_data_all.copy()
+                st.dataframe(date_table)
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
 
