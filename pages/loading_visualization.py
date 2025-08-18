@@ -195,8 +195,8 @@ def main():
 
 
                 st.markdown("**Select a week range**")
-                process_series_value = plot_data_all.iloc[3:10]
-                portion_table = pd.DataFrame([quarter, process_series_value])
+                # process_series_value = plot_data_all.iloc[3:10]
+                # portion_table = pd.DataFrame([quarter, process_series_value])
                 # st.dataframe(portion_table)
                 
     
