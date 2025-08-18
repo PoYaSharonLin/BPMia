@@ -371,21 +371,25 @@ def main():
                         .astype(str) + '%'
                     )
                     
+                    quarters = list(portion_collapsed.columns)    # x-axis
+                    products = list(portion_collapsed.index)      # stacked series
+
                     # Helper to build table cell lists (first column = process_series name)
                     def table_cells(df_pct_str):
                         return [df_pct_str.index.tolist()] + [df_pct_str[q].tolist() for q in df_pct_str.columns]
 
                     
                     # Build subplot
-                    # fig_portion = make_subplots(
-                    #     rows=1, cols=1, 
-                    #     shared_xaxes=False, 
-                    #     specs=[
-                    #             [{"type": "xy"}]
-                    #             # [{"type": "domain"}]
-                    #     ], 
-                    #     subplot_titles=["Product Seris by Quarter"] #"Product Series Table"
-                    # )
+                    fig_portion = make_subplots(
+                        rows=2, cols=1, 
+                        shared_xaxes=False, 
+                        vertical_spacing=0.12,
+                        specs=[
+                                [{"type": "xy"}],
+                                [{"type": "domain"}]
+                        ], 
+                        subplot_titles=["Product Seris by Quarter", "Product Series Table"] 
+                    )
                     
                     fig_HBM = make_subplots(
                         rows=2, cols=2,
@@ -401,17 +405,20 @@ def main():
 
                     
                     # Bar traces (stacked)
-                    # for category, color in color_mapping.items():
-                    #     fig_portion.add_trace(
-                    #         go.Bar(
-                    #             name=category,
-                    #             x=quarters,
-                    #             y=portion_table["Group"][category],
-                    #             marker_color=color
-                    #         ),
-                    #         row=1, col=1
-                    #     )
+                    for prod in products:
+                        y_vals = portion_collapsed.loc[prod].tolist()
+                        fig_portion.add_trace(
+                            go.Bar(
+                                name=prod,
+                                x=quarters,                   # or use: quarters
+                                y=y_vals,
+                                marker_color=color_mapping.get(prod)
+                            ),
+                            row=1, col=1
+                        )
+                    
 
+                    
                     fig_HBM.add_trace(
                         go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
                         row=1, col=1
@@ -422,22 +429,28 @@ def main():
                     )
 
                     # total table
-                    # fig_portion.add_trace(
-                    #     go.Table(
-                    #         header=dict(
-                    #             values=table_header,
-                    #             fill_color="#f2f2f2",
-                    #             align="center",
-                    #             font=dict(color="black", size=12)
-                    #         ),
-                    #         cells=dict(
-                    #             values=table_cells,
-                    #             align="center",
-                    #             height=24
-                    #         )
-                    #     ),
-                    #     row=2, col=1
-                    # )
+                
+                    table_cells = [products] + [
+                        [f"{portion_share_pct.loc[prod, q]:.1f}%" for prod in products]
+                        for q in quarters  # use original column keys to index the DataFrame
+                    ]
+                    
+                    fig_portion.add_trace(
+                        go.Table(
+                            header=dict(
+                                values=table_header,
+                                fill_color="#f2f2f2",
+                                align="center",
+                                font=dict(color="black", size=12)
+                            ),
+                            cells=dict(
+                                values=table_cells,
+                                align="center",
+                                height=24
+                            )
+                        ),
+                        row=2, col=1
+                    )
 
                     fig_HBM.add_trace(
                         go.Table(
@@ -511,14 +524,14 @@ def main():
                     )
 
 
-                    # fig_portion.update_layout(
-                    #     barmode='stack',
-                    #     xaxis_title='Quarter',
-                    #     yaxis_title='Wafer Output Portion', 
-                    #     legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
-                    #     height=500,
-                    #     margin=dict(t=60, b=40, l=40, r=20)
-                    # )
+                    fig_portion.update_layout(
+                        barmode='stack',
+                        xaxis_title='Quarter',
+                        yaxis_title='Wafer Output Portion', 
+                        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+                        height=500,
+                        margin=dict(t=60, b=40, l=40, r=20)
+                    )
                     
 
                     
@@ -534,7 +547,7 @@ def main():
 
                     
                     # Streamlit
-                    # st.plotly_chart(fig_portion, use_container_width=True)
+                    st.plotly_chart(fig_portion, use_container_width=True)
                     st.plotly_chart(fig_HBM, use_container_width=True)
 
 
