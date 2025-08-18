@@ -232,16 +232,12 @@ def main():
                 # Preserve quarter order as they appear in time_cols
                 portion_collapsed = portion_values.T.groupby(quarter.loc[time_cols], sort=False).sum().T
                 
-                # Show in Streamlit (or print)
-                st.dataframe(portion_collapsed)
-                
-                # (Optional) percentages per quarter
+                # percentages per quarter
                 portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
-                st.dataframe(portion_share_pct)
+                formatted_portion_share_pct = portion_share_pct.apply(fmt_pct)
+                st.dataframe(formatted_portion_share_pct)
 
-                
-                
-    
+
                 
                 date_table = plot_data_all.copy()
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
@@ -380,17 +376,6 @@ def main():
 
                     
                     # Build subplot
-                    fig_portion = make_subplots(
-                        rows=2, cols=1, 
-                        shared_xaxes=False, 
-                        vertical_spacing=0.12,
-                        specs=[
-                                [{"type": "xy"}],
-                                [{"type": "domain"}]
-                        ], 
-                        subplot_titles=["Product Seris by Quarter", "Product Series Table"] 
-                    )
-                    
                     fig_HBM = make_subplots(
                         rows=2, cols=2,
                         column_widths=[0.5, 0.5],
@@ -405,19 +390,6 @@ def main():
 
                     
                     # Bar traces (stacked)
-                    for prod in products:
-                        y_vals = portion_collapsed.loc[prod].tolist()
-                        fig_portion.add_trace(
-                            go.Bar(
-                                name=prod,
-                                x=quarters,                   # or use: quarters
-                                y=y_vals,
-                                marker_color=color_mapping.get(prod)
-                            ),
-                            row=1, col=1
-                        )
-                    
-
                     
                     fig_HBM.add_trace(
                         go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
@@ -429,30 +401,6 @@ def main():
                     )
 
                     # total table                   
-                    table_header = ["Product"] + quarters
-                    table_cells = [products] + [
-                        [f"{portion_share_pct.loc[prod, q]:.1f}%" for prod in products]
-                        for q in quarters  # use original column keys to index the DataFrame
-                    ]
-
-                    
-                    fig_portion.add_trace(
-                        go.Table(
-                            header=dict(
-                                values=table_header,
-                                fill_color="#f2f2f2",
-                                align="center",
-                                font=dict(color="black", size=12)
-                            ),
-                            cells=dict(
-                                values=table_cells,
-                                align="center",
-                                height=24
-                            )
-                        ),
-                        row=2, col=1
-                    )
-
                     fig_HBM.add_trace(
                         go.Table(
                             header=dict(
@@ -523,16 +471,6 @@ def main():
                         ),
                         row=2, col=2
                     )
-
-
-                    fig_portion.update_layout(
-                        barmode='stack',
-                        xaxis_title='Quarter',
-                        yaxis_title='Wafer Output Portion', 
-                        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
-                        height=500,
-                        margin=dict(t=60, b=40, l=40, r=20)
-                    )
                     
 
                     
@@ -548,7 +486,6 @@ def main():
 
                     
                     # Streamlit
-                    st.plotly_chart(fig_portion, use_container_width=True)
                     st.plotly_chart(fig_HBM, use_container_width=True)
 
 
