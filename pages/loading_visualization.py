@@ -428,12 +428,13 @@ def main():
                         row=1, col=1
                     )
 
-                    # total table
-                
+                    # total table                   
+                    table_header = ["Product"] + pretty_quarters
                     table_cells = [products] + [
                         [f"{portion_share_pct.loc[prod, q]:.1f}%" for prod in products]
                         for q in quarters  # use original column keys to index the DataFrame
                     ]
+
                     
                     fig_portion.add_trace(
                         go.Table(
