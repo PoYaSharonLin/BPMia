@@ -195,10 +195,11 @@ def main():
 
 
                 st.markdown("**Select a week range**")
-                portion_table = plot_data_all.copy()
-                process_series_value = plot_data_all.iloc[10:17, :]
+                process_series_value = plot_data_all.iloc[3:10, :]
+                portion_table = pd.DataFrame([quarter, process_series_value])
                 st.dataframe(portion_table)
-                st.dataframe(process_series_value)
+                
+    
                 
                 date_table = plot_data_all.copy()
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
@@ -334,15 +335,15 @@ def main():
 
                     
                     # Build subplot
-                    # fig_portion = make_subplots(
-                    #     rows=2, col=1, 
-                    #     shared_xaxes=False, 
-                    #     specs=[
-                    #             [{"type": "xy"}],
-                    #             [{"type": "domain"}]
-                    #     ], 
-                    #     subplot_titles=["Product Seris by Quarter", "Product Series Table"]
-                    # )
+                    fig_portion = make_subplots(
+                        rows=1, col=1, 
+                        shared_xaxes=False, 
+                        specs=[
+                                [{"type": "xy"}]
+                                # [{"type": "domain"}]
+                        ], 
+                        subplot_titles=["Product Seris by Quarter"] #"Product Series Table"
+                    )
                     
                     fig_HBM = make_subplots(
                         rows=2, cols=2,
@@ -358,16 +359,16 @@ def main():
 
                     
                     # Bar traces (stacked)
-                    # for category, color in color_mapping.items():
-                    #     fig_portion.add_trace(
-                    #         go.Bar(
-                    #             name=category,
-                    #             x=quarters,
-                    #             y=sample_data[category],
-                    #             marker_color=color
-                    #         ),
-                    #         row=1, col=1
-                    #     )
+                    for category, color in color_mapping.items():
+                        fig_portion.add_trace(
+                            go.Bar(
+                                name=category,
+                                x=quarters,
+                                y=portion_table["Group"][category],
+                                marker_color=color
+                            ),
+                            row=1, col=1
+                        )
 
                     fig_HBM.add_trace(
                         go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
@@ -468,14 +469,14 @@ def main():
                     )
 
 
-                    # fig_portion.update_layout(
-                    #     barmode='stack',
-                    #     xaxis_title='Quarter',
-                    #     yaxis_title='Wafer Output Portion', 
-                    #     legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
-                    #     height=500,
-                    #     margin=dict(t=60, b=40, l=40, r=20)
-                    # )
+                    fig_portion.update_layout(
+                        barmode='stack',
+                        xaxis_title='Quarter',
+                        yaxis_title='Wafer Output Portion', 
+                        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+                        height=500,
+                        margin=dict(t=60, b=40, l=40, r=20)
+                    )
                     
 
                     
@@ -491,7 +492,7 @@ def main():
 
                     
                     # Streamlit
-                    # st.plotly_chart(fig_portion, use_container_width=True)
+                    st.plotly_chart(fig_portion, use_container_width=True)
                     st.plotly_chart(fig_HBM, use_container_width=True)
 
 
