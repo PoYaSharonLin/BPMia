@@ -166,7 +166,7 @@ def main():
                 fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                st.markdown("### Select a date range to view YoY & QoQ data")
+                st.markdown("### Data Overview")
                 st.markdown("**Overall QoQ**")
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
@@ -194,7 +194,7 @@ def main():
                 
 
 
-                st.markdown("**Select a week range**")
+                st.markdown("**Overall Process Series Portion**")
                 
                 # Detect the Group column robustly (your file has a trailing space: 'Group ')
                 portion_df = plot_data_all.copy()
@@ -257,7 +257,7 @@ def main():
                     f"{label} ({first_row[col]})" for label, col in zip(week_labels, ordered_week_cols)
                 ]
 
-                
+                st.markdown("### Select a date range to view HBM/nonHBM data")
                 c1, c2 = st.columns(2)
                 with c1:
                     start_week = st.selectbox("Start week", final_week_labels, index=0)
@@ -278,7 +278,6 @@ def main():
                 )
             
 
-                st.markdown("**Selected Range Product Portion**")
                 if start_week and end_week: 
                     quarter_map = filtered.iloc[1, 1:].tolist()
                     process_series = filtered.iloc[4:, 0].reset_index(drop=True)
