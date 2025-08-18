@@ -186,8 +186,7 @@ def main():
                 percentage_df = df_sorted.copy()
                 percentage_df.columns = ['Quarter', 'Total Wafer Out']
                 percentage_df['Total Wafer Out'] = fmt_num(percentage_df['Total Wafer Out'])
-                percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 1)
-                percentage_df['% Change'] = fmt_pct(percentage_df['% Change'])
+                percentage_df['% Change'] = fmt_pct(percentage_df['Total Wafer Out'].pct_change())
                 st.dataframe(percentage_df.T)
                 
 
