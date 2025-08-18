@@ -180,7 +180,6 @@ def main():
                 values = total_dram.iloc[1, 1:-1].astype(float)
                 total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
                 collapsed = total_df.groupby('Group').sum().reset_index()
-                st.dataframe(total_dram)
 
                 
                 collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
@@ -196,6 +195,11 @@ def main():
 
 
                 st.markdown("**Select a week range**")
+                portion_table = plot_data_all.copy()
+                process_series_value = plot_data_all.iloc[10:17, :]
+                st.dataframe(portion_table)
+                st.dataframe(process_series_value)
+                
                 date_table = plot_data_all.copy()
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
