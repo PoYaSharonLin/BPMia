@@ -195,14 +195,49 @@ def main():
 
 
                 st.markdown("**Select a week range**")
-                process_series_value = plot_data_all.iloc[3:11]
-                quarter_df = quarter.to_frame().T
-                portion_table = pd.concat([quarter_df, process_series_value], axis=0)
-                quarter_labels = portion_table.iloc[0,:]
-                series_labels = portion_table.iloc[1:, -1]
-                portion_values = portion_table[1:,:].set_index(series_labels)
-                portion_collapsed = portion_values.groupby(quarter_labels, axis=1).sum()
+                
+                # Detect the Group column robustly (your file has a trailing space: 'Group ')
+                group_col = next((c for c in plot_data_all.columns if c.strip() == "Group"), None)
+                if group_col is None:
+                    raise ValueError("Could not find a 'Group' column in plot_data_all.")
+                
+                # Time columns are everything except 'Unnamed: 0' and Group column
+                time_cols = [c for c in plot_data_all.columns if c not in ("Unnamed: 0", group_col)]
+                
+                # Convert weekly values to numeric just once
+                plot_data_all[time_cols] = plot_data_all[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
+                
+                # --- Select product rows by label instead of hard-coded iloc slice ---
+                is_product = (
+                    plot_data_all[group_col].notna()
+                    & plot_data_all[group_col].astype(str).str.strip().ne("")
+                    & plot_data_all[group_col].astype(str).str.strip().ne("Total_DRAM")  # exclude total row
+                )
+                process_series_value = plot_data_all.loc[is_product, time_cols + [group_col]].copy()
+                
+                # First row: quarter labels (already provided in `quarter`, aligned to time_cols)
+                quarter_df = pd.DataFrame([quarter.loc[time_cols].astype(str)], columns=time_cols)
+                
+                # Build a table with quarter row (top) + product rows (below) – only time columns
+                portion_table = pd.concat([quarter_df, process_series_value[time_cols]], axis=0, ignore_index=True)
+                
+                # Series labels from the product names
+                series_labels = process_series_value[group_col].astype(str).values
+                
+                # Values excluding the first (quarter) row; set product names as index
+                portion_values = portion_table.iloc[1:, :].set_index(pd.Index(series_labels, name="Product"))
+                
+                # --- Aggregate weeks → quarters ---
+                # Preserve quarter order as they appear in time_cols
+                portion_collapsed = portion_values.T.groupby(quarter.loc[time_cols], sort=False).sum().T
+                
+                # Show in Streamlit (or print)
                 st.dataframe(portion_collapsed)
+                
+                # (Optional) percentages per quarter
+                portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
+                # st.dataframe(portion_share_pct)
+
                 
                 
     
