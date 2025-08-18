@@ -45,3 +45,6 @@ toolbarMode = "auto"
 # Default: true
 showSidebarNavigation = false
 
+[server]
+enableXsrfProtection = false
+
