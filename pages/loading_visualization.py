@@ -337,7 +337,7 @@ def main():
                     
                     # Build subplot
                     fig_portion = make_subplots(
-                        rows=1, col=1, 
+                        rows=1, cols=1, 
                         shared_xaxes=False, 
                         specs=[
                                 [{"type": "xy"}]
