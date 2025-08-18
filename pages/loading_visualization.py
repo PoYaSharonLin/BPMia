@@ -198,9 +198,9 @@ def main():
                 process_series_value = plot_data_all.iloc[3:11]
                 quarter_df = quarter.to_frame().T
                 portion_table = pd.concat([quarter_df, process_series_value], axis=0)
-                # bar_portion_table = portion_table[1:8, :]
+                bar_portion_table = portion_table[3:10, :]
                 st.dataframe(portion_table)
-                # st.dataframe(bar_portion_table)
+                st.dataframe(bar_portion_table)
                 
     
                 
