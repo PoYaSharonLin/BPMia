@@ -154,14 +154,14 @@ def main():
                     return
 
                 # Slice the DataFrame
-                df_range = df.iloc[start_row-1:end_row + 1, start_col:end_col + 1]
+                df_range = df.iloc[start_row-1:end_row, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
-                st.dataframe(df_range)
+                # st.dataframe(df_range)
 
 
                 # Delta Line plot 
                 plot_data_delta, plot_data_melted_all, primary_labels, secondary_labels= prepare_line_plot_data(
-                    df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
+                    df, start_col, end_col, x_row=2, y_start_row=start_row-1, y_end_row=end_row, group_col_index=column_index_from_string('D') - 1
                 )
                 fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
