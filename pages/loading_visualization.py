@@ -126,6 +126,7 @@ def fmt_num(s):
 def fmt_pct(s):
     return s.fillna(0).map(lambda x: f"{x:.1f}%")
 
+
 def main():
     try:
         UIHelper.config_page()
@@ -133,13 +134,11 @@ def main():
 
         st.title("📊Loading Mia")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
-        
-        st.markdown("### BC Delta")
         col1, col2 = st.columns(2)
         with col1:
-            start_cell = st.text_input("Enter start cell (e.g., CR46):", value="CR46")
+            start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
         with col2:
-            end_cell = st.text_input("Enter end cell (e.g., JE60):", value="JE60")
+            end_cell = st.text_input("Enter end cell (e.g., JE16):", value="JE16")
 
         if uploaded_file:
             try:
@@ -155,48 +154,37 @@ def main():
                     return
 
                 # Slice the DataFrame
-                df_range = df.iloc[start_row-1:end_row, start_col:end_col + 1]
+                df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
                 # st.dataframe(df_range)
-                
+
+
                 # Delta Line plot 
                 plot_data_delta, plot_data_melted_all, primary_labels, secondary_labels= prepare_line_plot_data(
-                    df, start_col, end_col, x_row=2, y_start_row=start_row-1, y_end_row=end_row, group_col_index=column_index_from_string('D') - 1
+                    df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
                 )
-                fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta Line Plot", primary_labels, secondary_labels)
+                fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                st.markdown("### Current BC")
-                col3, col4 = st.columns(2)
-                with col3:
-                    start_cell_BC = st.text_input("Enter start cell (e.g., CR5):", value="CR5")
-                with col4:
-                    end_cell_BC = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
-                try:
-                    start_col_BC, start_row_BC = parse_cell(start_cell_BC)
-                    end_col_BC, end_row_BC = parse_cell(end_cell_BC)
-                except Exception as e:
-                    st.error(f"Invalid cell range format: {e}")
-                    return
-                # df_range_BC = df.iloc[start_row_BC-1:end_row_BC, start_col_BC:end_col_BC + 1]
-                # st.dataframe(df_range_BC)
-                
+                st.markdown("### Data Overview")
                 st.markdown("**Overall Process Series Portion**")
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
-                df, start_col, end_col, x_row=2, y_start_row=start_row_BC-1, y_end_row=end_row_BC, group_col_index=column_index_from_string('D') - 1
+                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )   
-                 # Detect the Group column robustly (your file has a trailing space: 'Group ')
+
+                # Detect the Group column robustly (your file has a trailing space: 'Group ')
                 portion_df = plot_data_all.copy()
                 group_col = next((c for c in portion_df.columns if c.strip() == "Group"), None)
                 if group_col is None:
                     raise ValueError("Could not find a 'Group' column in plot_data_all.")
-                st.dataframe(plot_data_all)
+                
                 # Time columns are everything except 'Unnamed: 0' and Group column
                 time_cols = [c for c in portion_df.columns if c not in ("Unnamed: 0", group_col)]
+                
                 # Convert weekly values to numeric just once
                 portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
                 
-                quarter = pd.Series(df.iloc[1, start_col:end_col +1].values, index=primary_labels_all).astype(str)
+                quarter = plot_data_all.loc[0, time_cols].astype(str)
                 quarter.name = "quarter"
 
                 # --- Select product rows by label instead of hard-coded iloc slice ---
@@ -225,11 +213,14 @@ def main():
                 # --- Aggregate weeks → quarters ---
                 # Preserve quarter order as they appear in time_cols
                 portion_collapsed = portion_values.T.groupby(quarter.loc[time_cols], sort=False).sum().T
+                
                 # percentages per quarter
                 portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
                 formatted_portion_share_pct = portion_share_pct.apply(fmt_pct)
                 st.dataframe(formatted_portion_share_pct)
 
+
+                
                 date_table = plot_data_all.copy()
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
