@@ -190,14 +190,15 @@ def main():
                 group_col = next((c for c in portion_df.columns if c.strip() == "Group"), None)
                 if group_col is None:
                     raise ValueError("Could not find a 'Group' column in plot_data_all.")
-                
+                st.dataframe(plot_data_all)
                 # Time columns are everything except 'Unnamed: 0' and Group column
                 time_cols = [c for c in portion_df.columns if c not in ("Unnamed: 0", group_col)]
-                
+                st.dataframe(time_cols)
                 # Convert weekly values to numeric just once
                 portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
-                st.dataframe(plot_data_all)
+                
                 quarter = plot_data_all.loc[0, time_cols].astype(str)
+                st.write(quarter)
                 quarter.name = "quarter"
 
                 # --- Select product rows by label instead of hard-coded iloc slice ---
