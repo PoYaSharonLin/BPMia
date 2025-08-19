@@ -183,7 +183,7 @@ def main():
                 
                 st.markdown("**Overall Process Series Portion**")
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
-                df, start_col, end_col, x_row=1, y_start_row=start_row_BC-1, y_end_row=end_row_BC, group_col_index=column_index_from_string('D') - 1
+                df, start_col, end_col, x_row=2, y_start_row=start_row_BC-1, y_end_row=end_row_BC, group_col_index=column_index_from_string('D') - 1
                 )   
                  # Detect the Group column robustly (your file has a trailing space: 'Group ')
                 portion_df = plot_data_all.copy()
