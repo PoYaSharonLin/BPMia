@@ -138,7 +138,7 @@ def calculate_portion(df):
     # Convert weekly values to numeric just once
     portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
     
-    quarter = plot_data_all.loc[0, time_cols].astype(str)
+    quarter = df.loc[0, time_cols].astype(str)
     quarter.name = "quarter"
 
     # --- Select product rows by label instead of hard-coded iloc slice ---
