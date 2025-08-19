@@ -154,7 +154,7 @@ def main():
                     return
 
                 # Slice the DataFrame
-                df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
+                df_range = df.iloc[start_row-1:end_row + 1, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
                 st.dataframe(df_range)
 
