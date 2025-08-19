@@ -134,6 +134,7 @@ def main():
 
         st.title("📊Loading Mia")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+        st.markdown("### BC Delta")
         col1, col2 = st.columns(2)
         with col1:
             start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
@@ -146,7 +147,6 @@ def main():
                 df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
 
                 # Parse cell references
-                st.markdown("### BC Delta")
                 try:
                     start_col, start_row = parse_cell(start_cell)
                     end_col, end_row = parse_cell(end_cell)
