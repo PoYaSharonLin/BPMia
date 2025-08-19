@@ -134,11 +134,12 @@ def main():
 
         st.title("📊Loading Mia")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+        st.markdown("### BC Delta")
         col1, col2 = st.columns(2)
         with col1:
-            start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
+            start_cell = st.text_input("Enter start cell (e.g., CR48):", value="CR46")
         with col2:
-            end_cell = st.text_input("Enter end cell (e.g., JE16):", value="JE16")
+            end_cell = st.text_input("Enter end cell (e.g., JE60):", value="JE60")
 
         if uploaded_file:
             try:
@@ -154,22 +155,40 @@ def main():
                     return
 
                 # Slice the DataFrame
-                df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
+                # df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
                 # st.dataframe(df_range)
 
 
                 # Delta Line plot 
                 plot_data_delta, plot_data_melted_all, primary_labels, secondary_labels= prepare_line_plot_data(
-                    df, start_col, end_col, x_row=2, y_start_row=44, y_end_row=58, group_col_index=column_index_from_string('D') - 1
+                    df, start_col, end_col, x_row=2, y_start_row=start_row, y_end_row=end_row, group_col_index=column_index_from_string('D') - 1
                 )
                 fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                st.markdown("### Data Overview")
-                st.markdown("**Overall Process Series Portion**")
+                st.markdown("### Current BC")
+                st.markdown("**Process Series Portion**")
+                col3, col4 = st.columns(2)
+                with col3:
+                    start_cell_all = st.text_input("Enter start cell (e.g., CR5):", value="CR5")
+                with col4:
+                    end_cell_all = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
+
+                # Parse cell references
+                try:
+                    start_col_all, start_row_all = parse_cell(start_cell_all)
+                    end_col_all, end_row_all = parse_cell(end_cell_all)
+                except Exception as e:
+                    st.error(f"Invalid cell range format: {e}")
+                    return
+                    
+                df_range = df.iloc[start_row_all:end_row_all + 1, start_col_all:end_col_all + 1]
+                # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
+                # st.dataframe(df_range)
+                
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
-                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
+                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=end_row_all, group_col_index=column_index_from_string('D') - 1
                 )   
 
                 # Detect the Group column robustly (your file has a trailing space: 'Group ')
