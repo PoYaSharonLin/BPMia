@@ -196,7 +196,7 @@ def main():
                 # Convert weekly values to numeric just once
                 portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
                 
-                quarter = plot_data_all.loc[0, time_cols].astype(str)
+                quarter = pd.Series(df.iloc[1, start_col:end_col +1].values, index=primary_labels_all).astype(str)
                 quarter.name = "quarter"
 
                 # --- Select product rows by label instead of hard-coded iloc slice ---
