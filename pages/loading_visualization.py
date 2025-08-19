@@ -136,9 +136,9 @@ def main():
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
         col1, col2 = st.columns(2)
         with col1:
-            start_cell = st.text_input("Enter start cell (e.g., CR3):", value="CR3")
+            start_cell = st.text_input("Enter start cell (e.g., CR44):", value="CR44")
         with col2:
-            end_cell = st.text_input("Enter end cell (e.g., JE16):", value="JE16")
+            end_cell = st.text_input("Enter end cell (e.g., JE58):", value="JE58")
 
         if uploaded_file:
             try:
@@ -156,7 +156,7 @@ def main():
                 # Slice the DataFrame
                 df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
-                # st.dataframe(df_range)
+                st.dataframe(df_range)
 
 
                 # Delta Line plot 
