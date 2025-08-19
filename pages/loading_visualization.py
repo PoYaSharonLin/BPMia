@@ -155,8 +155,8 @@ def main():
 
                 # Slice the DataFrame
                 df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
-                st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
-                st.dataframe(df_range)
+                # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
+                # st.dataframe(df_range)
 
 
                 # Delta Line plot 
@@ -166,32 +166,61 @@ def main():
                 fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                st.markdown("### Select a date range to view YoY & QoQ data")
-                st.markdown("**Overall QoQ**")
+                st.markdown("### Data Overview")
+                st.markdown("**Overall Process Series Portion**")
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
-            )   
+                )   
 
-                # st.dataframe(plot_data_all)                  # Product (rows) x Quarter (cols)
-                quarter = plot_data_all.iloc[0]
-                dram_value = plot_data_all.iloc[10]
-                total_dram = pd.DataFrame([quarter,dram_value])
-                group_labels = total_dram.iloc[0, 1:-1]  
-                values = total_dram.iloc[1, 1:-1].astype(float)
-                total_df = pd.DataFrame({'Group': group_labels, 'Value': values})
-                collapsed = total_df.groupby('Group').sum().reset_index()
+                # Detect the Group column robustly (your file has a trailing space: 'Group ')
+                portion_df = plot_data_all.copy()
+                group_col = next((c for c in portion_df.columns if c.strip() == "Group"), None)
+                if group_col is None:
+                    raise ValueError("Could not find a 'Group' column in plot_data_all.")
                 
-                collapsed['Group'] = pd.Categorical(collapsed['Group'], categories=custom_order, ordered=True)
-                df_sorted = collapsed.sort_values('Group')
-                percentage_df = df_sorted.copy()
-                percentage_df.columns = ['Quarter', 'Total Wafer Out']
-                percentage_df['Total Wafer Out'] = pd.to_numeric(percentage_df['Total Wafer Out'], errors='coerce')
-                percentage_df['% Change'] = round(percentage_df['Total Wafer Out'].pct_change() * 100, 2)
-                st.dataframe(percentage_df.T)
+                # Time columns are everything except 'Unnamed: 0' and Group column
+                time_cols = [c for c in portion_df.columns if c not in ("Unnamed: 0", group_col)]
                 
+                # Convert weekly values to numeric just once
+                portion_df[time_cols] = portion_df[time_cols].apply(pd.to_numeric, errors="coerce").fillna(0.0)
+                
+                quarter = plot_data_all.loc[0, time_cols].astype(str)
+                quarter.name = "quarter"
+
+                # --- Select product rows by label instead of hard-coded iloc slice ---
+                is_product = (
+                    portion_df[group_col].notna()
+                    & portion_df[group_col].astype(str).str.strip().ne("")
+                    & portion_df[group_col].astype(str).str.strip().ne("Total_DRAM")  # exclude total row
+                    & portion_df[group_col].astype(str).str.strip().ne("process_series")
+                    & portion_df[group_col].astype(str).str.strip().ne("150S_DRAM")
+                    & portion_df[group_col].astype(str).str.strip().ne("160S_DRAM")
+                )
+                process_series_value = portion_df.loc[is_product, time_cols + [group_col]].copy()
+                
+                # First row: quarter labels (already provided in `quarter`, aligned to time_cols)
+                quarter_df = pd.DataFrame([quarter.loc[time_cols].astype(str)], columns=time_cols)
+                
+                # Build a table with quarter row (top) + product rows (below) – only time columns
+                portion_table = pd.concat([quarter_df, process_series_value[time_cols]], axis=0, ignore_index=True)
+                
+                # Series labels from the product names
+                series_labels = process_series_value[group_col].astype(str).values
+                
+                # Values excluding the first (quarter) row; set product names as index
+                portion_values = portion_table.iloc[1:, :].set_index(pd.Index(series_labels, name="Product"))
+                
+                # --- Aggregate weeks → quarters ---
+                # Preserve quarter order as they appear in time_cols
+                portion_collapsed = portion_values.T.groupby(quarter.loc[time_cols], sort=False).sum().T
+                
+                # percentages per quarter
+                portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
+                formatted_portion_share_pct = portion_share_pct.apply(fmt_pct)
+                st.dataframe(formatted_portion_share_pct)
 
 
-                st.markdown("**Select a week range**")
+                
                 date_table = plot_data_all.copy()
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
@@ -200,15 +229,21 @@ def main():
                 week_row = date_table_with_week.loc['Week'].astype(str)
                 mask = week_row.str.fullmatch(r"W\d{2}-\d{4}")
                 ordered_week_cols = week_row.index[mask].tolist()     
-                week_labels = week_row[mask].tolist()          
+                week_labels = week_row[mask].tolist()
                 
+                first_row = date_table.iloc[0, :]
+                final_week_labels = [
+                    f"{label} ({first_row[col]})" for label, col in zip(week_labels, ordered_week_cols)
+                ]
+
+                st.markdown("### Select a date range to view HBM/nonHBM data")
                 c1, c2 = st.columns(2)
                 with c1:
-                    start_week = st.selectbox("Start week", week_labels, index=0)
+                    start_week = st.selectbox("Start week", final_week_labels, index=0)
                 with c2:
-                    end_week = st.selectbox("End week", week_labels, index=len(week_labels) - 1)
+                    end_week = st.selectbox("End week", final_week_labels, index=len(week_labels) - 1)
                 
-                i0, i1 = week_labels.index(start_week), week_labels.index(end_week)
+                i0, i1 = final_week_labels.index(start_week), final_week_labels.index(end_week)
                 if i0 > i1:
                     i0, i1 = i1, i0
                 
@@ -222,7 +257,6 @@ def main():
                 )
             
 
-                st.markdown("**Selected Range Product Portion**")
                 if start_week and end_week: 
                     quarter_map = filtered.iloc[1, 1:].tolist()
                     process_series = filtered.iloc[4:, 0].reset_index(drop=True)
@@ -314,14 +348,16 @@ def main():
                         .astype(str) + '%'
                     )
                     
+                    quarters = list(portion_collapsed.columns)    # x-axis
+                    products = list(portion_collapsed.index)      # stacked series
+
                     # Helper to build table cell lists (first column = process_series name)
                     def table_cells(df_pct_str):
                         return [df_pct_str.index.tolist()] + [df_pct_str[q].tolist() for q in df_pct_str.columns]
 
                     
                     # Build subplot
-                    
-                    fig = make_subplots(
+                    fig_HBM = make_subplots(
                         rows=2, cols=2,
                         column_widths=[0.5, 0.5],
                         shared_xaxes=False,
@@ -335,17 +371,18 @@ def main():
 
                     
                     # Bar traces (stacked)
-                    fig.add_trace(
+                    
+                    fig_HBM.add_trace(
                         go.Bar(name='HBM', x=totals.index, y=totals['HBM']),
                         row=1, col=1
                     )
-                    fig.add_trace(
+                    fig_HBM.add_trace(
                         go.Bar(name='nonHBM', x=totals.index, y=totals['nonHBM']),
                         row=1, col=1
                     )
 
-                    # total table                 
-                    fig.add_trace(
+                    # total table                   
+                    fig_HBM.add_trace(
                         go.Table(
                             header=dict(
                                 values=["Quarter", "HBM", "nonHBM", "Total", "HBM %", "nonHBM %"],
@@ -375,7 +412,7 @@ def main():
 
                     # non HBM Percentage Table trace
                     
-                    fig.add_trace(
+                    fig_HBM.add_trace(
                         go.Table(
                             header=dict(
                                 values=['Process Series'] + quarters,
@@ -397,7 +434,7 @@ def main():
                     
                     # HBM Percentage Table trace: hbm_by_quarter / hbm_total
                     
-                    fig.add_trace(
+                    fig_HBM.add_trace(
                         go.Table(
                             header=dict(
                                 values=['Process'] + quarters,
@@ -415,13 +452,11 @@ def main():
                         ),
                         row=2, col=2
                     )
-
-
                     
 
                     
                     
-                    fig.update_layout(
+                    fig_HBM.update_layout(
                         barmode='stack',
                         xaxis_title='Quarter',
                         yaxis_title='Wafer Output',
@@ -432,7 +467,9 @@ def main():
 
                     
                     # Streamlit
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig_HBM, use_container_width=True)
+
+
 
             except Exception as e:
                 st.error(f"Error processing file: {e}")
