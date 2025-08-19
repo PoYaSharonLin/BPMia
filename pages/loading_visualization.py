@@ -173,7 +173,7 @@ def main():
                 with col3:
                     start_cell_all = st.text_input("Enter start cell (e.g., CR5):", value="CR5")
                 with col4:
-                    end_cell_all = st.text_input("Enter end cell (e.g., JE7):", value="JE7")
+                    end_cell_all = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
 
                 # Parse cell references
                 try:
@@ -185,10 +185,10 @@ def main():
                     
                 df_range = df.iloc[start_row_all:end_row_all + 1, start_col_all:end_col_all + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
-                st.dataframe(df_range)
+                # st.dataframe(df_range)
                 
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
-                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
+                df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=end_row_all, group_col_index=column_index_from_string('D') - 1
                 )   
 
                 # Detect the Group column robustly (your file has a trailing space: 'Group ')
