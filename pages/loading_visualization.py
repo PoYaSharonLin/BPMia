@@ -202,11 +202,11 @@ def main():
                 # --- Select product rows by label instead of hard-coded iloc slice ---
                 is_product = (
                     portion_df[group_col].notna()
-                    & portion_df[group_col].fillna('').astype(str).str.strip().ne("")
-                    & portion_df[group_col].fillna('').astype(str).str.strip().ne("Total_DRAM")  # exclude total row
-                    & portion_df[group_col].fillna('').astype(str).str.strip().ne("process_series")
-                    & portion_df[group_col].fillna('').astype(str).str.strip().ne("150S_DRAM")
-                    & portion_df[group_col].fillna('').astype(str).str.strip().ne("160S_DRAM")
+                    & portion_df[group_col].astype(str).str.strip().ne("")
+                    & portion_df[group_col].astype(str).str.strip().ne("Total_DRAM")  # exclude total row
+                    & portion_df[group_col].astype(str).str.strip().ne("process_series")
+                    & portion_df[group_col].astype(str).str.strip().ne("150S_DRAM")
+                    & portion_df[group_col].astype(str).str.strip().ne("160S_DRAM")
                 )
                 process_series_value = portion_df.loc[is_product, time_cols + [group_col]].copy()
                 
