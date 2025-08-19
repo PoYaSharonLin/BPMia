@@ -146,6 +146,7 @@ def main():
                 df = pd.read_excel(uploaded_file, sheet_name=sheet_name, engine='openpyxl')
 
                 # Parse cell references
+                st.markdown("### BC Delta")
                 try:
                     start_col, start_row = parse_cell(start_cell)
                     end_col, end_row = parse_cell(end_cell)
@@ -166,8 +167,8 @@ def main():
                 fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                st.markdown("### Data Overview")
-                st.markdown("**Overall Process Series Portion**")
+                st.markdown("### Current BC")
+                st.markdown("**Process Series Portion**")
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )   
