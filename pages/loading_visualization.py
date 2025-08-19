@@ -134,6 +134,8 @@ def main():
 
         st.title("📊Loading Mia")
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+        
+        st.markdown("### BC Delta")
         col1, col2 = st.columns(2)
         with col1:
             start_cell = st.text_input("Enter start cell (e.g., CR46):", value="CR46")
@@ -157,16 +159,29 @@ def main():
                 df_range = df.iloc[start_row-1:end_row, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
                 # st.dataframe(df_range)
-
-
+                
                 # Delta Line plot 
                 plot_data_delta, plot_data_melted_all, primary_labels, secondary_labels= prepare_line_plot_data(
                     df, start_col, end_col, x_row=2, y_start_row=start_row-1, y_end_row=end_row, group_col_index=column_index_from_string('D') - 1
                 )
-                fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta", primary_labels, secondary_labels)
+                fig_delta = create_line_plot(plot_data_melted_all, "OMT DRAM BC Delta Line Plot", primary_labels, secondary_labels)
                 st.plotly_chart(fig_delta, use_container_width=True)
                 
-                st.markdown("### Data Overview")
+                st.markdown("### Current BC")
+                col3, col4 = st.columns(2)
+                with col3:
+                    start_cell_BC = st.text_input("Enter start cell (e.g., CR5):", value="CR5")
+                with col4:
+                    end_cell_BC = st.text_input("Enter end cell (e.g., JE17):", value="JE17")
+                try:
+                    start_col_BC, start_row_BC = parse_cell(start_cell_BC)
+                    end_col_BC, end_row_BC = parse_cell(end_cell_BC)
+                except Exception as e:
+                    st.error(f"Invalid cell range format: {e}")
+                    return
+                df_range_BC = df.iloc[start_row_BC-1:end_row_BC, start_col_BC:end_col_BC + 1]
+                st.dataframe(df_range_BC)
+                
                 st.markdown("**Overall Process Series Portion**")
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
