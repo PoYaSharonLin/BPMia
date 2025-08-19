@@ -126,7 +126,7 @@ def fmt_num(s):
 def fmt_pct(s):
     return s.fillna(0).map(lambda x: f"{x:.1f}%")
 
-def calculate_portion(df): 
+def create_portion_collapsed(df): 
     portion_df = df.copy()
     group_col = next((c for c in portion_df.columns if c.strip() == "Group"), None)
     if group_col is None:
@@ -167,10 +167,13 @@ def calculate_portion(df):
     # --- Aggregate weeks → quarters ---
     # Preserve quarter order as they appear in time_cols
     portion_collapsed = portion_values.T.groupby(quarter.loc[time_cols], sort=False).sum().T
+    return portion_collapsed
     
+def create_portion_collapsed_pct(portion_collapsed):
     # percentages per quarter
     portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
-    return portion_share_pct
+    formatted_portion = portion_share_pct.apply(fmt_pct)
+    return formatted_portion
 
 def main():
     try:
@@ -231,11 +234,10 @@ def main():
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=start_row_BC-1, y_end_row=end_row_BC, group_col_index=column_index_from_string('D') - 1
                 )   
-                portion_all = calculate_portion(plot_data_all)
-                formatted_portion_all = portion_all.apply(fmt_pct)
-                st.dataframe(formatted_portion_all)
+                portion_collapsed = create_portion_collapsed(plot_data_all)
+                portion_collapsed_pct = create_portion_collapsed_pct(portion_collapsed)
+                st.dataframe(portion_collapsed_pct)
 
-                
                 date_table = plot_data_all.copy()
                 w_row = pd.Series({col: to_wlabel(col) for col in date_table.columns}, name='Week')
                 date_table_with_week = pd.concat([w_row.to_frame().T, date_table], ignore_index=False)
