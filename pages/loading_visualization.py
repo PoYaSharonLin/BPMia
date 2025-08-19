@@ -226,7 +226,7 @@ def main():
                 # --- Aggregate weeks → quarters ---
                 # Preserve quarter order as they appear in time_cols
                 portion_collapsed = portion_values.T.groupby(quarter.loc[time_cols], sort=False).sum().T
-                
+                st.dataframe(portion_collapsed)
                 # percentages per quarter
                 portion_share_pct = (portion_collapsed.div(portion_collapsed.sum(axis=0), axis=1) * 100).round(1)
                 formatted_portion_share_pct = portion_share_pct.apply(fmt_pct)
