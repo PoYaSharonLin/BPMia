@@ -155,9 +155,9 @@ def main():
                     return
 
                 # Slice the DataFrame
-                df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
+                # df_range = df.iloc[start_row:end_row + 1, start_col:end_col + 1]
                 # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
-                st.dataframe(df_range)
+                # st.dataframe(df_range)
 
 
                 # Delta Line plot 
@@ -169,6 +169,24 @@ def main():
                 
                 st.markdown("### Current BC")
                 st.markdown("**Process Series Portion**")
+                col3, col4 = st.columns(2)
+                with col3:
+                    start_cell_all = st.text_input("Enter start cell (e.g., CR5):", value="CR5")
+                with col4:
+                    end_cell_all = st.text_input("Enter end cell (e.g., JE7):", value="JE7")
+
+                # Parse cell references
+                try:
+                    start_col_all, start_row_all = parse_cell(start_cell_all)
+                    end_col_all, end_row_all = parse_cell(end_cell_all)
+                except Exception as e:
+                    st.error(f"Invalid cell range format: {e}")
+                    return
+                    
+                df_range = df.iloc[start_row_all:end_row_all + 1, start_col_all:end_col_all + 1]
+                # st.success(f"Showing data from {start_cell} to {end_cell} from excel sheet")
+                st.dataframe(df_range)
+                
                 plot_data_all, plot_data_melted_all, primary_labels_all, secondary_labels_all = prepare_line_plot_data(
                 df, start_col, end_col, x_row=2, y_start_row=0, y_end_row=17, group_col_index=column_index_from_string('D') - 1
                 )   
