@@ -136,9 +136,9 @@ def main():
         uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
         col1, col2 = st.columns(2)
         with col1:
-            start_cell = st.text_input("Enter start cell (e.g., CR46):", value="CR44")
+            start_cell = st.text_input("Enter start cell (e.g., CR46):", value="CR46")
         with col2:
-            end_cell = st.text_input("Enter end cell (e.g., JE60):", value="JE59")
+            end_cell = st.text_input("Enter end cell (e.g., JE60):", value="JE60")
 
         if uploaded_file:
             try:
