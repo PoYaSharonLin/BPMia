@@ -453,7 +453,7 @@ def create_hbm_nonhbm_figure(
 
     # Stacked bars
     fig.add_trace(go.Bar(name="HBM", x=totals.index, y=totals["HBM"], marker_color="#0078D7"), row=1, col=1)
-    fig.add_trace(go.Bar(name="nonHBM", x=totals.index, y=totals["nonHBM"], marker_color="#7EC8E3"), row=1, col=1)
+    fig.add_trace(go.Bar(name="nonHBM", x=totals.index, y=totals["nonHBM"], marker_color="#89d8f5"), row=1, col=1)
 
     # Totals table
     fig.add_trace(
