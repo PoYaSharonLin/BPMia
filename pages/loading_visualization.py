@@ -127,6 +127,7 @@ def fmt_pct(s):
     return s.fillna(0).map(lambda x: f"{x:.1f}%")
 
 
+
 def main():
     try:
         UIHelper.config_page()
