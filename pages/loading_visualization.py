@@ -591,6 +591,7 @@ def render_current_bc_section(df: pd.DataFrame, headers_from_delta: Optional[Hea
 
     # Prefer the header labels from the broader range if supplied; otherwise use this section's headers
     headers = headers_from_delta or data_all.headers
+    week_options = build_week_options(headers)
     if not week_options:
         st.warning("No week-like columns found (expected labels such as 'JUN 22-2025'). Showing all.")
         # Fallback: still append quarter when available
