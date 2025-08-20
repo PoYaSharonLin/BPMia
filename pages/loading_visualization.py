@@ -404,7 +404,7 @@ def create_line_plot(melted: pd.DataFrame, headers: HeaderInfo) -> go.Figure:
             zeroline=False,
         ),
         yaxis=dict(title="Wafer Output"),
-        legend=dict(orientation="v", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        legend=dict(orientation="v", yanchor="top", y=1.02, xanchor="right", x=1),
         margin=dict(t=60, b=40, l=40, r=20),
         height=420,
     )
