@@ -13,6 +13,8 @@ from datetime import datetime
 
 import streamlit as st
 
+from utils.ui_helper import UIHelper
+
 # --------------------------------------------------------------------------------------
 # Constants & Configuration
 # --------------------------------------------------------------------------------------
@@ -638,6 +640,7 @@ def render_current_bc_section(df: pd.DataFrame, headers_from_delta: Optional[Hea
 
 def main():
     page_header()
+    UIHelper.setup_sidebar()
 
     uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
     if not uploaded_file:
