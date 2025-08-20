@@ -228,14 +228,20 @@ def aggregate_process_share_by_quarter(
     return share_pct.round(1)
 
 
+
 def build_week_options(headers: HeaderInfo) -> List[Tuple[str, str]]:
     """
-    Returns list of (display_label, original_label) for week-like columns only.
+    Returns list of (display_label_with_quarter, original_week_label) for week-like columns.
+    Example display: 'W22-2025 (FQ425)'
     """
-    options = []
-    for lbl in headers.primary_labels:
+    options: List[Tuple[str, str]] = []
+    for i, lbl in enumerate(headers.primary_labels):
         disp = to_wlabel(lbl)
+        # Safely fetch the quarter at the same position as the week
+        quarter = str(headers.secondary_labels[i]) if i < len(headers.secondary_labels) else ""
         if WEEK_LABEL_RE.fullmatch(disp):
+            if quarter and quarter.strip():
+                disp = f"{disp} ({quarter})"
             options.append((disp, lbl))
     return options
 
@@ -585,10 +591,19 @@ def render_current_bc_section(df: pd.DataFrame, headers_from_delta: Optional[Hea
 
     # Prefer the header labels from the broader range if supplied; otherwise use this section's headers
     headers = headers_from_delta or data_all.headers
-    week_options = build_week_options(headers)
     if not week_options:
         st.warning("No week-like columns found (expected labels such as 'JUN 22-2025'). Showing all.")
-        week_options = [(lbl, lbl) for lbl in headers.primary_labels]
+        # Fallback: still append quarter when available
+        week_options = [
+            (
+                f"{to_wlabel(lbl)} ({headers.secondary_labels[i]})"
+                if i < len(headers.secondary_labels) and str(headers.secondary_labels[i]).strip()
+                else to_wlabel(lbl),
+                lbl,
+            )
+            for i, lbl in enumerate(headers.primary_labels)
+        ]
+
 
     disp_labels = [d for (d, _) in week_options]
     default_start_idx = 0
