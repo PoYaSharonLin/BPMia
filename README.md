@@ -2,7 +2,7 @@
 BPMia is a summer intern project under Business Planning Team, Project Management Office, Micron inc., Taiwan.
 It combines the function of:
 1. Wafer production forecasting visualization
-2. Internal document Retrieval Augementation Generation for locating internal resources/portals
+2. Internal document Retrieval-augmented Generation for locating internal resources/portals
 3. Personal Action Items tracking 
 
 
