@@ -1,6 +1,9 @@
-# On Boarding Mentor 
-
-Demo: https://on-boarding-mentor.streamlit.app/
+# BPMia
+BPMia is a summer intern project under Business Planning Team, Project Management Office, Micron inc., Taiwan.
+It combines the function of:
+1. Wafer production forecasting visualization
+2. Internal document Retrieval Augementation Generation for locating internal resources/portals
+3. Personal Action Items tracking 
 
 
 ## How to run it on your own machine
